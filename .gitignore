@@ -1,0 +1,25 @@
+# Sekrety - NIGDY nie trafiają do gita
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Logi - generowane, nie wersjonowane
+logs/
+*.log
+
+# Baza SQLite (jeśli używasz lokalnie do testów)
+*.db
+
+# Edytory
+.nvim/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+EOF
