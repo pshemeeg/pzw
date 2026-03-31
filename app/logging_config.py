@@ -4,7 +4,9 @@ from logging.handlers import RotatingFileHandler
 
 
 def setup_logging(app):
-    log_level = getattr(logging, app.config.get("LOG_LEVEL", "INFO").upper(), logging.INFO)
+    log_level = getattr(
+        logging, app.config.get("LOG_LEVEL", "INFO").upper(), logging.INFO
+    )
 
     formatter = logging.Formatter(
         "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
