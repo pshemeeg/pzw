@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or "zmien-mnie"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -20,7 +21,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = Config.get_db_url()
+    SQLALCHEMY_DATABASE_URI = os.environ.get("Database_URL", "sqlite:///pzw_dev.db")
 
 
 class ProductionConfig(Config):
@@ -38,4 +39,3 @@ config_map = {
     "production": ProductionConfig,
     "testing": TestingConfig,
 }
-
