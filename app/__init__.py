@@ -1,9 +1,8 @@
 import os
 from flask import Flask
-from app.extensions import db, migrate
+from app.extensions import db, migrate, login_manager
 from app.logging_config import setup_logging
 from config import config_map
-
 
 def create_app(config_name=None):
     app = Flask(__name__)
@@ -16,8 +15,10 @@ def create_app(config_name=None):
     db.init_app(app)
     migrate.init_app(app, db)
 
+
+    login_manager.init_app(app)
+    login_manager.login_view = "auth.login" # type: ignore[assignment]
+    
     setup_logging(app)
 
     app.logger.info("Aplikacja PZW uruchomiona w trybie: %s", config_name)
-
-    return app
