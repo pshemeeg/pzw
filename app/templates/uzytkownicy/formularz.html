@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Edytuj użytkownika{% endblock %}
+{% block page_title %}Edytuj użytkownika{% endblock %}
+
+{% block content %}
+
+<form method="POST"
+      action="{{ url_for('uzytkownicy.usun', uid=uzytkownik.id) }}"
+      id="form-usun"
+      onsubmit="return confirm('Usunąć tego użytkownika?')"></form>
+
+<form method="POST" id="form-glowny">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <div class="lg:col-span-2 space-y-5">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border
+                        border-water-200 dark:border-gray-700 p-6 space-y-4">
+                <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide">
+                    Dane konta
+                </h2>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">Email *</label>
+                    <input type="email" name="email" required
+                           value="{{ uzytkownik.email }}"
+                           class="w-full px-3 py-2 text-sm rounded-lg border
+                                  border-gray-300 dark:border-gray-600
+                                  bg-white dark:bg-gray-700
+                                  text-gray-800 dark:text-gray-100
+                                  focus:outline-none focus:ring-2
+                                  focus:ring-water-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">
+                        Nowe hasło
+                        <span class="font-normal text-gray-400 ml-1">
+                            (zostaw puste by nie zmieniać)
+                        </span>
+                    </label>
+                    <input type="password" name="haslo"
+                           class="w-full px-3 py-2 text-sm rounded-lg border
+                                  border-gray-300 dark:border-gray-600
+                                  bg-white dark:bg-gray-700
+                                  text-gray-800 dark:text-gray-100
+                                  focus:outline-none focus:ring-2
+                                  focus:ring-water-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">Rola</label>
+                    <select name="rola"
+                            class="w-full px-3 py-2 text-sm rounded-lg border
+                                   border-gray-300 dark:border-gray-600
+                                   bg-white dark:bg-gray-700
+                                   text-gray-800 dark:text-gray-100
+                                   focus:outline-none focus:ring-2
+                                   focus:ring-water-500">
+                        <option value="sedzia"
+                            {% if uzytkownik.rola == 'sedzia' %}selected{% endif %}>
+                            Sędzia
+                        </option>
+                        <option value="admin"
+                            {% if uzytkownik.rola == 'admin' %}selected{% endif %}>
+                            Administrator
+                        </option>
+                    </select>
+                </div>
+
+                <label class="flex items-center gap-2.5 text-sm
+                              text-gray-700 dark:text-gray-300 cursor-pointer">
+                    <input type="checkbox" name="aktywny"
+                           {% if uzytkownik.aktywny %}checked{% endif %}
+                           class="rounded border-gray-300 focus:ring-water-500 w-4 h-4">
+                    Konto aktywne
+                </label>
+            </div>
+
+            {% if uzytkownik.sedzia %}
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border
+                        border-water-200 dark:border-gray-700 p-6">
+                <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-3">
+                    Powiązany sędzia
+                </h2>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-800 dark:text-gray-100">
+                            {{ uzytkownik.sedzia.imie }} {{ uzytkownik.sedzia.nazwisko }}
+                        </p>
+                        <p class="text-xs text-gray-400">
+                            {{ uzytkownik.sedzia.kolo or 'Brak koła' }}
+                        </p>
+                    </div>
+                    <a href="{{ url_for('sedziowie.edytuj', sid=uzytkownik.sedzia.id) }}"
+                       class="text-xs text-water-700 dark:text-water-200 hover:underline">
+                        Edytuj profil
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="space-y-4">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border
+                        border-water-200 dark:border-gray-700 p-5 space-y-3">
+                <button type="submit" form="form-glowny"
+                        class="w-full py-2 text-sm font-medium bg-gold-500
+                               hover:bg-gold-600 text-white rounded-lg
+                               transition-colors">
+                    Zapisz zmiany
+                </button>
+                <a href="{{ url_for('uzytkownicy.lista') }}"
+                   class="block w-full py-2 text-sm text-center text-gray-400
+                          hover:text-gray-600 dark:hover:text-gray-200
+                          transition-colors">
+                    Anuluj
+                </a>
+                {% if uzytkownik.id != current_user.id %}
+                <div class="border-t border-gray-100 dark:border-gray-700 pt-3">
+                    <button type="submit" form="form-usun"
+                            class="w-full py-2 text-sm text-red-500
+                                   hover:text-red-700 transition-colors">
+                        Usuń użytkownika
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %} {% block title %}Użytkownicy{% endblock %} {% block page_title
+%}Użytkownicy{% endblock %} {% block content %}
+<div
+  class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden"
+>
+  <table class="w-full text-sm">
+    <thead>
+      <tr
+        class="border-b border-water-200 dark:border-gray-700 text-xs text-gray-400 uppercase tracking-wide"
+      >
+        <th class="text-left px-5 py-3 font-medium">Email</th>
+        <th class="text-left px-5 py-3 font-medium">Rola</th>
+        <th class="text-left px-5 py-3 font-medium">Sędzia</th>
+        <th class="text-left px-5 py-3 font-medium">Status</th>
+        <th class="px-5 py-3"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-water-100 dark:divide-gray-700">
+      {% for u in uzytkownicy %}
+      <tr class="hover:bg-water-50 dark:hover:bg-gray-700 transition-colors">
+        <td class="px-5 py-3 font-medium text-gray-800 dark:text-gray-100">
+          {{ u.email }} {% if u.id == current_user.id %}
+          <span
+            class="ml-1.5 text-[10px] bg-water-100 text-water-700 dark:bg-gray-700 dark:text-water-200 px-1.5 py-0.5 rounded-full"
+          >
+            Ty
+          </span>
+          {% endif %}
+        </td>
+        <td class="px-5 py-3">
+          <span
+            class="text-xs px-2 py-0.5 rounded-full font-medium {% if u.rola == 'admin' %} bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 {% else %} bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 {% endif %}"
+          >
+            {{ u.rola|capitalize }}
+          </span>
+        </td>
+        <td class="px-5 py-3 text-gray-500 dark:text-gray-400">
+          {% if u.sedzia %} {{ u.sedzia.imie }} {{ u.sedzia.nazwisko }} {% else %} — {%
+          endif %}
+        </td>
+        <td class="px-5 py-3">
+          <span
+            class="text-xs px-2 py-0.5 rounded-full font-medium {% if u.aktywny %} bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 {% else %} bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 {% endif %}"
+          >
+            {{ 'Aktywny' if u.aktywny else 'Nieaktywny' }}
+          </span>
+        </td>
+        <td class="px-5 py-3 text-right">
+          <a
+            href="{{ url_for('uzytkownicy.edytuj', uid=u.id) }}"
+            class="text-xs text-gray-400 hover:text-water-700 dark:hover:text-water-200 transition-colors"
+          >
+            Edytuj
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

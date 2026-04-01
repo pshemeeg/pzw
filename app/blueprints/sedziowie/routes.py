@@ -31,6 +31,7 @@ def nowy():
 
         email = f.get("email", "").strip().lower()
         haslo = f.get("haslo", "").strip()
+
         if email and haslo:
             if Uzytkownik.query.filter_by(email=email).first():
                 flash("Użytkownik z tym emailem już istnieje.", "danger")
@@ -44,6 +45,10 @@ def nowy():
                 sedzia_id=sedzia.id,
             )
             db.session.add(konto)
+        elif email and not haslo:
+            flash("Podaj hasło aby utworzyć konto.", "warning")
+            db.session.rollback()
+            return redirect(url_for("sedziowie.nowy"))
 
         db.session.commit()
         flash("Sędzia został dodany.", "success")
@@ -69,26 +74,38 @@ def edytuj(sid):
 
         email = f.get("email", "").strip().lower()
         haslo = f.get("haslo", "").strip()
+        konto = sedzia.uzytkownik
 
         if email:
-            konto = sedzia.uzytkownik
             if konto:
-                konto.email = email
+                if konto.email != email:
+                    zajety = Uzytkownik.query.filter_by(email=email).first()
+                    if zajety:
+                        flash("Ten email jest już zajęty przez inne konto.", "danger")
+                        return redirect(url_for("sedziowie.edytuj", sid=sid))
+                    konto.email = email
                 if haslo:
                     konto.haslo_hash = generate_password_hash(haslo)
             else:
-                istniejace = Uzytkownik.query.filter_by(email=email).first()
-                if istniejace:
-                    flash("Użytkownik z tym emailem już istnieje.", "danger")
+                if not haslo:
+                    flash("Podaj hasło aby utworzyć konto.", "warning")
+                    return redirect(url_for("sedziowie.edytuj", sid=sid))
+                zajety = Uzytkownik.query.filter_by(email=email).first()
+                if zajety:
+                    flash("Ten email jest już zajęty przez inne konto.", "danger")
                     return redirect(url_for("sedziowie.edytuj", sid=sid))
                 konto = Uzytkownik(
                     email=email,
-                    haslo_hash=generate_password_hash(haslo or "zmien-haslo"),
+                    haslo_hash=generate_password_hash(haslo),
                     rola="sedzia",
                     aktywny=True,
                     sedzia_id=sedzia.id,
                 )
                 db.session.add(konto)
+        else:
+            if konto:
+                if haslo:
+                    konto.haslo_hash = generate_password_hash(haslo)
 
         db.session.commit()
         flash("Dane sędziego zostały zaktualizowane.", "success")

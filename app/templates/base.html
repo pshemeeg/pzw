@@ -51,17 +51,19 @@
                   flex flex-col transition-transform duration-200
                   lg:relative lg:translate-x-0">
 
-        <div class="flex items-center gap-3 px-4 py-4
-                    border-b border-water-200 dark:border-gray-700">
-            <img src="{{ url_for('static', filename='img/logo.png') }}"
-                 alt="Logo" class="h-9 w-9 rounded-full">
-            <div>
-                <div class="text-sm font-medium text-water-700 dark:text-water-200">
-                    System PZW
-                </div>
-                <div class="text-xs text-gray-400">Zawody wędkarskie</div>
-            </div>
+        <a href="{{ url_for('main.index') }}"
+   class="flex items-center gap-3 px-4 py-4
+          border-b border-water-200 dark:border-gray-700
+          hover:bg-water-50 dark:hover:bg-gray-700 transition-colors">
+    <img src="{{ url_for('static', filename='img/logo.png') }}"
+         alt="Logo" class="h-9 w-9 rounded-full">
+    <div>
+        <div class="text-sm font-medium text-water-700 dark:text-water-200">
+            System PZW
         </div>
+        <div class="text-xs text-gray-400">Zawody wędkarskie</div>
+    </div>
+</a>
 
         <nav class="flex-1 overflow-y-auto px-2 py-3 space-y-4">
 
@@ -268,7 +270,7 @@
                           text-gray-400 dark:text-gray-500">
                     Administracja
                 </p>
-                <a href="#"
+                <a href="{{ url_for('uzytkownicy.lista') }}"
                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
                           text-gray-600 dark:text-gray-300
                           hover:bg-water-100 dark:hover:bg-gray-700">

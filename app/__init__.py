@@ -47,6 +47,10 @@ def create_app(config_name=None):
 
     app.register_blueprint(sedziowie_bp, url_prefix="/sedziowie")
 
+    from app.blueprints.uzytkownicy import bp as uzytkownicy_bp
+
+    app.register_blueprint(uzytkownicy_bp, url_prefix="/uzytkownicy")
+
     app.logger.info("Aplikacja PZW uruchomiona w trybie: %s", config_name)
 
     return app
