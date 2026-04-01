@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% block title %}Strona główna{% endblock %} {% block content
+%}
+<div class="mb-8">
+  <h1 class="text-2xl font-semibold text-water-700 dark:text-water-200">
+    Witaj, {{ current_user.email }}
+  </h1>
+  <p class="text-gray-500 dark:text-gray-400 mt-1">
+    {% if current_user.is_admin() %} Jesteś zalogowany jako administrator. {% else %}
+    Jesteś zalogowany jako sędzia. {% endif %}
+  </p>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div
+    class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-water-200 dark:border-gray-700 p-6"
+  >
+    <h2 class="font-semibold text-water-700 dark:text-water-200 mb-1">Zawody</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      Zarządzaj zawodami i losowaniem stanowisk.
+    </p>
+  </div>
+  <div
+    class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-water-200 dark:border-gray-700 p-6"
+  >
+    <h2 class="font-semibold text-water-700 dark:text-water-200 mb-1">Zawodnicy</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      Baza zawodników i historia startów.
+    </p>
+  </div>
+  <div
+    class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-water-200 dark:border-gray-700 p-6"
+  >
+    <h2 class="font-semibold text-water-700 dark:text-water-200 mb-1">Wyniki</h2>
+    <p class="text-sm text-gray-500 dark:text-gray-400">
+      Wprowadzanie i klasyfikacja wyników.
+    </p>
+  </div>
+</div>
+{% endblock %}

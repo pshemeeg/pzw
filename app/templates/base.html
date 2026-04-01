@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pl" class="h-full"
+      x-data="{ sidebarOpen: false, dark: localStorage.getItem('theme') === 'dark' }"
+      :class="{ 'dark': dark }">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PZW{% endblock %} — System Zawodów</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        water: {
+                            50:  '#f0f8fa',
+                            100: '#c8e6f0',
+                            200: '#9dd4e6',
+                            500: '#4a9cb8',
+                            700: '#2d6f85',
+                            900: '#1a3f4d',
+                        },
+                        gold: {
+                            300: '#e8c96a',
+                            400: '#d4aa47',
+                            500: '#c9a84c',
+                            600: '#a8892e',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+
+<body class="h-full bg-water-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+<div class="flex h-full">
+
+    {% if current_user.is_authenticated %}
+    <div x-show="sidebarOpen"
+         @click="sidebarOpen = false"
+         class="fixed inset-0 bg-black/40 z-20 lg:hidden">
+    </div>
+
+    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+           class="fixed inset-y-0 left-0 z-30 w-60 bg-white dark:bg-gray-800
+                  border-r border-water-200 dark:border-gray-700
+                  flex flex-col transition-transform duration-200
+                  lg:relative lg:translate-x-0">
+
+        <div class="flex items-center gap-3 px-4 py-4
+                    border-b border-water-200 dark:border-gray-700">
+            <img src="{{ url_for('static', filename='img/logo.png') }}"
+                 alt="Logo" class="h-9 w-9 rounded-full">
+            <div>
+                <div class="text-sm font-medium text-water-700 dark:text-water-200">
+                    System PZW
+                </div>
+                <div class="text-xs text-gray-400">Zawody wędkarskie</div>
+            </div>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto px-2 py-3 space-y-4">
+
+            <div>
+                <p class="px-2 mb-1 text-[10px] font-medium uppercase tracking-widest
+                          text-gray-400 dark:text-gray-500">
+                    Zawody
+                </p>
+                <a href="{{ url_for('main.index') }}"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
+                          text-gray-600 dark:text-gray-300
+                          hover:bg-water-100 dark:hover:bg-gray-700
+                          {% if request.endpoint == 'main.index' %}
+                          bg-water-100 dark:bg-gray-700 text-water-700
+                          dark:text-water-200 font-medium{% endif %}">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor"
+                         stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25
+                                 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121
+                                 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5
+                                 A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25
+                                 2.25 0 015.25 9h13.5A2.25 2.25 0 0121
+                                 11.25v7.5"/>
+                    </svg>
+                    Lista zawodów
+                </a>
+                <a href="#"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
+                          text-gray-600 dark:text-gray-300
+                          hover:bg-water-100 dark:hover:bg-gray-700">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor"
+                         stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M3 13.125C3 12.504 3.504 12 4.125
+                                 12h2.25c.621 0 1.125.504 1.125
+                                 1.125v6.75C7.5 20.496 6.996 21
+                                 6.375 21h-2.25A1.125 1.125 0
+                                 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125
+                                 1.125-1.125h2.25c.621 0 1.125.504
+                                 1.125 1.125v11.25c0 .621-.504
+                                 1.125-1.125 1.125h-2.25a1.125
+                                 1.125 0 01-1.125-1.125V8.625z
+                                 M16.5 4.125c0-.621.504-1.125
+                                 1.125-1.125h2.25C20.496 3 21
+                                 3.504 21 4.125v15.75c0 .621-.504
+                                 1.125-1.125 1.125h-2.25a1.125
+                                 1.125 0 01-1.125-1.125V4.125z"/>
+                    </svg>
+                    Wyniki
+                </a>
+                <a href="#"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
+                          text-gray-600 dark:text-gray-300
+                          hover:bg-water-100 dark:hover:bg-gray-700">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor"
+                         stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M19.5 14.25v-2.625a3.375 3.375
+                                 0 00-3.375-3.375h-1.5A1.125 1.125
+                                 0 0113.5 7.125v-1.5a3.375 3.375
+                                 0 00-3.375-3.375H8.25m0
+                                 12.75h7.5m-7.5 3H12M10.5
+                                 2.25H5.625c-.621 0-1.125.504-1.125
+                                 1.125v17.25c0 .621.504 1.125
+                                 1.125 1.125h12.75c.621 0
+                                 1.125-.504 1.125-1.125V11.25
+                                 a9 9 0 00-9-9z"/>
+                    </svg>
+                    Protokoły
+                </a>
+                <a href="#"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
+                          text-gray-600 dark:text-gray-300
+                          hover:bg-water-100 dark:hover:bg-gray-700">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor"
+                         stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M16.5 18.75h-9m9 0a3 3 0 013
+                                 3h-15a3 3 0 013-3m9 0v-3.375c0-.621
+                                 -.503-1.125-1.125-1.125h-.871M7.5
+                                 18.75v-3.375c0-.621.504-1.125
+                                 1.125-1.125h.872m5.007 0H9.497m5.007
+                                 0a7.454 7.454 0 01-.982-3.172M9.497
+                                 14.25a7.454 7.454 0 00.981-3.172
+                                 M5.25 4.236c-.982.143-1.954.317
+                                 -2.916.52A6.003 6.003 0 007.73
+                                 9.728M5.25 4.236V4.5c0 2.108.966
+                                 3.99 2.48 5.228M5.25 4.236V2.721
+                                 C7.456 2.41 9.71 2.25 12 2.25c2.291
+                                 0 4.545.16 6.75.47v1.516M7.73
+                                 9.728a6.726 6.726 0 002.748
+                                 1.35m8.272-6.842V4.5c0 2.108-.966
+                                 3.99-2.48 5.228m2.48-5.492a46.32
+                                 46.32 0 012.916.52 6.003 6.003
+                                 0 01-5.395 4.972m0 0a6.726 6.726
+                                 0 01-2.749 1.35m0 0a6.772 6.772
+                                 0 01-3.044 0"/>
+                    </svg>
+                    Grand Prix
+                </a>
+            </div>
+
+            <div>
+                <p class="px-2 mb-1 text-[10px] font-medium uppercase tracking-widest
+                          text-gray-400 dark:text-gray-500">
+                    Uczestnicy
+                </p>
+                <a href="#"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
+                          text-gray-600 dark:text-gray-300
+                          hover:bg-water-100 dark:hover:bg-gray-700">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor"
+                         stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M15.75 6a3.75 3.75 0 11-7.5
+                                 0 3.75 3.75 0 017.5 0zM4.501
+                                 20.118a7.5 7.5 0 0114.998
+                                 0A17.933 17.933 0 0112 21.75c-2.676
+                                 0-5.216-.584-7.499-1.632z"/>
+                    </svg>
+                    Zawodnicy
+                </a>
+                {% if current_user.is_admin() %}
+                <a href="#"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
+                          text-gray-600 dark:text-gray-300
+                          hover:bg-water-100 dark:hover:bg-gray-700">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor"
+                         stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M18 18.72a9.094 9.094 0 003.741
+                                 -.479 3 3 0 00-4.682-2.72m.94
+                                 4.198l.001.031c0 .225-.012.447
+                                 -.037.666A11.944 11.944 0 0112
+                                 21c-2.17 0-4.207-.576-5.963-1.584
+                                 A6.062 6.062 0 016 18.719m12
+                                 0a5.971 5.971 0 00-.941-3.197m0
+                                 0A5.995 5.995 0 0012 12.75a5.995
+                                 5.995 0 00-5.058 2.772m0 0a3 3
+                                 0 00-4.681 2.72 8.986 8.986 0
+                                 003.74.477m.94-3.197a5.971 5.971
+                                 0 00-.94 3.197M15 6.75a3 3 0
+                                 11-6 0 3 3 0 016 0zm6 3a2.25
+                                 2.25 0 11-4.5 0 2.25 2.25 0
+                                 014.5 0zm-13.5 0a2.25 2.25 0
+                                 11-4.5 0 2.25 2.25 0 014.5 0z"/>
+                    </svg>
+                    Sędziowie
+                    <span class="ml-auto text-[10px] bg-amber-100 text-amber-800
+                                 dark:bg-amber-900 dark:text-amber-200
+                                 px-1.5 py-0.5 rounded-full">
+                        Admin
+                    </span>
+                </a>
+                {% endif %}
+            </div>
+
+            <div>
+                <p class="px-2 mb-1 text-[10px] font-medium uppercase tracking-widest
+                          text-gray-400 dark:text-gray-500">
+                    Słowniki
+                </p>
+                <a href="#"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
+                          text-gray-600 dark:text-gray-300
+                          hover:bg-water-100 dark:hover:bg-gray-700">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor"
+                         stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M15 10.5a3 3 0 11-6 0 3 3 0
+                                 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M19.5 10.5c0 7.142-7.5 11.25
+                                 -7.5 11.25S4.5 17.642 4.5
+                                 10.5a7.5 7.5 0 1115 0z"/>
+                    </svg>
+                    Łowiska
+                </a>
+                <a href="#"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
+                          text-gray-600 dark:text-gray-300
+                          hover:bg-water-100 dark:hover:bg-gray-700">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor"
+                         stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M9.568 3H5.25A2.25 2.25 0 003
+                                 5.25v4.318c0 .597.237 1.17.659
+                                 1.591l9.581 9.581c.699.699 1.78
+                                 .872 2.607.33a18.095 18.095 0
+                                 005.223-5.223c.542-.827.369
+                                 -1.908-.33-2.607L11.16 3.66A2.25
+                                 2.25 0 009.568 3z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M6 6h.008v.008H6V6z"/>
+                    </svg>
+                    Dyscypliny
+                </a>
+            </div>
+
+            {% if current_user.is_admin() %}
+            <div>
+                <p class="px-2 mb-1 text-[10px] font-medium uppercase tracking-widest
+                          text-gray-400 dark:text-gray-500">
+                    Administracja
+                </p>
+                <a href="#"
+                   class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
+                          text-gray-600 dark:text-gray-300
+                          hover:bg-water-100 dark:hover:bg-gray-700">
+                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor"
+                         stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M10.343 3.94c.09-.542.56-.94
+                                 1.11-.94h1.093c.55 0 1.02.398
+                                 1.11.94l.149.894c.07.424.384.764
+                                 .78.93.398.164.855.142 1.205
+                                 -.108l.737-.527a1.125 1.125 0
+                                 011.45.12l.773.774c.39.389.44
+                                 1.002.12 1.45l-.527.737c-.25.35
+                                 -.272.806-.107 1.204.165.397.505
+                                 .71.93.78l.893.15c.543.09.94.56
+                                 .94 1.109v1.094c0 .55-.397
+                                 1.02-.94 1.11l-.893.149c-.425
+                                 .07-.765.383-.93.78-.165.398
+                                 -.143.854.107 1.204l.527.738c.32
+                                 .447.269 1.06-.12 1.45l-.774.773a
+                                 1.125 1.125 0 01-1.449.12l-.738
+                                 -.527c-.35-.25-.806-.272-1.203
+                                 -.107-.397.165-.71.505-.781.929
+                                 l-.149.894c-.09.542-.56.94-1.11
+                                 .94h-1.094c-.55 0-1.019-.398
+                                 -1.11-.94l-.148-.894c-.071-.424
+                                 -.384-.764-.781-.93-.398-.164
+                                 -.854-.142-1.204.108l-.738.527c
+                                 -.447.32-1.06.269-1.45-.12l-.773
+                                 -.774a1.125 1.125 0 01-.12-1.45
+                                 l.527-.737c.25-.35.273-.806.108
+                                 -1.204-.165-.397-.505-.71-.93
+                                 -.78l-.894-.15c-.542-.09-.94-.56
+                                 -.94-1.109v-1.094c0-.55.398-1.02
+                                 .94-1.11l.894-.149c.424-.07.765
+                                 -.383.93-.78.165-.398.143-.854
+                                 -.108-1.204l-.526-.738a1.125
+                                 1.125 0 01.12-1.45l.773-.773a
+                                 1.125 1.125 0 011.45-.12l.737
+                                 .527c.35.25.807.272 1.204.107
+                                 .397-.165.71-.505.78-.929l.15
+                                 -.894z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Użytkownicy
+                    <span class="ml-auto text-[10px] bg-amber-100 text-amber-800
+                                 dark:bg-amber-900 dark:text-amber-200
+                                 px-1.5 py-0.5 rounded-full">
+                        Admin
+                    </span>
+                </a>
+            </div>
+            {% endif %}
+
+        </nav>
+
+        <div class="px-3 py-3 border-t border-water-200 dark:border-gray-700">
+            <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-full bg-gold-500 flex items-center
+                            justify-center text-white text-xs font-medium shrink-0">
+                    {{ current_user.email[0].upper() }}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="text-xs font-medium text-gray-700 dark:text-gray-200
+                                truncate">
+                        {{ current_user.email }}
+                    </div>
+                    <div class="text-[10px] text-gray-400">
+                        {% if current_user.is_admin() %}Administrator{% else %}Sędzia{% endif %}
+                    </div>
+                </div>
+                <a href="{{ url_for('auth.logout') }}"
+                   class="text-gray-400 hover:text-red-500 transition-colors text-xs p-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                         stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M15.75 9V5.25A2.25 2.25 0 0013.5
+                                 3h-6a2.25 2.25 0 00-2.25 2.25v13.5
+                                 A2.25 2.25 0 007.5 21h6a2.25 2.25
+                                 0 002.25-2.25V15M12 9l-3 3m0 0l3
+                                 3m-3-3h12.75"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </aside>
+    {% endif %}
+
+    <div class="flex-1 flex flex-col min-w-0 min-h-0">
+
+        <header class="bg-white dark:bg-gray-800 border-b border-water-200
+                       dark:border-gray-700 px-4 py-3 flex items-center gap-3">
+            {% if current_user.is_authenticated %}
+            <button @click="sidebarOpen = !sidebarOpen"
+                    class="lg:hidden p-1.5 rounded-lg hover:bg-water-100
+                           dark:hover:bg-gray-700 text-gray-500">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                     stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+                </svg>
+            </button>
+            {% endif %}
+            <h1 class="text-sm font-medium text-gray-700 dark:text-gray-200">
+                {% block page_title %}Dashboard{% endblock %}
+            </h1>
+            <div class="ml-auto flex items-center gap-2">
+                <button @click="dark = !dark; localStorage.setItem('theme', dark ? 'dark' : 'light')"
+                        class="p-1.5 rounded-lg hover:bg-water-100 dark:hover:bg-gray-700
+                               text-gray-500 dark:text-gray-400 transition-colors">
+                    <svg x-show="!dark" class="w-4 h-4" fill="none" stroke="currentColor"
+                         stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M21.752 15.002A9.718 9.718 0 0118
+                                 15.75c-5.385 0-9.75-4.365-9.75-9.75
+                                 0-1.33.266-2.597.748-3.752A9.753
+                                 9.753 0 003 11.25C3 16.635 7.365
+                                 21 12.75 21a9.753 9.753 0 009.002
+                                 -5.998z"/>
+                    </svg>
+                    <svg x-show="dark" class="w-4 h-4" fill="none" stroke="currentColor"
+                         stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M12 3v2.25m6.364.386l-1.591 1.591M21
+                                 12h-2.25m-.386 6.364l-1.591-1.591M12
+                                 18.75V21m-4.773-4.227l-1.591 1.591M5.25
+                                 12H3m4.227-4.773L5.636 5.636M15.75
+                                 12a3.75 3.75 0 11-7.5 0 3.75 3.75
+                                 0 017.5 0z"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="px-4 pt-3 space-y-2">
+                    {% for category, message in messages %}
+                        <div class="px-4 py-2.5 rounded-lg text-sm
+                            {% if category == 'danger' %}
+                                bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200
+                            {% elif category == 'success' %}
+                                bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                            {% elif category == 'warning' %}
+                                bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200
+                            {% else %}
+                                bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+                            {% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <main class="flex-1 overflow-y-auto p-6">
+            {% block content %}{% endblock %}
+        </main>
+
+    </div>
+</div>
+</body>
+</html>

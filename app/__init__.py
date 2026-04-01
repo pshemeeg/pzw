@@ -3,14 +3,6 @@ from flask import Flask
 from app.extensions import db, migrate, login_manager
 from app.logging_config import setup_logging
 from config import config_map
-from app.blueprints.auth import bp as auth_bp
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    from app.models import Uzytkownik
-
-    return db.session.get(Uzytkownik, int(user_id))
 
 
 def create_app(config_name=None):
@@ -24,13 +16,25 @@ def create_app(config_name=None):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    setup_logging(app)
-
     login_manager.init_app(app)
     login_manager.login_view = "auth.login"  # type: ignore[assignment]
 
-    app.logger.info("Aplikacja PZW uruchomiona w trybie: %s", config_name)
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.models import Uzytkownik
+
+        return db.session.get(Uzytkownik, int(user_id))
+
+    setup_logging(app)
+
+    from app.blueprints.auth import bp as auth_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
+
+    from app.blueprints.main import bp as main_bp
+
+    app.register_blueprint(main_bp)
+
+    app.logger.info("Aplikacja PZW uruchomiona w trybie: %s", config_name)
 
     return app
