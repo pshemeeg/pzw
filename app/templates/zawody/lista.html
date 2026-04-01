@@ -1,0 +1,132 @@
+{% extends "base.html" %} {% block title %}Zawody{% endblock %} {% block page_title
+%}Lista zawodów{% endblock %} {% block content %}
+<div class="flex items-center justify-between mb-6">
+  <form class="flex gap-2" method="GET">
+    <input
+      type="text"
+      name="q"
+      value="{{ q }}"
+      placeholder="Szukaj zawodów..."
+      class="px-3 py-2 text-sm rounded-lg border border-water-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500 w-56"
+    />
+    <select
+      name="status"
+      onchange="this.form.submit()"
+      class="px-3 py-2 text-sm rounded-lg border border-water-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
+    >
+    <option value="" {% if not status %}selected{% endif %}>Wszystkie</option>
+<option value="planowane" {% if status == 'planowane' %}selected{% endif %}>Planowane</option>
+<option value="w_trakcie" {% if status == 'w_trakcie' %}selected{% endif %}>W trakcie</option>
+<option value="zakonczone" {% if status == 'zakonczone' %}selected{% endif %}>Zakończone</option>
+          </select>
+  </form>
+
+  <a
+    href="{{ url_for('zawody.nowe') }}"
+    class="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors"
+  >
+    <svg
+      class="w-4 h-4"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      viewBox="0 0 24 24"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+    </svg>
+    Nowe zawody
+  </a>
+</div>
+
+{% if zawody %}
+<div
+  class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden"
+>
+  <table class="w-full text-sm">
+    <thead>
+      <tr
+        class="border-b border-water-200 dark:border-gray-700 text-xs text-gray-400 uppercase tracking-wide"
+      >
+        <th class="text-left px-5 py-3 font-medium">Nazwa</th>
+        <th class="text-left px-5 py-3 font-medium">Data</th>
+        <th class="text-left px-5 py-3 font-medium">Dyscyplina</th>
+        <th class="text-left px-5 py-3 font-medium">Łowisko</th>
+        <th class="text-left px-5 py-3 font-medium">Status</th>
+        <th class="px-5 py-3"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-water-100 dark:divide-gray-700">
+      {% for z in zawody %}
+      <tr class="hover:bg-water-50 dark:hover:bg-gray-700 transition-colors">
+        <td class="px-5 py-3 font-medium text-gray-800 dark:text-gray-100">
+          <a
+            href="{{ url_for('zawody.szczegoly', zid=z.id) }}"
+            class="hover:text-water-700 dark:hover:text-water-200"
+          >
+            {{ z.nazwa }}
+          </a>
+          {% if z.grand_prix %}
+          <span
+            class="ml-2 text-[10px] bg-gold-100 text-gold-600 dark:bg-amber-900 dark:text-amber-300 px-1.5 py-0.5 rounded-full font-medium"
+          >
+            GP
+          </span>
+          {% endif %}
+        </td>
+        <td class="px-5 py-3 text-gray-500 dark:text-gray-400">
+          {{ z.data.strftime('%d.%m.%Y') }}
+        </td>
+        <td class="px-5 py-3 text-gray-500 dark:text-gray-400">
+          {{ z.dyscyplina.nazwa }}
+        </td>
+        <td class="px-5 py-3 text-gray-500 dark:text-gray-400">
+          {{ z.lowisko.nazwa if z.lowisko else '—' }}
+        </td>
+        <td class="px-5 py-3">
+          <span
+            class="text-xs px-2 py-0.5 rounded-full font-medium {% if z.status == 'zakonczone' %} bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 {% elif z.status == 'w_trakcie' %} bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 {% else %} bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 {% endif %}"
+          >
+            {{ z.status|replace('_', ' ')|capitalize }}
+          </span>
+        </td>
+        <td class="px-5 py-3 text-right">
+          <a
+            href="{{ url_for('zawody.edytuj', zid=z.id) }}"
+            class="text-xs text-gray-400 hover:text-water-700 dark:hover:text-water-200 transition-colors"
+          >
+            Edytuj
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="text-center py-20 text-gray-400 dark:text-gray-500">
+  <svg
+    class="w-12 h-12 mx-auto mb-4 opacity-40"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1"
+    viewBox="0 0 24 24"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0
+                 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18
+                 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021
+                 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25
+                 2.25 0 0121 11.25v7.5"
+    />
+  </svg>
+  <p class="text-sm">Brak zawodów</p>
+  <a
+    href="{{ url_for('zawody.nowe') }}"
+    class="mt-3 inline-block text-sm text-water-700 dark:text-water-200 hover:underline"
+  >
+    Utwórz pierwsze zawody
+  </a>
+</div>
+{% endif %} {% endblock %}

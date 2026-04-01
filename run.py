@@ -1,6 +1,7 @@
 import click
 from werkzeug.security import generate_password_hash
 from app import create_app
+from app.seeds import run_seeds
 
 app = create_app()
 
@@ -28,3 +29,11 @@ def create_admin(email, haslo):
     db.session.add(admin)
     db.session.commit()
     click.echo(f"Admin {email} utworzony.")
+
+
+@app.cli.command("seed")
+def seed():
+    """Wypełnia bazę danymi początkowymi."""
+    with app.app_context():
+        run_seeds()
+        click.echo("Baza wypełniona danymi początkowymi.")

@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edytuj' if zawody else 'Nowe' }} zawody{% endblock %}
+{% block page_title %}{{ 'Edytuj zawody' if zawody else 'Nowe zawody' }}{% endblock %}
+
+{% block content %}
+
+{% if zawody %}
+<form method="POST"
+      action="{{ url_for('zawody.usun', zid=zawody.id) }}"
+      id="form-usun"
+      onsubmit="return confirm('Usunąć te zawody? Tej operacji nie można cofnąć.')">
+</form>
+{% endif %}
+
+<form method="POST" id="form-glowny">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <div class="lg:col-span-2 space-y-5">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border
+                        border-water-200 dark:border-gray-700 p-6 space-y-5">
+                <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide">
+                    Podstawowe informacje
+                </h2>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">
+                        Nazwa zawodów *
+                    </label>
+                    <input type="text" name="nazwa" required
+                           value="{{ zawody.nazwa if zawody else '' }}"
+                           class="w-full px-3 py-2 text-sm rounded-lg border
+                                  border-gray-300 dark:border-gray-600
+                                  bg-white dark:bg-gray-700
+                                  text-gray-800 dark:text-gray-100
+                                  focus:outline-none focus:ring-2
+                                  focus:ring-water-500">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700
+                                      dark:text-gray-300 mb-1">
+                            Data *
+                        </label>
+                        <input type="date" name="data" required
+                               value="{{ zawody.data.strftime('%Y-%m-%d') if zawody else '' }}"
+                               class="w-full px-3 py-2 text-sm rounded-lg border
+                                      border-gray-300 dark:border-gray-600
+                                      bg-white dark:bg-gray-700
+                                      text-gray-800 dark:text-gray-100
+                                      focus:outline-none focus:ring-2
+                                      focus:ring-water-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700
+                                      dark:text-gray-300 mb-1">
+                            Dyscyplina *
+                        </label>
+                        <select name="dyscyplina_id" required
+                                class="w-full px-3 py-2 text-sm rounded-lg border
+                                       border-gray-300 dark:border-gray-600
+                                       bg-white dark:bg-gray-700
+                                       text-gray-800 dark:text-gray-100
+                                       focus:outline-none focus:ring-2
+                                       focus:ring-water-500">
+                            <option value="">— wybierz —</option>
+                            {% for d in dyscypliny %}
+                            <option value="{{ d.id }}"
+                                {% if zawody and zawody.dyscyplina_id == d.id %}
+                                    selected
+                                {% endif %}>
+                                {{ d.nazwa }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700
+                                      dark:text-gray-300 mb-1">
+                            Godzina start
+                        </label>
+                        <input type="time" name="godzina_start"
+                               value="{{ zawody.godzina_start.strftime('%H:%M') if zawody and zawody.godzina_start else '' }}"
+                               class="w-full px-3 py-2 text-sm rounded-lg border
+                                      border-gray-300 dark:border-gray-600
+                                      bg-white dark:bg-gray-700
+                                      text-gray-800 dark:text-gray-100
+                                      focus:outline-none focus:ring-2
+                                      focus:ring-water-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700
+                                      dark:text-gray-300 mb-1">
+                            Godzina koniec
+                        </label>
+                        <input type="time" name="godzina_koniec"
+                               value="{{ zawody.godzina_koniec.strftime('%H:%M') if zawody and zawody.godzina_koniec else '' }}"
+                               class="w-full px-3 py-2 text-sm rounded-lg border
+                                      border-gray-300 dark:border-gray-600
+                                      bg-white dark:bg-gray-700
+                                      text-gray-800 dark:text-gray-100
+                                      focus:outline-none focus:ring-2
+                                      focus:ring-water-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">
+                        Łowisko
+                    </label>
+                    <select name="lowisko_id"
+                            class="w-full px-3 py-2 text-sm rounded-lg border
+                                   border-gray-300 dark:border-gray-600
+                                   bg-white dark:bg-gray-700
+                                   text-gray-800 dark:text-gray-100
+                                   focus:outline-none focus:ring-2
+                                   focus:ring-water-500">
+                        <option value="">— wybierz —</option>
+                        {% for l in lowiska %}
+                        <option value="{{ l.id }}"
+                            {% if zawody and zawody.lowisko_id == l.id %}
+                                selected
+                            {% endif %}>
+                            {{ l.nazwa }} — {{ l.miejscowosc }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">
+                        Organizator / sędzia główny
+                    </label>
+                    <select name="organizator_id"
+                            class="w-full px-3 py-2 text-sm rounded-lg border
+                                   border-gray-300 dark:border-gray-600
+                                   bg-white dark:bg-gray-700
+                                   text-gray-800 dark:text-gray-100
+                                   focus:outline-none focus:ring-2
+                                   focus:ring-water-500">
+                        <option value="">— wybierz —</option>
+                        {% for s in sedziowie %}
+                        <option value="{{ s.id }}"
+                            {% if zawody and zawody.organizator_id == s.id %}
+                                selected
+                            {% endif %}>
+                            {{ s.imie }} {{ s.nazwisko }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">
+                        Uwagi
+                    </label>
+                    <textarea name="uwagi" rows="3"
+                              class="w-full px-3 py-2 text-sm rounded-lg border
+                                     border-gray-300 dark:border-gray-600
+                                     bg-white dark:bg-gray-700
+                                     text-gray-800 dark:text-gray-100
+                                     focus:outline-none focus:ring-2
+                                     focus:ring-water-500">{{ zawody.uwagi if zawody else '' }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border
+                        border-water-200 dark:border-gray-700 p-5 space-y-4">
+                <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide">
+                    Ustawienia
+                </h2>
+
+                <div>
+    <label class="block text-sm font-medium text-gray-700
+                  dark:text-gray-300 mb-1">
+        Kategoria
+    </label>
+    <select name="kategoria"
+            class="w-full px-3 py-2 text-sm rounded-lg border
+                   border-gray-300 dark:border-gray-600
+                   bg-white dark:bg-gray-700
+                   text-gray-800 dark:text-gray-100
+                   focus:outline-none focus:ring-2
+                   focus:ring-water-500">
+        <option value="">— wybierz —</option>
+        {% set kategorie = [
+            ('kadeci', 'Kadeci (do 15 lat)'),
+            ('juniorzy', 'Juniorzy (do 20 lat)'),
+            ('mlodziez', 'Młodzież (do 25 lat)'),
+            ('seniorzy', 'Seniorzy'),
+            ('weterani', 'Weterani (55+)'),
+            ('inne', 'Inne'),
+        ] %}
+        {% for wartosc, etykieta in kategorie %}
+        <option value="{{ wartosc }}"
+            {% if zawody and zawody.kategoria == wartosc %}selected{% endif %}>
+            {{ etykieta }}
+        </option>
+        {% endfor %}
+    </select>
+</div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">
+                        Rejon
+                    </label>
+                    <input type="text" name="rejon"
+                           value="{{ zawody.rejon if zawody else '' }}"
+                           placeholder="np. Mazowsze"
+                           class="w-full px-3 py-2 text-sm rounded-lg border
+                                  border-gray-300 dark:border-gray-600
+                                  bg-white dark:bg-gray-700
+                                  text-gray-800 dark:text-gray-100
+                                  focus:outline-none focus:ring-2
+                                  focus:ring-water-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">
+                        Liczba sektorów
+                    </label>
+                    <input type="number" name="liczba_sektorow" min="1" max="26"
+                           value="{{ zawody.liczba_sektorow if zawody else 1 }}"
+                           class="w-full px-3 py-2 text-sm rounded-lg border
+                                  border-gray-300 dark:border-gray-600
+                                  bg-white dark:bg-gray-700
+                                  text-gray-800 dark:text-gray-100
+                                  focus:outline-none focus:ring-2
+                                  focus:ring-water-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">
+                        Liczba tur
+                    </label>
+                    <input type="number" name="liczba_tur" min="1" max="10"
+                           value="{{ zawody.liczba_tur if zawody else 1 }}"
+                           class="w-full px-3 py-2 text-sm rounded-lg border
+                                  border-gray-300 dark:border-gray-600
+                                  bg-white dark:bg-gray-700
+                                  text-gray-800 dark:text-gray-100
+                                  focus:outline-none focus:ring-2
+                                  focus:ring-water-500">
+                </div>
+
+                {% if zawody %}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">
+                        Status
+                    </label>
+                    <select name="status"
+                            class="w-full px-3 py-2 text-sm rounded-lg border
+                                   border-gray-300 dark:border-gray-600
+                                   bg-white dark:bg-gray-700
+                                   text-gray-800 dark:text-gray-100
+                                   focus:outline-none focus:ring-2
+                                   focus:ring-water-500">
+                        <option value="planowane"
+                            {% if zawody.status == 'planowane' %}selected{% endif %}>
+                            Planowane
+                        </option>
+                        <option value="w_trakcie"
+                            {% if zawody.status == 'w_trakcie' %}selected{% endif %}>
+                            W trakcie
+                        </option>
+                        <option value="zakonczone"
+                            {% if zawody.status == 'zakonczone' %}selected{% endif %}>
+                            Zakończone
+                        </option>
+                    </select>
+                </div>
+                {% endif %}
+
+                <div class="space-y-2 pt-1">
+                    <label class="flex items-center gap-2.5 text-sm
+                                  text-gray-700 dark:text-gray-300 cursor-pointer">
+                        <input type="checkbox" name="grand_prix"
+                               {% if zawody and zawody.grand_prix %}checked{% endif %}
+                               class="rounded border-gray-300
+                                      focus:ring-water-500 w-4 h-4">
+                        Grand Prix
+                    </label>
+                    <label class="flex items-center gap-2.5 text-sm
+                                  text-gray-700 dark:text-gray-300 cursor-pointer">
+                        <input type="checkbox" name="klasyfikacja_druzynowa"
+                               {% if zawody and zawody.klasyfikacja_druzynowa %}checked{% endif %}
+                               class="rounded border-gray-300
+                                      focus:ring-water-500 w-4 h-4">
+                        Klasyfikacja drużynowa
+                    </label>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 rounded-2xl border
+                        border-water-200 dark:border-gray-700 p-5 space-y-3">
+                <button type="submit" form="form-glowny"
+                        class="w-full py-2 text-sm font-medium bg-gold-500
+                               hover:bg-gold-600 text-white rounded-lg
+                               transition-colors">
+                    {{ 'Zapisz zmiany' if zawody else 'Utwórz zawody' }}
+                </button>
+                <a href="{{ url_for('zawody.lista') }}"
+                   class="block w-full py-2 text-sm text-center text-gray-400
+                          hover:text-gray-600 dark:hover:text-gray-200
+                          transition-colors">
+                    Anuluj
+                </a>
+                {% if zawody %}
+                <div class="border-t border-gray-100 dark:border-gray-700 pt-3">
+                    <button type="submit" form="form-usun"
+                            class="w-full py-2 text-sm text-red-500
+                                   hover:text-red-700 transition-colors">
+                        Usuń zawody
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</form>
+{% endblock %}

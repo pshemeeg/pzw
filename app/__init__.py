@@ -35,6 +35,10 @@ def create_app(config_name=None):
 
     app.register_blueprint(main_bp)
 
+    from app.blueprints.zawody import bp as zawody_bp
+
+    app.register_blueprint(zawody_bp, url_prefix="/zawody")
+
     app.logger.info("Aplikacja PZW uruchomiona w trybie: %s", config_name)
 
     return app

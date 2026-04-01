@@ -1,0 +1,108 @@
+{% extends "base.html" %} {% block title %}{{ zawody.nazwa }}{% endblock %} {% block
+page_title %}{{ zawody.nazwa }}{% endblock %} {% block content %}
+<div class="flex items-center gap-3 mb-6">
+  <a
+    href="{{ url_for('zawody.lista') }}"
+    class="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+  >
+    Zawody
+  </a>
+  <span class="text-gray-300 dark:text-gray-600">/</span>
+  <span class="text-sm text-gray-600 dark:text-gray-300"> {{ zawody.nazwa }} </span>
+  <a
+    href="{{ url_for('zawody.edytuj', zid=zawody.id) }}"
+    class="ml-auto text-sm px-3 py-1.5 rounded-lg border border-water-200 dark:border-gray-600 text-water-700 dark:text-water-200 hover:bg-water-100 dark:hover:bg-gray-700 transition-colors"
+  >
+    Edytuj
+  </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div
+    class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6"
+  >
+    <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-4">
+      Informacje
+    </h2>
+    <dl class="space-y-3 text-sm">
+      <div class="flex justify-between">
+        <dt class="text-gray-500 dark:text-gray-400">Data</dt>
+        <dd class="font-medium">{{ zawody.data.strftime('%d.%m.%Y') }}</dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-gray-500 dark:text-gray-400">Dyscyplina</dt>
+        <dd class="font-medium">{{ zawody.dyscyplina.nazwa }}</dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-gray-500 dark:text-gray-400">Łowisko</dt>
+        <dd class="font-medium">
+          {{ zawody.lowisko.nazwa if zawody.lowisko else '—' }}
+        </dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-gray-500 dark:text-gray-400">Godziny</dt>
+        <dd class="font-medium">
+          {% if zawody.godzina_start %} {{ zawody.godzina_start.strftime('%H:%M') }} {%
+          if zawody.godzina_koniec %} — {{ zawody.godzina_koniec.strftime('%H:%M') }} {%
+          endif %} {% else %} — {% endif %}
+        </dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-gray-500 dark:text-gray-400">Sektory / tury</dt>
+        <dd class="font-medium">
+          {{ zawody.liczba_sektorow }} / {{ zawody.liczba_tur }}
+        </dd>
+      </div>
+      {% if zawody.organizator %}
+      <div class="flex justify-between">
+        <dt class="text-gray-500 dark:text-gray-400">Organizator</dt>
+        <dd class="font-medium">
+          {{ zawody.organizator.imie }} {{ zawody.organizator.nazwisko }}
+        </dd>
+      </div>
+      {% endif %}
+    </dl>
+  </div>
+
+  <div class="space-y-4">
+    <div
+      class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-5"
+    >
+      <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-3">
+        Status
+      </h2>
+      <span
+        class="text-sm px-3 py-1 rounded-full font-medium {% if zawody.status == 'zakonczone' %} bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 {% elif zawody.status == 'w_trakcie' %} bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 {% else %} bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 {% endif %}"
+      >
+        {{ zawody.status|replace('_', ' ')|capitalize }}
+      </span>
+    </div>
+
+    <div
+      class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-5"
+    >
+      <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-3">
+        Flagi
+      </h2>
+      <div class="space-y-2 text-sm">
+        <div class="flex items-center gap-2">
+          <span
+            class="w-4 h-4 rounded-full flex items-center justify-center {% if zawody.grand_prix %} bg-gold-100 text-gold-600 {% else %} bg-gray-100 text-gray-400 {% endif %}"
+          >
+            {% if zawody.grand_prix %}✓{% else %}–{% endif %}
+          </span>
+          <span class="text-gray-600 dark:text-gray-300">Grand Prix</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span
+            class="w-4 h-4 rounded-full flex items-center justify-center {% if zawody.klasyfikacja_druzynowa %} bg-water-100 text-water-700 {% else %} bg-gray-100 text-gray-400 {% endif %}"
+          >
+            {% if zawody.klasyfikacja_druzynowa %}✓{% else %}–{% endif %}
+          </span>
+          <span class="text-gray-600 dark:text-gray-300"> Klasyfikacja drużynowa </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
