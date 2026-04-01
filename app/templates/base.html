@@ -186,7 +186,7 @@
                     Zawodnicy
                 </a>
                 {% if current_user.is_admin() %}
-                <a href="#"
+                <a href="{{ url_for('sedziowie.lista') }}"
                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
                           text-gray-600 dark:text-gray-300
                           hover:bg-water-100 dark:hover:bg-gray-700">
