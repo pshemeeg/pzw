@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edytuj' if dyscyplina else 'Nowa' }} dyscyplina{% endblock %}
+{% block page_title %}{{ 'Edytuj dyscyplinę' if dyscyplina else 'Nowa dyscyplina' }}{% endblock %}
+
+{% block content %}
+
+{% if dyscyplina %}
+<form method="POST"
+      action="{{ url_for('slowniki.dyscyplina_usun', did=dyscyplina.id) }}"
+      id="form-usun"
+      onsubmit="return confirm('Usunąć tę dyscyplinę?')"></form>
+{% endif %}
+
+<form method="POST" id="form-glowny" class="max-w-lg">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border
+                border-water-200 dark:border-gray-700 p-6 space-y-4">
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700
+                          dark:text-gray-300 mb-1">Nazwa *</label>
+            <input type="text" name="nazwa" required
+                   value="{{ dyscyplina.nazwa if dyscyplina else '' }}"
+                   class="w-full px-3 py-2 text-sm rounded-lg border
+                          border-gray-300 dark:border-gray-600
+                          bg-white dark:bg-gray-700
+                          text-gray-800 dark:text-gray-100
+                          focus:outline-none focus:ring-2 focus:ring-water-500">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700
+                          dark:text-gray-300 mb-1">
+                Kod *
+                <span class="font-normal text-gray-400 ml-1">
+                    (unikalny, bez spacji, małe litery)
+                </span>
+            </label>
+            <input type="text" name="kod" required
+                   value="{{ dyscyplina.kod if dyscyplina else '' }}"
+                   placeholder="np. splawik, feeder"
+                   pattern="[a-z0-9_]+"
+                   title="Tylko małe litery, cyfry i podkreślnik"
+                   class="w-full px-3 py-2 text-sm rounded-lg border
+                          border-gray-300 dark:border-gray-600
+                          bg-white dark:bg-gray-700
+                          text-gray-800 dark:text-gray-100
+                          focus:outline-none focus:ring-2 focus:ring-water-500">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium text-gray-700
+                          dark:text-gray-300 mb-1">Typ wyniku *</label>
+            <select name="typ_wyniku" required
+                    class="w-full px-3 py-2 text-sm rounded-lg border
+                           border-gray-300 dark:border-gray-600
+                           bg-white dark:bg-gray-700
+                           text-gray-800 dark:text-gray-100
+                           focus:outline-none focus:ring-2 focus:ring-water-500">
+                {% for wartosc, etykieta in [
+                    ('wagowy', 'Wagowy (gramy)'),
+                    ('punktowy', 'Punktowy (długość ryby)'),
+                    ('karpie', 'Karpiówka'),
+                ] %}
+                <option value="{{ wartosc }}"
+                    {% if dyscyplina and dyscyplina.typ_wyniku == wartosc %}
+                        selected
+                    {% endif %}>
+                    {{ etykieta }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+    </div>
+
+    <div class="flex items-center justify-between mt-4">
+        <a href="{{ url_for('slowniki.index') }}"
+           class="text-sm text-gray-400 hover:text-gray-600
+                  dark:hover:text-gray-200 transition-colors">
+            Anuluj
+        </a>
+        <div class="flex items-center gap-3">
+            {% if dyscyplina %}
+            <button type="submit" form="form-usun"
+                    class="text-sm text-red-500 hover:text-red-700 transition-colors">
+                Usuń
+            </button>
+            {% endif %}
+            <button type="submit" form="form-glowny"
+                    class="px-5 py-2 text-sm font-medium bg-gold-500
+                           hover:bg-gold-600 text-white rounded-lg transition-colors">
+                {{ 'Zapisz zmiany' if dyscyplina else 'Dodaj dyscyplinę' }}
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}

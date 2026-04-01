@@ -1,0 +1,83 @@
+{% extends "base.html" %} {% block title %}{{ 'Edytuj' if lowisko else 'Nowe' }}
+łowisko{% endblock %} {% block page_title %}{{ 'Edytuj łowisko' if lowisko else 'Nowe
+łowisko' }}{% endblock %} {% block content %} {% if lowisko %}
+<form
+  method="POST"
+  action="{{ url_for('slowniki.lowisko_usun', lid=lowisko.id) }}"
+  id="form-usun"
+  onsubmit="return confirm('Usunąć to łowisko?')"
+></form>
+{% endif %}
+
+<form method="POST" id="form-glowny" class="max-w-lg">
+  <div
+    class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6 space-y-4"
+  >
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+        >Nazwa *</label
+      >
+      <input
+        type="text"
+        name="nazwa"
+        required
+        value="{{ lowisko.nazwa if lowisko else '' }}"
+        class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
+      />
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+        >Miejscowość *</label
+      >
+      <input
+        type="text"
+        name="miejscowosc"
+        required
+        value="{{ lowisko.miejscowosc if lowisko else '' }}"
+        class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
+      />
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+        >Opis</label
+      >
+      <textarea
+        name="opis"
+        rows="3"
+        class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
+      >
+{{ lowisko.opis if lowisko else '' }}</textarea
+      >
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between mt-4">
+    <a
+      href="{{ url_for('slowniki.index') }}"
+      class="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+    >
+      Anuluj
+    </a>
+    <div class="flex items-center gap-3">
+      {% if lowisko %}
+      <button
+        type="submit"
+        form="form-usun"
+        class="text-sm text-red-500 hover:text-red-700 transition-colors"
+      >
+        Usuń
+      </button>
+      {% endif %}
+      <button
+        type="submit"
+        form="form-glowny"
+        class="px-5 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors"
+      >
+        {{ 'Zapisz zmiany' if lowisko else 'Dodaj łowisko' }}
+      </button>
+    </div>
+  </div>
+</form>
+{% endblock %}

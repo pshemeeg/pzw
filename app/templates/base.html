@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon.png') }}">
     <title>{% block title %}PZW{% endblock %} — System Zawodów</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -224,7 +225,7 @@
                           text-gray-400 dark:text-gray-500">
                     Słowniki
                 </p>
-                <a href="#"
+                <a href="{{ url_for('slowniki.index') }}"
                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
                           text-gray-600 dark:text-gray-300
                           hover:bg-water-100 dark:hover:bg-gray-700">
@@ -240,7 +241,7 @@
                     </svg>
                     Łowiska
                 </a>
-                <a href="#"
+                <a href="{{ url_for('slowniki.index') }}"
                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm
                           text-gray-600 dark:text-gray-300
                           hover:bg-water-100 dark:hover:bg-gray-700">
