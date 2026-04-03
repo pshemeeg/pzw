@@ -4,7 +4,7 @@ from flask_login import login_required
 
 from app.blueprints.zawody import bp
 from app.extensions import db
-from app.models import Zawody, Dyscyplina, Lowisko, Sedzia
+from app.models import Zawody, Dyscyplina, Lowisko, Sedzia, Uczestnik, Zawodnik
 
 
 def parse_date(s):
@@ -129,3 +129,70 @@ def usun(zid):
     db.session.commit()
     flash("Zawody zostały usunięte.", "success")
     return redirect(url_for("zawody.lista"))
+
+
+@bp.route("/<int:zid>/uczestnicy/dodaj", methods=["POST"])
+@login_required
+def uczestnik_dodaj(zid):
+    zawody = db.session.get(Zawody, zid)
+    if not zawody:
+        flash("Nie znaleziono zawodów.", "danger")
+        return redirect(url_for("zawody.lista"))
+
+    zawodnik_id = request.form.get("zawodnik_id")
+    if not zawodnik_id:
+        flash("Nie wybrano zawodnika.", "danger")
+        return redirect(url_for("zawody.szczegoly", zid=zid))
+
+    istniejacy = Uczestnik.query.filter_by(
+        zawody_id=zid,
+        zawodnik_id=int(zawodnik_id),
+    ).first()
+    if istniejacy:
+        flash("Ten zawodnik jest już zapisany na te zawody.", "warning")
+        return redirect(url_for("zawody.szczegoly", zid=zid))
+
+    max_nr = (
+        db.session.query(db.func.coalesce(db.func.max(Uczestnik.numer_startowy), 0))
+        .filter_by(zawody_id=zid)
+        .scalar()
+    )
+
+    uczestnik = Uczestnik(
+        zawody_id=zid,
+        zawodnik_id=int(zawodnik_id),
+        druzyna=request.form.get("druzyna", "").strip() or None,
+        numer_startowy=max_nr + 1,
+    )
+    db.session.add(uczestnik)
+    db.session.commit()
+    flash("Zawodnik został dodany do zawodów.", "success")
+    return redirect(url_for("zawody.szczegoly", zid=zid))
+
+
+@bp.route("/<int:zid>/uczestnicy/<int:uid>/usun", methods=["POST"])
+@login_required
+def uczestnik_usun(zid, uid):
+    uczestnik = db.session.get(Uczestnik, uid)
+    if not uczestnik or uczestnik.zawody_id != zid:
+        flash("Nie znaleziono uczestnika.", "danger")
+        return redirect(url_for("zawody.szczegoly", zid=zid))
+    db.session.delete(uczestnik)
+    db.session.commit()
+    flash("Zawodnik został usunięty z zawodów.", "success")
+    return redirect(url_for("zawody.szczegoly", zid=zid))
+
+
+@bp.route("/<int:zid>/uczestnicy/<int:uid>/edytuj", methods=["POST"])
+@login_required
+def uczestnik_edytuj(zid, uid):
+    uczestnik = db.session.get(Uczestnik, uid)
+    if not uczestnik or uczestnik.zawody_id != zid:
+        flash("Nie znaleziono uczestnika.", "danger")
+        return redirect(url_for("zawody.szczegoly", zid=zid))
+    uczestnik.druzyna = request.form.get("druzyna", "").strip() or None
+    nr = request.form.get("numer_startowy", "").strip()
+    if nr.isdigit():
+        uczestnik.numer_startowy = int(nr)
+    db.session.commit()
+    return redirect(url_for("zawody.szczegoly", zid=zid))

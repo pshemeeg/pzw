@@ -1,6 +1,6 @@
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required
-
+from flask import jsonify
 from app.blueprints.zawodnicy import bp
 from app.extensions import db
 from app.models import Zawodnik
@@ -130,3 +130,34 @@ def usun(zid):
     db.session.commit()
     flash("Zawodnik został usunięty.", "success")
     return redirect(url_for("zawodnicy.lista"))
+
+
+@bp.route("/szukaj")
+@login_required
+def szukaj():
+    q = request.args.get("q", "").strip()
+    if len(q) < 2:
+        return jsonify([])
+    zawodnicy = (
+        Zawodnik.query.filter(
+            db.or_(
+                Zawodnik.imie.ilike(f"%{q}%"),
+                Zawodnik.nazwisko.ilike(f"%{q}%"),
+            )
+        )
+        .order_by(Zawodnik.nazwisko, Zawodnik.imie)
+        .limit(10)
+        .all()
+    )
+    return jsonify(
+        [
+            {
+                "id": z.id,
+                "imie": z.imie,
+                "nazwisko": z.nazwisko,
+                "kolo": z.kolo,
+                "label": f"{z.nazwisko} {z.imie} — {z.kolo}",
+            }
+            for z in zawodnicy
+        ]
+    )

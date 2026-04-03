@@ -1,108 +1,286 @@
-{% extends "base.html" %} {% block title %}{{ zawody.nazwa }}{% endblock %} {% block
-page_title %}{{ zawody.nazwa }}{% endblock %} {% block content %}
+{% extends "base.html" %}
+
+{% block title %}{{ zawody.nazwa }}{% endblock %}
+{% block page_title %}{{ zawody.nazwa }}{% endblock %}
+
+{% block content %}
 <div class="flex items-center gap-3 mb-6">
-  <a
-    href="{{ url_for('zawody.lista') }}"
-    class="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-  >
-    Zawody
-  </a>
-  <span class="text-gray-300 dark:text-gray-600">/</span>
-  <span class="text-sm text-gray-600 dark:text-gray-300"> {{ zawody.nazwa }} </span>
-  <a
-    href="{{ url_for('zawody.edytuj', zid=zawody.id) }}"
-    class="ml-auto text-sm px-3 py-1.5 rounded-lg border border-water-200 dark:border-gray-600 text-water-700 dark:text-water-200 hover:bg-water-100 dark:hover:bg-gray-700 transition-colors"
-  >
-    Edytuj
-  </a>
+    <a href="{{ url_for('zawody.lista') }}"
+       class="text-sm text-gray-400 hover:text-gray-600
+              dark:hover:text-gray-200 transition-colors">
+        Zawody
+    </a>
+    <span class="text-gray-300 dark:text-gray-600">/</span>
+    <span class="text-sm text-gray-600 dark:text-gray-300">
+        {{ zawody.nazwa }}
+    </span>
+    <a href="{{ url_for('zawody.edytuj', zid=zawody.id) }}"
+       class="ml-auto text-sm px-3 py-1.5 rounded-lg border
+              border-water-200 dark:border-gray-600
+              text-water-700 dark:text-water-200
+              hover:bg-water-100 dark:hover:bg-gray-700 transition-colors">
+        Edytuj zawody
+    </a>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-  <div
-    class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6"
-  >
-    <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-4">
-      Informacje
-    </h2>
-    <dl class="space-y-3 text-sm">
-      <div class="flex justify-between">
-        <dt class="text-gray-500 dark:text-gray-400">Data</dt>
-        <dd class="font-medium">{{ zawody.data.strftime('%d.%m.%Y') }}</dd>
-      </div>
-      <div class="flex justify-between">
-        <dt class="text-gray-500 dark:text-gray-400">Dyscyplina</dt>
-        <dd class="font-medium">{{ zawody.dyscyplina.nazwa }}</dd>
-      </div>
-      <div class="flex justify-between">
-        <dt class="text-gray-500 dark:text-gray-400">Łowisko</dt>
-        <dd class="font-medium">
-          {{ zawody.lowisko.nazwa if zawody.lowisko else '—' }}
-        </dd>
-      </div>
-      <div class="flex justify-between">
-        <dt class="text-gray-500 dark:text-gray-400">Godziny</dt>
-        <dd class="font-medium">
-          {% if zawody.godzina_start %} {{ zawody.godzina_start.strftime('%H:%M') }} {%
-          if zawody.godzina_koniec %} — {{ zawody.godzina_koniec.strftime('%H:%M') }} {%
-          endif %} {% else %} — {% endif %}
-        </dd>
-      </div>
-      <div class="flex justify-between">
-        <dt class="text-gray-500 dark:text-gray-400">Sektory / tury</dt>
-        <dd class="font-medium">
-          {{ zawody.liczba_sektorow }} / {{ zawody.liczba_tur }}
-        </dd>
-      </div>
-      {% if zawody.organizator %}
-      <div class="flex justify-between">
-        <dt class="text-gray-500 dark:text-gray-400">Organizator</dt>
-        <dd class="font-medium">
-          {{ zawody.organizator.imie }} {{ zawody.organizator.nazwisko }}
-        </dd>
-      </div>
-      {% endif %}
-    </dl>
-  </div>
-
-  <div class="space-y-4">
-    <div
-      class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-5"
-    >
-      <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-3">
-        Status
-      </h2>
-      <span
-        class="text-sm px-3 py-1 rounded-full font-medium {% if zawody.status == 'zakonczone' %} bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 {% elif zawody.status == 'w_trakcie' %} bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 {% else %} bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 {% endif %}"
-      >
-        {{ zawody.status|replace('_', ' ')|capitalize }}
-      </span>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border
+                border-water-200 dark:border-gray-700 p-6">
+        <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-4">
+            Informacje
+        </h2>
+        <dl class="space-y-3 text-sm">
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Data</dt>
+                <dd class="font-medium">{{ zawody.data.strftime('%d.%m.%Y') }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Dyscyplina</dt>
+                <dd class="font-medium">{{ zawody.dyscyplina.nazwa }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Łowisko</dt>
+                <dd class="font-medium">
+                    {{ zawody.lowisko.nazwa if zawody.lowisko else '—' }}
+                </dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Godziny</dt>
+                <dd class="font-medium">
+                    {% if zawody.godzina_start %}
+                        {{ zawody.godzina_start.strftime('%H:%M') }}
+                        {% if zawody.godzina_koniec %}
+                            — {{ zawody.godzina_koniec.strftime('%H:%M') }}
+                        {% endif %}
+                    {% else %}—{% endif %}
+                </dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Sektory / tury</dt>
+                <dd class="font-medium">
+                    {{ zawody.liczba_sektorow }} / {{ zawody.liczba_tur }}
+                </dd>
+            </div>
+            {% if zawody.organizator %}
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Organizator</dt>
+                <dd class="font-medium">
+                    {{ zawody.organizator.imie }} {{ zawody.organizator.nazwisko }}
+                </dd>
+            </div>
+            {% endif %}
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Status</dt>
+                <dd>
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
+                        {% if zawody.status == 'zakonczone' %}
+                            bg-green-100 text-green-800
+                            dark:bg-green-900 dark:text-green-200
+                        {% elif zawody.status == 'w_trakcie' %}
+                            bg-blue-100 text-blue-800
+                            dark:bg-blue-900 dark:text-blue-200
+                        {% else %}
+                            bg-gray-100 text-gray-600
+                            dark:bg-gray-700 dark:text-gray-300
+                        {% endif %}">
+                        {{ zawody.status|replace('_', ' ')|capitalize }}
+                    </span>
+                </dd>
+            </div>
+        </dl>
     </div>
 
-    <div
-      class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-5"
-    >
-      <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-3">
-        Flagi
-      </h2>
-      <div class="space-y-2 text-sm">
-        <div class="flex items-center gap-2">
-          <span
-            class="w-4 h-4 rounded-full flex items-center justify-center {% if zawody.grand_prix %} bg-gold-100 text-gold-600 {% else %} bg-gray-100 text-gray-400 {% endif %}"
-          >
-            {% if zawody.grand_prix %}✓{% else %}–{% endif %}
-          </span>
-          <span class="text-gray-600 dark:text-gray-300">Grand Prix</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span
-            class="w-4 h-4 rounded-full flex items-center justify-center {% if zawody.klasyfikacja_druzynowa %} bg-water-100 text-water-700 {% else %} bg-gray-100 text-gray-400 {% endif %}"
-          >
-            {% if zawody.klasyfikacja_druzynowa %}✓{% else %}–{% endif %}
-          </span>
-          <span class="text-gray-600 dark:text-gray-300"> Klasyfikacja drużynowa </span>
-        </div>
-      </div>
-    </div>
-  </div>
+    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border
+                border-water-200 dark:border-gray-700 p-6">
+        <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-4">
+            Dodaj zawodnika
+        </h2>
+
+        <form method="POST"
+              action="{{ url_for('zawody.uczestnik_dodaj', zid=zawody.id) }}"
+              class="space-y-3">
+            <div x-data="szukajZawodnika()" class="relative">
+                <input type="hidden" name="zawodnik_id" x-model="wybranyId">
+                <input type="text"
+                       x-model="fraza"
+                       @input.debounce.300ms="szukaj()"
+                       @focus="szukaj()"
+                       @keydown.escape="zamknij()"
+                       placeholder="Wpisz nazwisko lub imię..."
+                       autocomplete="off"
+                       class="w-full px-3 py-2 text-sm rounded-lg border
+                              border-gray-300 dark:border-gray-600
+                              bg-white dark:bg-gray-700
+                              text-gray-800 dark:text-gray-100
+                              focus:outline-none focus:ring-2
+                              focus:ring-water-500">
+                <div x-show="wyniki.length > 0"
+                     class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800
+                            border border-water-200 dark:border-gray-600
+                            rounded-lg shadow-lg overflow-hidden">
+                    <template x-for="z in wyniki" :key="z.id">
+                        <div @click="wybierz(z)"
+                             class="px-4 py-2.5 text-sm cursor-pointer
+                                    hover:bg-water-50 dark:hover:bg-gray-700
+                                    text-gray-800 dark:text-gray-100
+                                    border-b border-water-100
+                                    dark:border-gray-700 last:border-0">
+                            <span class="font-medium"
+                                  x-text="z.nazwisko + ' ' + z.imie"></span>
+                            <span class="text-gray-400 ml-2 text-xs"
+                                  x-text="z.kolo"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <input type="text" name="druzyna"
+                       placeholder="Drużyna (opcjonalnie)"
+                       class="px-3 py-2 text-sm rounded-lg border
+                              border-gray-300 dark:border-gray-600
+                              bg-white dark:bg-gray-700
+                              text-gray-800 dark:text-gray-100
+                              focus:outline-none focus:ring-2
+                              focus:ring-water-500">
+                <button type="submit"
+                        class="px-4 py-2 text-sm font-medium bg-gold-500
+                               hover:bg-gold-600 text-white rounded-lg
+                               transition-colors">
+                    Dodaj do zawodów
+                </button>
+            </div>
+            <div class="text-center text-xs text-gray-400 mt-1">
+    Nie ma w bazie?
+    <a href="{{ url_for('zawodnicy.nowy') }}"
+       target="_blank"
+       class="text-water-700 dark:text-water-200 hover:underline">
+        Dodaj nowego zawodnika
+    </a>
+    — potem wróć i odśwież stronę.
 </div>
+        </form>
+    </div>
+</div>
+
+<div class="bg-white dark:bg-gray-800 rounded-2xl border
+            border-water-200 dark:border-gray-700 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4
+                border-b border-water-200 dark:border-gray-700">
+        <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">
+            Uczestnicy
+            <span class="ml-2 text-xs text-gray-400">
+                {{ zawody.uczestnicy|length }}
+            </span>
+        </h2>
+    </div>
+
+    {% if zawody.uczestnicy %}
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="border-b border-water-200 dark:border-gray-700
+                       text-xs text-gray-400 uppercase tracking-wide">
+                <th class="text-left px-5 py-3 font-medium">Nr</th>
+                <th class="text-left px-5 py-3 font-medium">Zawodnik</th>
+                <th class="text-left px-5 py-3 font-medium hidden sm:table-cell">
+                    Koło
+                </th>
+                <th class="text-left px-5 py-3 font-medium hidden md:table-cell">
+                    Drużyna
+                </th>
+                <th class="px-5 py-3"></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-water-100 dark:divide-gray-700">
+            {% for u in zawody.uczestnicy|sort(attribute='numer_startowy') %}
+            <tr class="hover:bg-water-50 dark:hover:bg-gray-700 transition-colors"
+                x-data="{ edytuje: false }">
+                <td class="px-5 py-3 text-gray-500 dark:text-gray-400 w-16">
+                    <span x-show="!edytuje">{{ u.numer_startowy }}</span>
+                    <form x-show="edytuje"
+                          method="POST"
+                          action="{{ url_for('zawody.uczestnik_edytuj', zid=zawody.id, uid=u.id) }}">
+                        <input type="hidden" name="druzyna"
+                               value="{{ u.druzyna or '' }}">
+                        <input type="number" name="numer_startowy"
+                               value="{{ u.numer_startowy }}"
+                               class="w-16 px-2 py-1 text-xs rounded border
+                                      border-gray-300 dark:border-gray-600
+                                      bg-white dark:bg-gray-700
+                                      text-gray-800 dark:text-gray-100">
+                        <button type="submit"
+                                class="ml-1 text-xs text-water-700
+                                       dark:text-water-200 hover:underline">
+                            Zapisz
+                        </button>
+                    </form>
+                </td>
+                <td class="px-5 py-3 font-medium text-gray-800 dark:text-gray-100">
+                    <a href="{{ url_for('zawodnicy.szczegoly', zid=u.zawodnik.id) }}"
+                       class="hover:text-water-700 dark:hover:text-water-200">
+                        {{ u.zawodnik.nazwisko }} {{ u.zawodnik.imie }}
+                    </a>
+                </td>
+                <td class="px-5 py-3 text-gray-500 dark:text-gray-400
+                           hidden sm:table-cell">
+                    {{ u.zawodnik.kolo }}
+                </td>
+                <td class="px-5 py-3 text-gray-500 dark:text-gray-400
+                           hidden md:table-cell">
+                    {{ u.druzyna or '—' }}
+                </td>
+                <td class="px-5 py-3 text-right">
+                    <button @click="edytuje = !edytuje"
+                            class="text-xs text-gray-400 hover:text-water-700
+                                   dark:hover:text-water-200 transition-colors mr-3">
+                        <span x-text="edytuje ? 'Anuluj' : 'Edytuj'"></span>
+                    </button>
+                    <form method="POST" class="inline"
+                          action="{{ url_for('zawody.uczestnik_usun', zid=zawody.id, uid=u.id) }}"
+                          onsubmit="return confirm('Usunąć zawodnika z zawodów?')">
+                        <button type="submit"
+                                class="text-xs text-red-400 hover:text-red-600
+                                       transition-colors">
+                            Usuń
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="text-center py-12 text-gray-400 dark:text-gray-500">
+        <p class="text-sm">Brak uczestników — dodaj pierwszego powyżej</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function szukajZawodnika() {
+    return {
+        fraza: '',
+        wyniki: [],
+        wybranyId: null,
+        async szukaj() {
+            if (this.fraza.length < 2) {
+                this.wyniki = [];
+                return;
+            }
+            const resp = await fetch(
+                `/zawodnicy/szukaj?q=${encodeURIComponent(this.fraza)}`
+            );
+            this.wyniki = await resp.json();
+        },
+        wybierz(z) {
+            this.fraza = z.nazwisko + ' ' + z.imie + ' — ' + z.kolo;
+            this.wybranyId = z.id;
+            this.wyniki = [];
+        },
+        zamknij() {
+            this.wyniki = [];
+        },
+    }
+}
+</script>
 {% endblock %}
