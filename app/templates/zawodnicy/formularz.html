@@ -1,0 +1,116 @@
+{% extends "base.html" %} {% block title %}{{ 'Edytuj' if zawodnik else 'Nowy' }}
+zawodnik{% endblock %} {% block page_title %}{{ 'Edytuj zawodnika' if zawodnik else
+'Nowy zawodnik' }}{% endblock %} {% block content %} {% if zawodnik %}
+<form
+  method="POST"
+  action="{{ url_for('zawodnicy.usun', zid=zawodnik.id) }}"
+  id="form-usun"
+  onsubmit="
+    return confirm('Usunąć tego zawodnika? Usunięcie usunie też historię jego startów.')
+  "
+></form>
+{% endif %}
+
+<form method="POST" id="form-glowny">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6 space-y-4"
+      >
+        <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide">
+          Dane zawodnika
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >Imię *</label
+            >
+            <input
+              type="text"
+              name="imie"
+              required
+              value="{{ zawodnik.imie if zawodnik else '' }}"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
+            />
+          </div>
+          <div>
+            <label
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >Nazwisko *</label
+            >
+            <input
+              type="text"
+              name="nazwisko"
+              required
+              value="{{ zawodnik.nazwisko if zawodnik else '' }}"
+              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >Koło PZW *</label
+          >
+          <input
+            type="text"
+            name="kolo"
+            required
+            value="{{ zawodnik.kolo if zawodnik else '' }}"
+            placeholder="np. Koło nr 14 Warszawa"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
+          />
+        </div>
+
+        <div>
+          <label
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
+            Nr licencji
+            <span class="font-normal text-gray-400 ml-1"> (opcjonalnie) </span>
+          </label>
+          <input
+            type="text"
+            name="nr_licencji"
+            value="{{ zawodnik.nr_licencji if zawodnik else '' }}"
+            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-4">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-5 space-y-3"
+      >
+        <button
+          type="submit"
+          form="form-glowny"
+          class="w-full py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors"
+        >
+          {{ 'Zapisz zmiany' if zawodnik else 'Dodaj zawodnika' }}
+        </button>
+        <a
+          href="{{ url_for('zawodnicy.lista') }}"
+          class="block w-full py-2 text-sm text-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+        >
+          Anuluj
+        </a>
+        {% if zawodnik %}
+        <div class="border-t border-gray-100 dark:border-gray-700 pt-3">
+          <button
+            type="submit"
+            form="form-usun"
+            class="w-full py-2 text-sm text-red-500 hover:text-red-700 transition-colors"
+          >
+            Usuń zawodnika
+          </button>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}

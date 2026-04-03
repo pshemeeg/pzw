@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Zawodnicy{% endblock %}
+{% block page_title %}Zawodnicy{% endblock %}
+
+{% block content %}
+<div class="flex flex-wrap items-center gap-3 mb-6">
+    <form class="flex flex-wrap gap-2 flex-1" method="GET">
+        <input type="text" name="q" value="{{ q }}"
+               placeholder="Szukaj po imieniu lub nazwisku..."
+               class="px-3 py-2 text-sm rounded-lg border border-water-200
+                      dark:border-gray-600 bg-white dark:bg-gray-800
+                      text-gray-800 dark:text-gray-100
+                      focus:outline-none focus:ring-2 focus:ring-water-500 w-64">
+        <select name="kolo" onchange="this.form.submit()"
+                class="px-3 py-2 text-sm rounded-lg border border-water-200
+                       dark:border-gray-600 bg-white dark:bg-gray-800
+                       text-gray-800 dark:text-gray-100
+                       focus:outline-none focus:ring-2 focus:ring-water-500">
+            <option value="">Wszystkie koła</option>
+            {% for k in kola %}
+            <option value="{{ k }}" {% if kolo == k %}selected{% endif %}>
+                {{ k }}
+            </option>
+            {% endfor %}
+        </select>
+        <button type="submit"
+                class="px-4 py-2 text-sm bg-water-500 hover:bg-water-700
+                       text-white rounded-lg transition-colors">
+            Szukaj
+        </button>
+        {% if q or kolo %}
+        <a href="{{ url_for('zawodnicy.lista') }}"
+           class="px-4 py-2 text-sm text-gray-400 hover:text-gray-600
+                  dark:hover:text-gray-200 transition-colors">
+            Wyczyść
+        </a>
+        {% endif %}
+    </form>
+
+    <a href="{{ url_for('zawodnicy.nowy') }}"
+       class="flex items-center gap-2 px-4 py-2 text-sm font-medium
+              bg-gold-500 hover:bg-gold-600 text-white rounded-lg
+              transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+             stroke-width="1.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"/>
+        </svg>
+        Dodaj zawodnika
+    </a>
+</div>
+
+{% if zawodnicy %}
+<div class="bg-white dark:bg-gray-800 rounded-2xl border
+            border-water-200 dark:border-gray-700 overflow-hidden">
+    <div class="px-5 py-3 border-b border-water-100 dark:border-gray-700
+                text-xs text-gray-400">
+        Znaleziono: {{ zawodnicy|length }}
+    </div>
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="border-b border-water-200 dark:border-gray-700
+                       text-xs text-gray-400 uppercase tracking-wide">
+                <th class="text-left px-5 py-3 font-medium">Zawodnik</th>
+                <th class="text-left px-5 py-3 font-medium">Koło</th>
+                <th class="text-left px-5 py-3 font-medium hidden sm:table-cell">
+                    Nr licencji
+                </th>
+                <th class="text-left px-5 py-3 font-medium hidden md:table-cell">
+                    Starty
+                </th>
+                <th class="px-5 py-3"></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-water-100 dark:divide-gray-700">
+            {% for z in zawodnicy %}
+            <tr class="hover:bg-water-50 dark:hover:bg-gray-700 transition-colors">
+                <td class="px-5 py-3">
+                    <a href="{{ url_for('zawodnicy.szczegoly', zid=z.id) }}"
+                       class="font-medium text-gray-800 dark:text-gray-100
+                              hover:text-water-700 dark:hover:text-water-200">
+                        {{ z.nazwisko }} {{ z.imie }}
+                    </a>
+                </td>
+                <td class="px-5 py-3 text-gray-500 dark:text-gray-400">
+                    {{ z.kolo }}
+                </td>
+                <td class="px-5 py-3 text-gray-500 dark:text-gray-400
+                           hidden sm:table-cell">
+                    {{ z.nr_licencji or '—' }}
+                </td>
+                <td class="px-5 py-3 text-gray-500 dark:text-gray-400
+                           hidden md:table-cell">
+                    {{ z.udzialy|length }}
+                </td>
+                <td class="px-5 py-3 text-right">
+                    <a href="{{ url_for('zawodnicy.edytuj', zid=z.id) }}"
+                       class="text-xs text-gray-400 hover:text-water-700
+                              dark:hover:text-water-200 transition-colors">
+                        Edytuj
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="text-center py-20 text-gray-400 dark:text-gray-500">
+    <svg class="w-12 h-12 mx-auto mb-4 opacity-40" fill="none"
+         stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5
+                 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933
+                 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+    </svg>
+    <p class="text-sm">Brak zawodników</p>
+    <a href="{{ url_for('zawodnicy.nowy') }}"
+       class="mt-3 inline-block text-sm text-water-700
+              dark:text-water-200 hover:underline">
+        Dodaj pierwszego zawodnika
+    </a>
+</div>
+{% endif %}
+{% endblock %}

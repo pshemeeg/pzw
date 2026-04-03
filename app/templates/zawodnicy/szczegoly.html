@@ -1,0 +1,104 @@
+{% extends "base.html" %} {% block title %}{{ zawodnik.imie }} {{ zawodnik.nazwisko }}{%
+endblock %} {% block page_title %}{{ zawodnik.imie }} {{ zawodnik.nazwisko }}{% endblock
+%} {% block content %}
+<div class="flex items-center gap-3 mb-6">
+  <a
+    href="{{ url_for('zawodnicy.lista') }}"
+    class="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+  >
+    Zawodnicy
+  </a>
+  <span class="text-gray-300 dark:text-gray-600">/</span>
+  <span class="text-sm text-gray-600 dark:text-gray-300">
+    {{ zawodnik.imie }} {{ zawodnik.nazwisko }}
+  </span>
+  <a
+    href="{{ url_for('zawodnicy.edytuj', zid=zawodnik.id) }}"
+    class="ml-auto text-sm px-3 py-1.5 rounded-lg border border-water-200 dark:border-gray-600 text-water-700 dark:text-water-200 hover:bg-water-100 dark:hover:bg-gray-700 transition-colors"
+  >
+    Edytuj
+  </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div
+    class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6"
+  >
+    <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-4">
+      Dane osobowe
+    </h2>
+    <dl class="space-y-3 text-sm">
+      <div class="flex justify-between">
+        <dt class="text-gray-500 dark:text-gray-400">Imię i nazwisko</dt>
+        <dd class="font-medium">{{ zawodnik.imie }} {{ zawodnik.nazwisko }}</dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-gray-500 dark:text-gray-400">Koło PZW</dt>
+        <dd class="font-medium">{{ zawodnik.kolo }}</dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-gray-500 dark:text-gray-400">Nr licencji</dt>
+        <dd class="font-medium">{{ zawodnik.nr_licencji or '—' }}</dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-gray-500 dark:text-gray-400">Liczba startów</dt>
+        <dd class="font-medium">{{ zawodnik.udzialy|length }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <div
+    class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden"
+  >
+    <div class="px-5 py-4 border-b border-water-200 dark:border-gray-700">
+      <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">
+        Historia startów
+      </h2>
+    </div>
+
+    {% if zawodnik.udzialy %}
+    <table class="w-full text-sm">
+      <thead>
+        <tr
+          class="border-b border-water-100 dark:border-gray-700 text-xs text-gray-400 uppercase tracking-wide"
+        >
+          <th class="text-left px-5 py-3 font-medium">Zawody</th>
+          <th class="text-left px-5 py-3 font-medium">Data</th>
+          <th class="text-left px-5 py-3 font-medium hidden sm:table-cell">
+            Dyscyplina
+          </th>
+          <th class="text-left px-5 py-3 font-medium">Nr startowy</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-water-100 dark:divide-gray-700">
+        {% for u in zawodnik.udzialy|sort(attribute='zawody.data', reverse=True) %}
+        <tr class="hover:bg-water-50 dark:hover:bg-gray-700 transition-colors">
+          <td class="px-5 py-3 font-medium text-gray-800 dark:text-gray-100">
+            <a
+              href="{{ url_for('zawody.szczegoly', zid=u.zawody.id) }}"
+              class="hover:text-water-700 dark:hover:text-water-200"
+            >
+              {{ u.zawody.nazwa }}
+            </a>
+          </td>
+          <td class="px-5 py-3 text-gray-500 dark:text-gray-400 whitespace-nowrap">
+            {{ u.zawody.data.strftime('%d.%m.%Y') }}
+          </td>
+          <td class="px-5 py-3 text-gray-500 dark:text-gray-400 hidden sm:table-cell">
+            {{ u.zawody.dyscyplina.nazwa }}
+          </td>
+          <td class="px-5 py-3 text-gray-500 dark:text-gray-400">
+            {{ u.numer_startowy or '—' }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="text-center py-12 text-gray-400 dark:text-gray-500">
+      <p class="text-sm">Brak historii startów</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
