@@ -131,24 +131,24 @@
 </div>
 
 <!-- TABS -->
-<div x-data="{ tab: 'uczestnicy' }">
+<div x-data="{ tab: window.location.hash ? window.location.hash.substring(1) : 'uczestnicy' }" @hashchange.window="tab = window.location.hash ? window.location.hash.substring(1) : 'uczestnicy'">
     <div class="flex overflow-x-auto border-b border-water-200 dark:border-gray-700 mb-6 gap-2">
-        <button @click="tab = 'uczestnicy'"
+        <button @click="window.location.hash = 'uczestnicy'"
                 :class="tab === 'uczestnicy' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
                 class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
             Uczestnicy
         </button>
-        <button @click="tab = 'stanowiska'"
+        <button @click="window.location.hash = 'stanowiska'"
                 :class="tab === 'stanowiska' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
                 class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
             Stanowiska i Losowanie
         </button>
-        <button @click="tab = 'wyniki'"
+        <button @click="window.location.hash = 'wyniki'"
                 :class="tab === 'wyniki' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
                 class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
             Wprowadzanie Wyników
         </button>
-        <button @click="tab = 'klasyfikacja'"
+        <button @click="window.location.hash = 'klasyfikacja'"
                 :class="tab === 'klasyfikacja' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
                 class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
             Klasyfikacja

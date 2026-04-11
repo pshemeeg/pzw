@@ -347,4 +347,42 @@ def losuj(zid):
         f"Losowanie tury {tura} zakończone — przydzielono {len(nowe)} stanowisk.",
         "success",
     )
-    return redirect(url_for("zawody.szczegoly", zid=zid))
+    return redirect(url_for("zawody.szczegoly", zid=zid) + "#stanowiska")
+
+
+@bp.route("/<int:zid>/stanowiska_recznie", methods=["POST"])
+@login_required
+def stanowiska_recznie(zid):
+    zawody = db.session.get(Zawody, zid)
+    if not zawody:
+        flash("Nie znaleziono zawodów.", "danger")
+        return redirect(url_for("zawody.lista"))
+
+    tura = int(request.form.get("tura", 1))
+    
+    Stanowisko.query.filter_by(zawody_id=zid, tura=tura).delete()
+    
+    uczestnicy = Uczestnik.query.filter_by(zawody_id=zid).all()
+    count = 0
+    for u in uczestnicy:
+        sek = request.form.get(f"sektor_{u.id}")
+        nr = request.form.get(f"numer_{u.id}")
+        
+        if sek and nr:
+            try:
+                nr_int = int(nr)
+                stan = Stanowisko(
+                    zawody_id=zid,
+                    uczestnik_id=u.id,
+                    tura=tura,
+                    sektor=sek.strip(),
+                    numer=nr_int,
+                )
+                db.session.add(stan)
+                count += 1
+            except ValueError:
+                pass
+
+    db.session.commit()
+    flash(f"Zapisano ręczne przypisanie stanowisk (Tura {tura}, {count} stanowisk).", "success")
+    return redirect(url_for("zawody.szczegoly", zid=zid) + "#stanowiska")
