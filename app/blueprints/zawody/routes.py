@@ -1,10 +1,18 @@
 from datetime import date, time
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_required
-
+import random
 from app.blueprints.zawody import bp
 from app.extensions import db
-from app.models import Zawody, Dyscyplina, Lowisko, Sedzia, Uczestnik, Zawodnik
+from app.models import (
+    Zawody,
+    Dyscyplina,
+    Lowisko,
+    Sedzia,
+    Uczestnik,
+    Zawodnik,
+    Stanowisko,
+)
 
 
 def parse_date(s):
@@ -94,11 +102,30 @@ def nowe():
 @bp.route("/<int:zid>")
 @login_required
 def szczegoly(zid):
-    zawody = db.session.get(Zawody, zid) or db.session.get(Zawody, zid)
+    zawody = db.session.get(Zawody, zid)
     if not zawody:
         flash("Nie znaleziono zawodów.", "danger")
         return redirect(url_for("zawody.lista"))
-    return render_template("zawody/szczegoly.html", zawody=zawody)
+
+    druzyny = []
+    if zawody.klasyfikacja_druzynowa:
+        druzyny = [
+            r[0]
+            for r in db.session.query(Uczestnik.druzyna)
+            .filter(
+                Uczestnik.zawody_id == zid,
+                Uczestnik.druzyna.isnot(None),
+            )
+            .distinct()
+            .order_by(Uczestnik.druzyna)
+            .all()
+        ]
+
+    return render_template(
+        "zawody/szczegoly.html",
+        zawody=zawody,
+        druzyny=druzyny,
+    )
 
 
 @bp.route("/<int:zid>/edytuj", methods=["GET", "POST"])
@@ -152,6 +179,25 @@ def uczestnik_dodaj(zid):
         flash("Ten zawodnik jest już zapisany na te zawody.", "warning")
         return redirect(url_for("zawody.szczegoly", zid=zid))
 
+    druzyna = request.form.get("druzyna", "").strip() or None
+
+    if zawody.klasyfikacja_druzynowa:
+        if not druzyna:
+            flash(
+                "W zawodach drużynowych każdy zawodnik musi mieć przypisaną drużynę.",
+                "danger",
+            )
+            return redirect(url_for("zawody.szczegoly", zid=zid))
+        liczba_w_druzynie = Uczestnik.query.filter_by(
+            zawody_id=zid,
+            druzyna=druzyna,
+        ).count()
+        if liczba_w_druzynie >= 3:
+            flash(
+                f"Drużyna '{druzyna}' ma już 3 zawodników — jest kompletna.", "warning"
+            )
+            return redirect(url_for("zawody.szczegoly", zid=zid))
+
     max_nr = (
         db.session.query(db.func.coalesce(db.func.max(Uczestnik.numer_startowy), 0))
         .filter_by(zawody_id=zid)
@@ -161,7 +207,7 @@ def uczestnik_dodaj(zid):
     uczestnik = Uczestnik(
         zawody_id=zid,
         zawodnik_id=int(zawodnik_id),
-        druzyna=request.form.get("druzyna", "").strip() or None,
+        druzyna=druzyna,
         numer_startowy=max_nr + 1,
     )
     db.session.add(uczestnik)
@@ -195,4 +241,110 @@ def uczestnik_edytuj(zid, uid):
     if nr.isdigit():
         uczestnik.numer_startowy = int(nr)
     db.session.commit()
+    return redirect(url_for("zawody.szczegoly", zid=zid))
+
+
+@bp.route("/<int:zid>/losuj", methods=["POST"])
+@login_required
+def losuj(zid):
+    zawody = db.session.get(Zawody, zid)
+    if not zawody:
+        flash("Nie znaleziono zawodów.", "danger")
+        return redirect(url_for("zawody.lista"))
+
+    tura = int(request.form.get("tura", 1))
+    tryb = request.form.get("tryb", "auto")
+
+    uczestnicy = (
+        Uczestnik.query.filter_by(zawody_id=zid)
+        .order_by(Uczestnik.numer_startowy)
+        .all()
+    )
+
+    if not uczestnicy:
+        flash("Brak uczestników — dodaj zawodników przed losowaniem.", "warning")
+        return redirect(url_for("zawody.szczegoly", zid=zid))
+
+    n = len(uczestnicy)
+    k = zawody.liczba_sektorow
+    sektory = [chr(65 + i) for i in range(k)]
+
+    if tryb == "auto":
+        losowi = list(uczestnicy)
+        random.shuffle(losowi)
+        base = n // k
+        extra = n % k
+        sizes = {s: base + (1 if i < extra else 0) for i, s in enumerate(sektory)}
+        nowe = []
+        idx = 0
+        for sek in sektory:
+            for pos in range(1, sizes[sek] + 1):
+                if idx < len(losowi):
+                    nowe.append((losowi[idx].id, tura, sek, pos))
+                    idx += 1
+
+    elif tryb == "druzynowe":
+        druzyny = {}
+        bez_druzyny = []
+        for u in uczestnicy:
+            d = (u.druzyna or "").strip()
+            if d:
+                druzyny.setdefault(d, []).append(u)
+            else:
+                bez_druzyny.append(u)
+
+        if bez_druzyny:
+            names = ", ".join(
+                u.zawodnik.imie + " " + u.zawodnik.nazwisko for u in bez_druzyny
+            )
+            flash(f"Zawodnicy bez drużyny: {names}", "danger")
+            return redirect(url_for("zawody.szczegoly", zid=zid))
+
+        for nazwa, czlonkowie in druzyny.items():
+            if len(czlonkowie) != k:
+                flash(
+                    f"Drużyna '{nazwa}' ma {len(czlonkowie)} zawodników "
+                    f"(wymagane {k} — tyle ile sektorów).",
+                    "danger",
+                )
+                return redirect(url_for("zawody.szczegoly", zid=zid))
+
+        lista_druzyn = list(druzyny.items())
+        random.shuffle(lista_druzyn)
+        sektor_kolejka = {s: [] for s in sektory}
+
+        for nazwa, czlonkowie in lista_druzyn:
+            shuffled = list(czlonkowie)
+            random.shuffle(shuffled)
+            for s_idx, uczestnik in enumerate(shuffled):
+                sektor_kolejka[sektory[s_idx]].append(uczestnik.id)
+
+        nowe = []
+        for sek in sektory:
+            kolejka = sektor_kolejka[sek]
+            random.shuffle(kolejka)
+            for pos, uid in enumerate(kolejka, start=1):
+                nowe.append((uid, tura, sek, pos))
+
+    else:
+        flash("Nieznany tryb losowania.", "danger")
+        return redirect(url_for("zawody.szczegoly", zid=zid))
+
+    Stanowisko.query.filter_by(zawody_id=zid, tura=tura).delete()
+
+    for uczestnik_id, t, sek, pos in nowe:
+        stan = Stanowisko(
+            zawody_id=zid,
+            uczestnik_id=uczestnik_id,
+            tura=t,
+            sektor=sek,
+            numer=pos,
+        )
+        db.session.add(stan)
+
+    db.session.commit()
+    flash(
+        f"Losowanie tury {tura} zakończone — przydzielono {len(nowe)} stanowisk.",
+        "success",
+    )
     return redirect(url_for("zawody.szczegoly", zid=zid))
