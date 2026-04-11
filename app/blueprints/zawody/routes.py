@@ -361,6 +361,15 @@ def stanowiska_recznie(zid):
     tura = int(request.form.get("tura", 1))
     
     uczestnicy = Uczestnik.query.filter_by(zawody_id=zid).all()
+    obecne_stanowiska = Stanowisko.query.filter_by(zawody_id=zid, tura=tura).all()
+    stan_dict = {s.uczestnik_id: s for s in obecne_stanowiska}
+
+    # Tymczasowe "odsunięcie" obecnych stanowisk, aby uniknąć konfliktów UniqueConstraint
+    # podczas zamiany miejsc (swap) w bazie, np. SQLite.
+    for s in obecne_stanowiska:
+        s.tura += 10000
+    db.session.flush()
+
     count = 0
     zajete_stanowiska = set()
     bledy = []
@@ -369,7 +378,7 @@ def stanowiska_recznie(zid):
         sek = request.form.get(f"sektor_{tura}_{u.id}")
         nr = request.form.get(f"numer_{tura}_{u.id}")
         
-        stan = Stanowisko.query.filter_by(zawody_id=zid, tura=tura, uczestnik_id=u.id).first()
+        stan = stan_dict.get(u.id)
 
         if sek and sek.strip() and nr and nr.strip():
             try:
@@ -389,6 +398,7 @@ def stanowiska_recznie(zid):
                 if stan:
                     stan.sektor = sek_str
                     stan.numer = nr_int
+                    stan.tura = tura  # Przywracamy poprawną turę
                 else:
                     stan = Stanowisko(
                         zawody_id=zid,
