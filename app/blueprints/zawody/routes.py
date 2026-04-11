@@ -360,28 +360,35 @@ def stanowiska_recznie(zid):
 
     tura = int(request.form.get("tura", 1))
     
-    Stanowisko.query.filter_by(zawody_id=zid, tura=tura).delete()
-    
     uczestnicy = Uczestnik.query.filter_by(zawody_id=zid).all()
     count = 0
     for u in uczestnicy:
-        sek = request.form.get(f"sektor_{u.id}")
-        nr = request.form.get(f"numer_{u.id}")
+        sek = request.form.get(f"sektor_{tura}_{u.id}")
+        nr = request.form.get(f"numer_{tura}_{u.id}")
         
-        if sek and nr:
+        stan = Stanowisko.query.filter_by(zawody_id=zid, tura=tura, uczestnik_id=u.id).first()
+
+        if sek and sek.strip() and nr and nr.strip():
             try:
                 nr_int = int(nr)
-                stan = Stanowisko(
-                    zawody_id=zid,
-                    uczestnik_id=u.id,
-                    tura=tura,
-                    sektor=sek.strip(),
-                    numer=nr_int,
-                )
-                db.session.add(stan)
+                if stan:
+                    stan.sektor = sek.strip().upper()
+                    stan.numer = nr_int
+                else:
+                    stan = Stanowisko(
+                        zawody_id=zid,
+                        uczestnik_id=u.id,
+                        tura=tura,
+                        sektor=sek.strip().upper(),
+                        numer=nr_int,
+                    )
+                    db.session.add(stan)
                 count += 1
             except ValueError:
                 pass
+        else:
+            if stan:
+                db.session.delete(stan)
 
     db.session.commit()
     flash(f"Zapisano ręczne przypisanie stanowisk (Tura {tura}, {count} stanowisk).", "success")

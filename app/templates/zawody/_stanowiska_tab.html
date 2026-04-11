@@ -42,21 +42,24 @@
     </div>
 
     <!-- WIDOK: wpisywanie ręczne -->
-    <div x-show="mode === 'manual'" style="display: none;" class="p-6 bg-gray-50 dark:bg-gray-900 border-b border-water-200 dark:border-gray-700">
+    <div x-show="mode === 'manual'" style="display: none;" class="p-6 bg-gray-50 dark:bg-gray-900 border-b border-water-200 dark:border-gray-700" x-data="{ tura_wybrana: 1 }">
         <form method="POST" action="{{ url_for('zawody.stanowiska_recznie', zid=zawody.id) }}">
             <div class="mb-4 max-w-xs">
                 <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Dla której tury wpisujesz?</label>
-                <select name="tura" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500">
+                <select name="tura" x-model.number="tura_wybrana" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500">
                     {% for t in range(1, zawody.liczba_tur + 1) %}
                     <option value="{{ t }}">Tura {{ t }}</option>
                     {% endfor %}
                 </select>
             </div>
             
-            <p class="text-xs text-gray-500 mb-4">Wpisz Sektor (np. A, B) i Numer stanowiska. Puste pola oznaczają brak przypisania. Zapisanie nadpisze dotychczasowe stanowiska dla wybranej tury.</p>
+            <p class="text-xs text-gray-500 mb-4">Wybierz Sektor i wpisz Numer stanowiska. Puste (—) oznaczają brak przypisania.</p>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% set litery = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
+            {% for t in range(1, zawody.liczba_tur + 1) %}
+            <div x-show="tura_wybrana === {{ t }}" style="display: none;" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {% for u in zawody.uczestnicy|sort(attribute='numer_startowy') %}
+                {% set stan = u.stanowiska | selectattr('tura', 'equalto', t) | list | first %}
                 <div class="flex items-center gap-2 bg-white dark:bg-gray-800 p-3 rounded border border-water-100 dark:border-gray-700">
                     <div class="flex-grow min-w-0">
                         <div class="text-sm font-medium text-gray-800 dark:text-gray-100 truncate" title="{{ u.zawodnik.nazwisko }} {{ u.zawodnik.imie }}">
@@ -65,15 +68,22 @@
                         <div class="text-xs text-gray-500 truncate">{{ u.zawodnik.kolo }}</div>
                     </div>
                     <div class="flex gap-2">
-                        <input type="text" name="sektor_{{ u.id }}" placeholder="Sek" class="w-12 px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-center uppercase" maxlength="2">
-                        <input type="number" name="numer_{{ u.id }}" placeholder="Nr" class="w-14 px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-center">
+                        <select name="sektor_{{ t }}_{{ u.id }}" class="w-16 px-1 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-center">
+                            <option value="">—</option>
+                            {% for i in range(zawody.liczba_sektorow) %}
+                            {% set l = litery[i] %}
+                            <option value="{{ l }}" {% if stan and stan.sektor == l %}selected{% endif %}>{{ l }}</option>
+                            {% endfor %}
+                        </select>
+                        <input type="number" name="numer_{{ t }}_{{ u.id }}" value="{{ stan.numer if stan else '' }}" placeholder="Nr" class="w-14 px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-center">
                     </div>
                 </div>
                 {% endfor %}
             </div>
+            {% endfor %}
             
             <div class="mt-6 flex justify-end">
-                <button type="submit" onclick="return confirm('To nadpisze stanowiska dla wybranej tury. Kontynuować?')" class="px-6 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors">
+                <button type="submit" class="px-6 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors">
                     Zapisz stanowiska ręcznie
                 </button>
             </div>
