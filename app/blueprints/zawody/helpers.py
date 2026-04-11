@@ -107,25 +107,30 @@ def oblicz_klasyfikacje(zawody):
             miejsce_counter = 1
             idx = 0
             while idx < len(z_wynikiem):
-                # Zbieramy wszystkich z tym samym wynikiem
                 aktualny_wynik = wyniki_tur[t][z_wynikiem[idx]]['wynik_sort']
                 grupa = []
                 while idx < len(z_wynikiem) and wyniki_tur[t][z_wynikiem[idx]]['wynik_sort'] == aktualny_wynik:
                     grupa.append(z_wynikiem[idx])
                     idx += 1
                 
-                # Wszyscy ex aequo dostają "lepsze miejsce" (np. 2, 2, a następny 4)
-                dane_miejsce = miejsce_counter
+                # Wszyscy ex aequo dostają średnią z zajmowanych miejsc
+                start_m = miejsce_counter
+                end_m = miejsce_counter + len(grupa) - 1
+                srednia_miejsc = sum(range(start_m, end_m + 1)) / len(grupa)
+                
+                # ZOSW mówi, żeby zera po przecinku upraszczać do .5, sum() podzielone przez int zawsze daje float, np. 2.0 lub 2.5
                 for uid in grupa:
-                    pkt_sektorowe[uid][t] = dane_miejsce
+                    pkt_sektorowe[uid][t] = srednia_miejsc
                 
                 miejsce_counter += len(grupa)
             
             # Nadawanie punktów dla ZERO
             if zera:
-                miejsce_dla_zera = miejsce_counter
+                start_m = miejsce_counter
+                end_m = miejsce_counter + len(zera) - 1
+                srednia_zera = sum(range(start_m, end_m + 1)) / len(zera)
                 for uid in zera:
-                    pkt_sektorowe[uid][t] = miejsce_dla_zera
+                    pkt_sektorowe[uid][t] = srednia_zera
                 miejsce_counter += len(zera)
             
             # Nadawanie punktów dla DYSK
