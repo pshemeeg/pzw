@@ -75,7 +75,7 @@
                             <option value="{{ l }}" {% if stan and stan.sektor == l %}selected{% endif %}>{{ l }}</option>
                             {% endfor %}
                         </select>
-                        <input type="number" name="numer_{{ t }}_{{ u.id }}" value="{{ stan.numer if stan else '' }}" placeholder="Nr" class="w-14 px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-center">
+                        <input type="number" name="numer_{{ t }}_{{ u.id }}" value="{{ stan.numer if stan else '' }}" placeholder="Nr" min="1" class="w-14 px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-center">
                     </div>
                 </div>
                 {% endfor %}

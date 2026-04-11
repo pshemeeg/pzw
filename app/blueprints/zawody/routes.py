@@ -362,6 +362,9 @@ def stanowiska_recznie(zid):
     
     uczestnicy = Uczestnik.query.filter_by(zawody_id=zid).all()
     count = 0
+    zajete_stanowiska = set()
+    bledy = []
+
     for u in uczestnicy:
         sek = request.form.get(f"sektor_{tura}_{u.id}")
         nr = request.form.get(f"numer_{tura}_{u.id}")
@@ -371,15 +374,27 @@ def stanowiska_recznie(zid):
         if sek and sek.strip() and nr and nr.strip():
             try:
                 nr_int = int(nr)
+                if nr_int <= 0:
+                    bledy.append(f"Nieprawidłowy numer stanowiska ({nr_int}) dla zawodnika {u.zawodnik.nazwisko}.")
+                    continue
+
+                sek_str = sek.strip().upper()
+                klucz = (sek_str, nr_int)
+                if klucz in zajete_stanowiska:
+                    bledy.append(f"Stanowisko {sek_str}{nr_int} zostało przypisane więcej niż raz.")
+                    continue
+                
+                zajete_stanowiska.add(klucz)
+
                 if stan:
-                    stan.sektor = sek.strip().upper()
+                    stan.sektor = sek_str
                     stan.numer = nr_int
                 else:
                     stan = Stanowisko(
                         zawody_id=zid,
                         uczestnik_id=u.id,
                         tura=tura,
-                        sektor=sek.strip().upper(),
+                        sektor=sek_str,
                         numer=nr_int,
                     )
                     db.session.add(stan)
@@ -389,6 +404,12 @@ def stanowiska_recznie(zid):
         else:
             if stan:
                 db.session.delete(stan)
+
+    if bledy:
+        db.session.rollback()
+        for b in set(bledy):
+            flash(b, "danger")
+        return redirect(url_for("zawody.szczegoly", zid=zid) + "#stanowiska")
 
     db.session.commit()
     flash(f"Zapisano ręczne przypisanie stanowisk (Tura {tura}, {count} stanowisk).", "success")
