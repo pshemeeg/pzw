@@ -70,38 +70,41 @@ def zapisz_zbiorczo_karpie(zid, tura):
     flash(f'Zapisano zbiorczo wyniki karpiowe (Tura {tura}).', 'success')
     return redirect(url_for('zawody.szczegoly', zid=zid) + '#wyniki')
 
-@bp.route('/zawody/<int:zid>/tura/<int:tura>/stanowisko/<int:sid>/punktowy', methods=['POST'])
+@bp.route('/zawody/<int:zid>/tura/<int:tura>/punktowy', methods=['POST'])
 @login_required
-def zapisz_zbiorczo_punktowy(zid, tura, sid):
-    stanowisko = db.session.get(Stanowisko, sid)
-    if not stanowisko or stanowisko.zawody_id != zid:
+def zapisz_zbiorczo_punktowy(zid, tura):
+    zawody = db.session.get(Zawody, zid)
+    if not zawody:
         abort(404)
 
-    gatunki = request.form.getlist('gatunek[]')
-    dlugosci = request.form.getlist('dlugosc_mm[]')
+    stanowiska = Stanowisko.query.filter_by(zawody_id=zid, tura=tura).all()
+    
+    for s in stanowiska:
+        gatunki = request.form.getlist(f'gatunek_{s.id}[]')
+        dlugosci = request.form.getlist(f'dlugosc_{s.id}[]')
 
-    for r in stanowisko.wyniki_ryby:
-        db.session.delete(r)
+        for r in s.wyniki_ryby:
+            db.session.delete(r)
 
-    for gat, dl in zip(gatunki, dlugosci):
-        gat = gat.strip()
-        if not gat or not dl:
-            continue
-        try:
-            dl_mm = int(dl)
-        except ValueError:
-            continue
+        for gat, dl in zip(gatunki, dlugosci):
+            gat = gat.strip()
+            if not gat or not dl:
+                continue
+            try:
+                dl_mm = int(dl)
+            except ValueError:
+                continue
 
-        punkty, zaliczona = oblicz_punkty_ryby(gat, dl_mm)
-        nowa_ryba = WynikRyba(
-            stanowisko_id=sid,
-            gatunek=gat,
-            dlugosc_mm=dl_mm,
-            punkty=punkty,
-            zaliczona=zaliczona
-        )
-        db.session.add(nowa_ryba)
+            punkty, zaliczona = oblicz_punkty_ryby(gat, dl_mm)
+            nowa_ryba = WynikRyba(
+                stanowisko_id=s.id,
+                gatunek=gat,
+                dlugosc_mm=dl_mm,
+                punkty=punkty,
+                zaliczona=zaliczona
+            )
+            db.session.add(nowa_ryba)
 
     db.session.commit()
-    flash(f'Zapisano ryby dla zawodnika {stanowisko.uczestnik.zawodnik.nazwisko}.', 'success')
+    flash(f'Zapisano zbiorczo wyniki punktowe (Tura {tura}).', 'success')
     return redirect(url_for('zawody.szczegoly', zid=zid) + '#wyniki')
