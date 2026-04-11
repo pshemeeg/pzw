@@ -23,19 +23,35 @@
                     Podstawowe informacje
                 </h2>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700
-                                  dark:text-gray-300 mb-1">
-                        Nazwa zawodów *
-                    </label>
-                    <input type="text" name="nazwa" required
-                           value="{{ zawody.nazwa if zawody else '' }}"
-                           class="w-full px-3 py-2 text-sm rounded-lg border
-                                  border-gray-300 dark:border-gray-600
-                                  bg-white dark:bg-gray-700
-                                  text-gray-800 dark:text-gray-100
-                                  focus:outline-none focus:ring-2
-                                  focus:ring-water-500">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700
+                                      dark:text-gray-300 mb-1">
+                            Nazwa zawodów *
+                        </label>
+                        <input type="text" name="nazwa" required
+                               value="{{ zawody.nazwa if zawody else '' }}"
+                               class="w-full px-3 py-2 text-sm rounded-lg border
+                                      border-gray-300 dark:border-gray-600
+                                      bg-white dark:bg-gray-700
+                                      text-gray-800 dark:text-gray-100
+                                      focus:outline-none focus:ring-2
+                                      focus:ring-water-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700
+                                      dark:text-gray-300 mb-1">
+                            Nr zawodów
+                        </label>
+                        <input type="text" name="nr_zawodow" placeholder="np. 2/2026"
+                               value="{{ zawody.nr_zawodow if zawody and zawody.nr_zawodow else '' }}"
+                               class="w-full px-3 py-2 text-sm rounded-lg border
+                                      border-gray-300 dark:border-gray-600
+                                      bg-white dark:bg-gray-700
+                                      text-gray-800 dark:text-gray-100
+                                      focus:outline-none focus:ring-2
+                                      focus:ring-water-500">
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

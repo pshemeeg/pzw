@@ -1,5 +1,5 @@
 from datetime import date, time
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, flash, abort
 from flask_login import login_required
 import random
 from app.blueprints.zawody import bp
@@ -36,6 +36,7 @@ def zawody_z_formularza(d, zawody=None):
     if zawody is None:
         zawody = Zawody()
     zawody.nazwa = d["nazwa"].strip()
+    zawody.nr_zawodow = d.get("nr_zawodow", "").strip() or None
     zawody.data = parse_date(d.get("data"))
     zawody.dyscyplina_id = int(d["dyscyplina_id"])
     zawody.lowisko_id = int(d["lowisko_id"]) if d.get("lowisko_id") else None
@@ -100,6 +101,21 @@ def nowe():
 
 
 from app.blueprints.zawody.helpers import oblicz_klasyfikacje
+
+@bp.route("/<int:zid>/protokol")
+@login_required
+def protokol(zid):
+    zawody = db.session.get(Zawody, zid)
+    if not zawody:
+        abort(404)
+        
+    klasyfikacja = oblicz_klasyfikacje(zawody)
+    
+    return render_template(
+        "zawody/protokol.html",
+        zawody=zawody,
+        klasyfikacja=klasyfikacja,
+    )
 
 @bp.route("/<int:zid>")
 @login_required
