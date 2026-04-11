@@ -99,6 +99,8 @@ def nowe():
     return render_template("zawody/formularz.html", zawody=None, **get_slowniki())
 
 
+from app.blueprints.zawody.helpers import oblicz_klasyfikacje
+
 @bp.route("/<int:zid>")
 @login_required
 def szczegoly(zid):
@@ -121,10 +123,13 @@ def szczegoly(zid):
             .all()
         ]
 
+    klasyfikacja = oblicz_klasyfikacje(zawody)
+
     return render_template(
         "zawody/szczegoly.html",
         zawody=zawody,
         druzyny=druzyny,
+        klasyfikacja=klasyfikacja,
     )
 
 

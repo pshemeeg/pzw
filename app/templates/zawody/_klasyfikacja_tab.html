@@ -1,3 +1,142 @@
-<div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6 text-center text-gray-500">
-    Tutaj pojawi się klasyfikacja (Priority 2).
+<div class="space-y-6">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-water-200 dark:border-gray-700">
+            <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">Klasyfikacja Indywidualna</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-water-100 dark:border-gray-700 text-xs text-gray-400 uppercase text-left bg-gray-50 dark:bg-gray-900">
+                        <th class="px-4 py-3 font-medium w-16">Miejsce</th>
+                        <th class="px-4 py-3 font-medium">Zawodnik</th>
+                        <th class="px-4 py-3 font-medium hidden sm:table-cell">Koło</th>
+                        {% for t in range(1, zawody.liczba_tur + 1) %}
+                            <th class="px-4 py-3 font-medium text-center">Tura {{ t }}<br><span class="text-[10px] font-normal lowercase">(pkt sekt.)</span></th>
+                        {% endfor %}
+                        <th class="px-4 py-3 font-medium text-center">Suma<br>Punktów</th>
+                        <th class="px-4 py-3 font-medium text-right">Suma<br>Wyników</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-water-50 dark:divide-gray-700">
+                    {% for r in klasyfikacja.indywidualna %}
+                    <tr class="hover:bg-water-50 dark:hover:bg-gray-750 transition-colors {% if r.miejsce in [1, 2, 3] %}bg-gold-50 dark:bg-gold-900/10{% else %}bg-white dark:bg-gray-800{% endif %}">
+                        <td class="px-4 py-3 font-bold {% if r.miejsce == 1 %}text-yellow-500{% elif r.miejsce == 2 %}text-gray-400{% elif r.miejsce == 3 %}text-amber-600{% else %}text-gray-500{% endif %} text-center">
+                            {{ r.miejsce }}
+                        </td>
+                        <td class="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">
+                            {{ r.uczestnik.zawodnik.nazwisko }} {{ r.uczestnik.zawodnik.imie }}
+                        </td>
+                        <td class="px-4 py-3 text-gray-500 dark:text-gray-400 hidden sm:table-cell">
+                            {{ r.uczestnik.zawodnik.kolo }}
+                        </td>
+                        {% for t in range(1, zawody.liczba_tur + 1) %}
+                            <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-300">
+                                {% set pkt = r.punkty_tury.get(t, '-') %}
+                                {{ pkt if pkt != '-' else '—' }}
+                            </td>
+                        {% endfor %}
+                        <td class="px-4 py-3 text-center font-bold text-gray-800 dark:text-gray-100">
+                            {{ r.suma_sektorowych if r.status == 'OK' else '—' }}
+                        </td>
+                        <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">
+                            {% if r.status == 'OK' %}
+                                {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}
+                                    {{ r.suma_wag }} pkt
+                                {% else %}
+                                    {{ r.suma_wag }} g
+                                {% endif %}
+                            {% else %}
+                                N/C
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="{{ 5 + zawody.liczba_tur }}" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
+                            Brak danych do klasyfikacji. Dodaj zawodników, stanowiska i wyniki.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if zawody.klasyfikacja_druzynowa %}
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-water-200 dark:border-gray-700">
+            <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">Klasyfikacja Drużynowa</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-water-100 dark:border-gray-700 text-xs text-gray-400 uppercase text-left bg-gray-50 dark:bg-gray-900">
+                        <th class="px-4 py-3 font-medium w-16">Miejsce</th>
+                        <th class="px-4 py-3 font-medium">Drużyna</th>
+                        <th class="px-4 py-3 font-medium text-center">Suma<br>Punktów</th>
+                        <th class="px-4 py-3 font-medium text-right">Suma<br>Wyników</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-water-50 dark:divide-gray-700">
+                    {% for d in klasyfikacja.druzynowa %}
+                    <tr x-data="{ open: false }" class="hover:bg-water-50 dark:hover:bg-gray-750 transition-colors {% if d.miejsce in [1, 2, 3] %}bg-gold-50 dark:bg-gold-900/10{% else %}bg-white dark:bg-gray-800{% endif %} cursor-pointer" @click="open = !open">
+                        <td class="px-4 py-3 font-bold {% if d.miejsce == 1 %}text-yellow-500{% elif d.miejsce == 2 %}text-gray-400{% elif d.miejsce == 3 %}text-amber-600{% else %}text-gray-500{% endif %} text-center">
+                            {{ d.miejsce }}
+                        </td>
+                        <td class="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">
+                            {{ d.druzyna }}
+                            <span class="text-xs font-normal text-gray-400 ml-2">(kliknij by rozwinąć)</span>
+                        </td>
+                        <td class="px-4 py-3 text-center font-bold text-gray-800 dark:text-gray-100">
+                            {{ d.suma_sektorowych if d.status == 'OK' else '—' }}
+                        </td>
+                        <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">
+                            {% if d.status == 'OK' %}
+                                {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}
+                                    {{ d.suma_wag }} pkt
+                                {% else %}
+                                    {{ d.suma_wag }} g
+                                {% endif %}
+                            {% else %}
+                                N/C
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <!-- Rozwinięcie drużyny -->
+                    <tr x-show="open" style="display: none;" class="bg-gray-50 dark:bg-gray-900">
+                        <td colspan="4" class="p-0 border-b border-water-200 dark:border-gray-700">
+                            <table class="w-full text-xs text-gray-500 dark:text-gray-400">
+                                <tbody>
+                                    {% for r in d.zawodnicy %}
+                                    <tr class="border-b border-water-50 dark:border-gray-750 last:border-0 hover:bg-gray-100 dark:hover:bg-gray-800">
+                                        <td class="px-4 py-2 w-16 text-center">
+                                            {{ loop.index }}
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            {{ r.uczestnik.zawodnik.nazwisko }} {{ r.uczestnik.zawodnik.imie }}
+                                        </td>
+                                        <td class="px-4 py-2 text-center font-medium text-gray-700 dark:text-gray-300">
+                                            {{ r.suma_sektorowych if r.status == 'OK' else 'NC' }} pkt
+                                        </td>
+                                        <td class="px-4 py-2 text-right">
+                                            {{ r.suma_wag }} {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}pkt{% else %}g{% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
+                            Brak poprawnych kompletnych 3-osobowych drużyn.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
 </div>
