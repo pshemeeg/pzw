@@ -77,9 +77,9 @@
                         <th class="px-4 py-3 font-medium text-right">Suma<br>Wyników</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-water-50 dark:divide-gray-700">
-                    {% for d in klasyfikacja.druzynowa %}
-                    <tr x-data="{ open: false }" class="hover:bg-water-50 dark:hover:bg-gray-750 transition-colors {% if d.miejsce in [1, 2, 3] %}bg-gold-50 dark:bg-gold-900/10{% else %}bg-white dark:bg-gray-800{% endif %} cursor-pointer" @click="open = !open">
+                {% for d in klasyfikacja.druzynowa %}
+                <tbody x-data="{ open: false }" class="divide-y divide-water-50 dark:divide-gray-700 border-b border-water-50 dark:border-gray-700">
+                    <tr class="hover:bg-water-50 dark:hover:bg-gray-750 transition-colors {% if d.miejsce in [1, 2, 3] %}bg-gold-50 dark:bg-gold-900/10{% else %}bg-white dark:bg-gray-800{% endif %} cursor-pointer" @click="open = !open">
                         <td class="px-4 py-3 font-bold {% if d.miejsce == 1 %}text-yellow-500{% elif d.miejsce == 2 %}text-gray-400{% elif d.miejsce == 3 %}text-amber-600{% else %}text-gray-500{% endif %} text-center">
                             {{ d.miejsce }}
                         </td>
@@ -127,14 +127,16 @@
                             </table>
                         </td>
                     </tr>
-                    {% else %}
+                </tbody>
+                {% else %}
+                <tbody>
                     <tr>
                         <td colspan="4" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
                             Brak poprawnych kompletnych 3-osobowych drużyn.
                         </td>
                     </tr>
-                    {% endfor %}
                 </tbody>
+                {% endfor %}
             </table>
         </div>
     </div>
