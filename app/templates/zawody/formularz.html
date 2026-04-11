@@ -176,6 +176,48 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700
                                   dark:text-gray-300 mb-1">
+                        Sędzia sekretarz
+                    </label>
+                    <select name="sekretarz_id"
+                            class="w-full px-3 py-2 text-sm rounded-lg border
+                                   border-gray-300 dark:border-gray-600
+                                   bg-white dark:bg-gray-700
+                                   text-gray-800 dark:text-gray-100
+                                   focus:outline-none focus:ring-2
+                                   focus:ring-water-500">
+                        <option value="">— wybierz —</option>
+                        {% for s in sedziowie %}
+                        <option value="{{ s.id }}"
+                            {% if zawody and zawody.sekretarz_id == s.id %}
+                                selected
+                            {% endif %}>
+                            {{ s.imie }} {{ s.nazwisko }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Sędziowie sektorowi
+                    </label>
+                    <input type="text" name="sedziowie_sektorowi" placeholder="np. Jan Kowalski, Adam Nowak"
+                           value="{{ zawody.sedziowie_sektorowi if zawody and zawody.sedziowie_sektorowi else '' }}"
+                           class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Sędziowie kontrolni / wagowi
+                    </label>
+                    <input type="text" name="sedziowie_kontrolni" placeholder="np. Piotr Wiśniewski"
+                           value="{{ zawody.sedziowie_kontrolni if zawody and zawody.sedziowie_kontrolni else '' }}"
+                           class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">
                         Uwagi
                     </label>
                     <textarea name="uwagi" rows="3"

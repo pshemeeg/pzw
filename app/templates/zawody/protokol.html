@@ -182,9 +182,9 @@
             Rejon nr. <span class="dotted-line">{{ zawody.rejon if zawody.rejon else '......' }}</span><br>
             3. Komisja sędziowska w składzie:<br>
             &nbsp;&nbsp;&nbsp;Sędzia główny: <span class="dotted-line">{{ zawody.organizator.imie|upper }} {{ zawody.organizator.nazwisko|upper }}</span><br>
-            &nbsp;&nbsp;&nbsp;Sędzia sekretarz: <span class="dotted-line">...................................................................................................</span><br>
-            Sędziowie sektorowi: <span class="dotted-line">..........................................................................................................................</span><br>
-            Sędziowie kontrolni/wagowi: <span class="dotted-line">.............................................................................................................</span><br>
+            &nbsp;&nbsp;&nbsp;Sędzia sekretarz: <span class="dotted-line">{{ zawody.sekretarz.imie|upper ~ ' ' ~ zawody.sekretarz.nazwisko|upper if zawody.sekretarz else '........................................................................' }}</span><br>
+            Sędziowie sektorowi: <span class="dotted-line">{{ zawody.sedziowie_sektorowi|upper if zawody.sedziowie_sektorowi else '..........................................................................................................................' }}</span><br>
+            Sędziowie kontrolni/wagowi: <span class="dotted-line">{{ zawody.sedziowie_kontrolni|upper if zawody.sedziowie_kontrolni else '.............................................................................................................' }}</span><br>
         </div>
         <div style="margin-top: 5px;">
             Komisja sędziowska stwierdza: <span class="italic">należyte*</span> przygotowanie terenu.

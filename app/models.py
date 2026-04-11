@@ -110,6 +110,8 @@ class Zawody(db.Model):
     klasyfikacja_druzynowa = db.Column(db.Boolean, default=False)
     status = db.Column(db.String(16), nullable=False, default="planowane")
     uwagi = db.Column(db.Text, nullable=True)
+    sedziowie_sektorowi = db.Column(db.Text, nullable=True)
+    sedziowie_kontrolni = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(
         db.DateTime,
@@ -122,10 +124,12 @@ class Zawody(db.Model):
     )
     lowisko_id = db.Column(db.Integer, db.ForeignKey("lowiska.id"), nullable=True)
     organizator_id = db.Column(db.Integer, db.ForeignKey("sedziowie.id"), nullable=True)
+    sekretarz_id = db.Column(db.Integer, db.ForeignKey("sedziowie.id"), nullable=True)
 
     dyscyplina = db.relationship("Dyscyplina", backref="zawody")
     lowisko = db.relationship("Lowisko", backref="zawody")
     organizator = db.relationship("Sedzia", foreign_keys=[organizator_id])
+    sekretarz = db.relationship("Sedzia", foreign_keys=[sekretarz_id])
     sedziowie = db.relationship(
         "Sedzia",
         secondary=zawody_sedziowie,

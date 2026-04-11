@@ -43,6 +43,11 @@ def zawody_z_formularza(d, zawody=None):
     zawody.organizator_id = (
         int(d["organizator_id"]) if d.get("organizator_id") else None
     )
+    zawody.sekretarz_id = (
+        int(d["sekretarz_id"]) if d.get("sekretarz_id") else None
+    )
+    zawody.sedziowie_sektorowi = d.get("sedziowie_sektorowi", "").strip() or None
+    zawody.sedziowie_kontrolni = d.get("sedziowie_kontrolni", "").strip() or None
     zawody.godzina_start = parse_time(d.get("godzina_start"))
     zawody.godzina_koniec = parse_time(d.get("godzina_koniec"))
     zawody.kategoria = d.get("kategoria", "").strip()
