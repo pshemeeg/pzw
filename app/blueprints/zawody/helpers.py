@@ -83,6 +83,12 @@ def oblicz_klasyfikacje(zawody):
         for u_id, data in wyniki_tur[t].items():
             sektory[data['stanowisko'].sektor].append(u_id)
             
+        # ZOSW: Do obliczania miejsc dla zer i dyskwalifikacji przy nierównych sektorach
+        # bierze się pod uwagę pojemność najliczniejszego sektora w danej turze.
+        max_sektor_size = 0
+        if sektory:
+            max_sektor_size = max(len(zaw) for zaw in sektory.values())
+            
         for sektor, zawodnicy_ids in sektory.items():
             N = len(zawodnicy_ids)
             
@@ -118,25 +124,31 @@ def oblicz_klasyfikacje(zawody):
                 end_m = miejsce_counter + len(grupa) - 1
                 srednia_miejsc = sum(range(start_m, end_m + 1)) / len(grupa)
                 
-                # ZOSW mówi, żeby zera po przecinku upraszczać do .5, sum() podzielone przez int zawsze daje float, np. 2.0 lub 2.5
                 for uid in grupa:
                     pkt_sektorowe[uid][t] = srednia_miejsc
                 
                 miejsce_counter += len(grupa)
             
-            # Nadawanie punktów dla ZERO
+            # Nadawanie punktów dla ZERO (do max_sektor_size wg ZOSW)
             if zera:
                 start_m = miejsce_counter
-                end_m = miejsce_counter + len(zera) - 1
-                srednia_zera = sum(range(start_m, end_m + 1)) / len(zera)
+                end_m = max_sektor_size  # Obliczamy średnią do najliczniejszego sektora
+                
+                # Jeśli z jakiegoś powodu start_m > end_m, to znaczy że sector size logic is weird,
+                # ale standardowo start_m <= max_sektor_size.
+                if start_m <= end_m:
+                    liczba_wolnych = end_m - start_m + 1
+                    srednia_zera = sum(range(start_m, end_m + 1)) / liczba_wolnych
+                else:
+                    srednia_zera = start_m
+                    
                 for uid in zera:
                     pkt_sektorowe[uid][t] = srednia_zera
-                miejsce_counter += len(zera)
             
             # Nadawanie punktów dla DYSK
             if dyski:
-                # Dyskwalifikacja = liczba zawodników w sektorze + 1
-                miejsce_dla_dysk = N + 1
+                # Dyskwalifikacja = liczba zawodników w najliczniejszym sektorze + 1
+                miejsce_dla_dysk = max_sektor_size + 1
                 for uid in dyski:
                     pkt_sektorowe[uid][t] = miejsce_dla_dysk
 
