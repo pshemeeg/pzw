@@ -12,6 +12,7 @@
             <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Tura {{ tura }}</span>
         </div>
         
+        {% if zawody.dyscyplina.typ_wyniku != 'punktowy' %}
         <form method="POST" action="{{ url_for('wyniki.zapisz_zbiorczo_' + zawody.dyscyplina.typ_wyniku, zid=zawody.id, tura=tura) }}">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
@@ -30,9 +31,6 @@
                             <th class="px-4 py-2 w-32">Najcięższa (g)</th>
                             <th class="px-4 py-2 w-24">Pkt Karne</th>
                             <th class="px-4 py-2">Uwagi</th>
-                        {% elif zawody.dyscyplina.typ_wyniku == 'punktowy' %}
-                            <th class="px-4 py-2">Obecny Wynik</th>
-                            <th class="px-4 py-2 text-right">Akcje</th>
                         {% endif %}
                     </tr>
                 </thead>
@@ -41,7 +39,6 @@
                 <tbody class="divide-y divide-water-50 dark:divide-gray-700 border-b-2 border-water-100 dark:border-gray-600">
                     {% for s in stanowiska | selectattr('tura', 'equalto', tura) | selectattr('sektor', 'equalto', sektor) | sort(attribute='numer') %}
                     
-                    {% if zawody.dyscyplina.typ_wyniku != 'punktowy' %}
                     <tr class="bg-white dark:bg-gray-800 hover:bg-water-50 dark:hover:bg-gray-750 transition-colors">
                         <td class="px-4 py-3 text-gray-500 font-medium">{{ s.sektor }}</td>
                         <td class="px-4 py-3 text-gray-500">{{ s.numer }}</td>
@@ -77,26 +74,20 @@
                         {% endif %}
                     </tr>
                     
-                    {% else %}
-                    <!-- Punktowy mode remains as individual expandable rows inside the main loop, handled separately or as a sub-form -->
-                    {% endif %}
-                    
                     {% endfor %}
                 </tbody>
                 {% endfor %}
             </table>
         </div>
         
-        {% if zawody.dyscyplina.typ_wyniku != 'punktowy' %}
         <div class="px-5 py-4 bg-gray-50 dark:bg-gray-900 border-t border-water-200 dark:border-gray-700 flex justify-end">
             <button type="submit" class="px-6 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors">
                 Zapisz wyniki tury {{ tura }}
             </button>
         </div>
-        {% endif %}
         </form>
 
-        {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}
+        {% elif zawody.dyscyplina.typ_wyniku == 'punktowy' %}
         <div class="overflow-x-auto mt-4">
             <table class="w-full text-sm">
                 <!-- Fallback for punktowy: keep original expandable row logic -->
