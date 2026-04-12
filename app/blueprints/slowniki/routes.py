@@ -60,7 +60,7 @@ def import_csv(typ):
                 if not nazwa or not kod or typ_wyniku not in ["wagowy", "punktowy", "karpie"]:
                     pominieto += 1
                     continue
-                istniejacy = Dyscyplina.query.filter_by(kod=kod).first()
+                istniejacy = Dyscyplina.query.filter(db.or_(Dyscyplina.kod == kod, Dyscyplina.nazwa == nazwa)).first()
                 if istniejacy:
                     pominieto += 1
                     continue
