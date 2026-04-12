@@ -1,0 +1,11 @@
+nazwa,kod,typ_wyniku
+Spławikowa,splawik,wagowy
+Feederowa,feeder,wagowy
+Spinningowa z łodzi,spin_lodz,punktowy
+Spinningowa z brzegu,spin_brzeg,punktowy
+Karpiowa,karp,karpie
+Mucha,muchowa,punktowy
+Podlodowa,podlodowa,wagowy
+Morska z kutra,morska,punktowy
+Gruntowa tradycyjna,grunt,wagowy
+Method Feeder,method,karpie

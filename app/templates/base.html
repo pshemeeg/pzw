@@ -105,7 +105,7 @@
 
             <!-- Zawody Group -->
             <div class="space-y-1">
-                <p class="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
+                <p class="px-3 mb-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
                     Główne menu
                 </p>
                 <a href="{{ url_for('main.index') }}"
@@ -128,12 +128,18 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     Lista zawodów
                 </a>
+                <a href="{{ url_for('main.grand_prix') }}"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all
+                          {{ 'bg-water-500 text-white shadow-md shadow-water-500/20' if request.endpoint == 'main.grand_prix' else 'text-gray-600 dark:text-gray-400 hover:bg-water-50 dark:hover:bg-gray-700/50 hover:text-water-700 dark:hover:text-water-200' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.286-6.857L1 12l7.714-2.143L11 3z"/></svg>
+                    Grand Prix
+                </a>
             </div>
 
             {% if current_user.is_authenticated %}
             <!-- Dane Group -->
             <div class="space-y-1">
-                <p class="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
+                <p class="px-3 mb-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
                     Zarządzanie
                 </p>
                 <a href="{{ url_for('zawodnicy.lista') }}"
@@ -165,7 +171,7 @@
             </div>
             {% else %}
             <div class="space-y-1">
-                <p class="px-3 mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
+                <p class="px-3 mb-2 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
                     Konto
                 </p>
                 <a href="{{ url_for('auth.login') }}"
@@ -189,7 +195,7 @@
                     <div class="text-xs font-bold text-gray-900 dark:text-white truncate">
                         {{ current_user.email.split('@')[0] }}
                     </div>
-                    <div class="text-[10px] font-medium text-water-600 dark:text-water-400 uppercase tracking-tight">
+                    <div class="text-xs font-medium text-water-600 dark:text-water-400 uppercase tracking-tight">
                         {{ 'Administrator' if current_user.is_admin() else 'Sędzia' }}
                     </div>
                 </div>
@@ -201,7 +207,7 @@
             </div>
             {% else %}
             <div class="text-center p-2">
-                <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Wersja 1.2.0</p>
+                <p class="text-xs text-gray-400 uppercase font-bold tracking-widest">Wersja 1.2.0</p>
             </div>
             {% endif %}
         </div>
@@ -327,17 +333,17 @@
                         </div>
                         <div class="flex flex-wrap gap-12">
                             <div class="space-y-3">
-                                <h5 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 dark:text-white">Zasoby</h5>
+                                <h5 class="text-xs font-black uppercase tracking-[0.2em] text-gray-900 dark:text-white">Zasoby</h5>
                                 <ul class="space-y-2">
-                                    <li><a href="#" class="text-[10px] font-bold text-gray-400 hover:text-water-500 transition-colors uppercase tracking-wider">Dokumentacja</a></li>
-                                    <li><a href="#" class="text-[10px] font-bold text-gray-400 hover:text-water-500 transition-colors uppercase tracking-wider">Regulamin</a></li>
+                                    <li><a href="#" class="text-xs font-bold text-gray-400 hover:text-water-500 transition-colors uppercase tracking-wider">Dokumentacja</a></li>
+                                    <li><a href="#" class="text-xs font-bold text-gray-400 hover:text-water-500 transition-colors uppercase tracking-wider">Regulamin</a></li>
                                 </ul>
                             </div>
                             <div class="space-y-3">
-                                <h5 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 dark:text-white">System</h5>
+                                <h5 class="text-xs font-black uppercase tracking-[0.2em] text-gray-900 dark:text-white">System</h5>
                                 <ul class="space-y-2">
-                                    <li><span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Wersja 1.2.0</span></li>
-                                    <li><span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Status: Stable</span></li>
+                                    <li><span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Wersja 1.2.0</span></li>
+                                    <li><span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Status: Stable</span></li>
                                 </ul>
                             </div>
                         </div>
