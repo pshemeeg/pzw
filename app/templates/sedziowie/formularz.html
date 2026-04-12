@@ -1,154 +1,103 @@
-{% extends "base.html" %} {% block title %}{{ 'Edytuj' if sedzia else 'Nowy' }} sędzia{%
-endblock %} {% block page_title %}{{ 'Edytuj sędziego' if sedzia else 'Nowy sędzia' }}{%
-endblock %} {% block content %} {% if sedzia %}
-<form
-  method="POST"
-  action="{{ url_for('sedziowie.usun', sid=sedzia.id) }}"
-  id="form-usun"
-  onsubmit="return confirm('Usunąć tego sędziego? Usunięcie usunie też jego konto.')"
-></form>
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edytuj' if sedzia else 'Nowy' }} sędzia{% endblock %}
+{% block page_title %}{{ 'Edytuj sędziego' if sedzia else 'Nowy sędzia' }}{% endblock %}
+
+{% block content %}
+
+{% if sedzia %}
+<form method="POST" action="{{ url_for('sedziowie.usun', sid=sedzia.id) }}" id="form-usun"
+      onsubmit="return confirm('Usunąć tego sędziego? Usunięcie usunie też jego konto.')">
+</form>
 {% endif %}
 
 <form method="POST" id="form-glowny">
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-2 space-y-5">
-      <div
-        class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6 space-y-4"
-      >
-        <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide">
-          Dane osobowe
-        </h2>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Personal Data Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-sm overflow-hidden">
+                <div class="px-8 py-5 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
+                    <h2 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 opacity-80">Dane osobowe</h2>
+                </div>
+                <div class="p-8 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Imię *</label>
+                            <input type="text" name="imie" required value="{{ sedzia.imie if sedzia else '' }}"
+                                   class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Nazwisko *</label>
+                            <input type="text" name="nazwisko" required value="{{ sedzia.nazwisko if sedzia else '' }}"
+                                   class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                        </div>
+                    </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >Imię *</label
-            >
-            <input
-              type="text"
-              name="imie"
-              required
-              value="{{ sedzia.imie if sedzia else '' }}"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
-            />
-          </div>
-          <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >Nazwisko *</label
-            >
-            <input
-              type="text"
-              name="nazwisko"
-              required
-              value="{{ sedzia.nazwisko if sedzia else '' }}"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
-            />
-          </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Numer telefonu</label>
+                            <input type="tel" name="telefon" value="{{ sedzia.telefon if sedzia else '' }}"
+                                   class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Koło PZW</label>
+                            <input type="text" name="kolo" value="{{ sedzia.kolo if sedzia else '' }}"
+                                   class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Access Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-sm overflow-hidden">
+                <div class="px-8 py-5 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
+                    <h2 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 opacity-80">Konto dostępu</h2>
+                </div>
+                <div class="p-8 space-y-6">
+                    <p class="text-xs text-gray-400 font-medium italic">
+                        {% if sedzia and sedzia.uzytkownik %} 
+                            Sędzia posiada aktywne konto systemowe. Zostaw pole hasła puste, aby go nie zmieniać.
+                        {% else %} 
+                            Opcjonalne: wypełnij poniższe pola, aby utworzyć sędziemu konto umożliwiające logowanie.
+                        {% endif %}
+                    </p>
+
+                    <div class="space-y-2 pt-2">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Adres Email</label>
+                        <input type="email" name="email" value="{{ sedzia.uzytkownik.email if sedzia and sedzia.uzytkownik else '' }}"
+                               class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                    </div>
+
+                    <div class="space-y-2 pt-2">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Hasło</label>
+                        <input type="password" name="haslo" placeholder="********"
+                               class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >Telefon</label
-            >
-            <input
-              type="tel"
-              name="telefon"
-              value="{{ sedzia.telefon if sedzia else '' }}"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
-            />
-          </div>
-          <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >Koło PZW</label
-            >
-            <input
-              type="text"
-              name="kolo"
-              value="{{ sedzia.kolo if sedzia else '' }}"
-              class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
-            />
-          </div>
+        <div class="space-y-8">
+            <!-- Actions Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-xl p-8 space-y-4">
+                <button type="submit" form="form-glowny"
+                        class="w-full py-4 bg-gold-500 hover:bg-gold-600 text-white font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-gold-500/20 transition-all active:scale-[0.98]">
+                    {{ 'Zapisz zmiany' if sedzia else 'Dodaj sędziego' }}
+                </button>
+                <a href="{{ url_for('sedziowie.lista') }}"
+                   class="block w-full py-4 text-xs font-black text-center text-gray-400 uppercase tracking-widest hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                    Anuluj i wróć
+                </a>
+                {% if sedzia %}
+                <div class="pt-4 border-t border-water-50 dark:border-gray-700">
+                    <button type="submit" form="form-usun"
+                            class="w-full py-3 text-[10px] font-black text-red-400 hover:text-red-600 uppercase tracking-widest transition-all">
+                        Usuń sędziego na stałe
+                    </button>
+                </div>
+                {% endif %}
+            </div>
         </div>
-      </div>
-
-      <div
-        class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6 space-y-4"
-      >
-        <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide">
-          Konto dostępu
-        </h2>
-        <p class="text-xs text-gray-400">
-          {% if sedzia and sedzia.uzytkownik %} Sędzia ma konto. Zostaw hasło puste
-          jeśli nie chcesz go zmieniać. {% else %} Opcjonalne — wypełnij żeby sędzia
-          mógł się logować. {% endif %}
-        </p>
-
-        <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >Email</label
-          >
-          <input
-            type="email"
-            name="email"
-            value="{{ sedzia.uzytkownik.email if sedzia and sedzia.uzytkownik else '' }}"
-            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
-          />
-        </div>
-
-        <div>
-          <label
-            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >
-            Hasło {% if sedzia and sedzia.uzytkownik %}
-            <span class="font-normal text-gray-400 ml-1">
-              (zostaw puste by nie zmieniać)
-            </span>
-            {% endif %}
-          </label>
-          <input
-            type="password"
-            name="haslo"
-            class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
-          />
-        </div>
-      </div>
     </div>
-
-    <div class="space-y-4">
-      <div
-        class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-5 space-y-3"
-      >
-        <button
-          type="submit"
-          form="form-glowny"
-          class="w-full py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors"
-        >
-          {{ 'Zapisz zmiany' if sedzia else 'Dodaj sędziego' }}
-        </button>
-        <a
-          href="{{ url_for('sedziowie.lista') }}"
-          class="block w-full py-2 text-sm text-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-        >
-          Anuluj
-        </a>
-        {% if sedzia %}
-        <div class="border-t border-gray-100 dark:border-gray-700 pt-3">
-          <button
-            type="submit"
-            form="form-usun"
-            class="w-full py-2 text-sm text-red-500 hover:text-red-700 transition-colors"
-          >
-            Usuń sędziego
-          </button>
-        </div>
-        {% endif %}
-      </div>
-    </div>
-  </div>
 </form>
 {% endblock %}

@@ -90,7 +90,7 @@
         <div class="p-6 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
             <h2 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 opacity-80 mb-4">Szybkie dodawanie zawodnika</h2>
         </div>
-        <div class="p-8 flex-1 flex flex-col justify-center">
+        <div class="p-4 sm:p-8 flex-1 flex flex-col justify-center">
             <form method="POST" action="{{ url_for('zawody.uczestnik_dodaj', zid=zawody.id) }}" class="space-y-6">
                 <div x-data="szukajZawodnika()" class="relative">
                     <input type="hidden" name="zawodnik_id" x-model="wybranyId">
@@ -119,7 +119,7 @@
                     
                     <!-- No Results -->
                     <div x-show="wyniki.length === 0 && po_wyszukaniu" x-cloak
-                         class="absolute z-20 w-full mt-2 bg-white dark:bg-gray-800 border border-water-200 dark:border-gray-700 rounded-2xl shadow-2xl p-8 text-center animate-in fade-in slide-in-from-top-2 duration-200">
+                         class="absolute z-20 w-full mt-2 bg-white dark:bg-gray-800 border border-water-200 dark:border-gray-700 rounded-2xl shadow-2xl p-4 sm:p-8 text-center animate-in fade-in slide-in-from-top-2 duration-200">
                         <div class="w-12 h-12 bg-gray-50 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
                             <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
                         </div>
@@ -160,7 +160,7 @@
      class="space-y-8">
     
     <!-- Tab Navigation -->
-    <div class="flex overflow-x-auto border-b border-water-200 dark:border-gray-700 gap-8 scrollbar-hide">
+    <div class="flex overflow-x-auto border-b border-water-200 dark:border-gray-700 gap-4 sm:gap-8 scrollbar-hide">
         {% if current_user.is_authenticated %}
         <button @click="window.location.hash = 'uczestnicy'"
                 :class="tab === 'uczestnicy' ? 'border-b-4 border-gold-500 text-gray-900 dark:text-white font-black' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 font-bold'"
@@ -246,7 +246,7 @@ function szukajZawodnika() {
     <div x-show="showModal" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="fixed inset-0 z-50 w-screen overflow-y-auto" x-cloak>
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <div @click.away="showModal = false" class="relative transform overflow-hidden rounded-3xl bg-white dark:bg-gray-800 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <form method="POST" action="{{ url_for('zawody.szybki_zawodnik', zid=zawody.id) }}" class="p-8">
+                <form method="POST" action="{{ url_for('zawody.szybki_zawodnik', zid=zawody.id) }}" class="p-4 sm:p-8">
                     <h3 class="text-xl font-black text-gray-900 dark:text-white mb-6 uppercase tracking-tight">
                         Dodaj zawodnika do bazy
                     </h3>
