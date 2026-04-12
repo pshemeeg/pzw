@@ -1,83 +1,58 @@
-{% extends "base.html" %} {% block title %}{{ 'Edytuj' if lowisko else 'Nowe' }}
-łowisko{% endblock %} {% block page_title %}{{ 'Edytuj łowisko' if lowisko else 'Nowe
-łowisko' }}{% endblock %} {% block content %} {% if lowisko %}
-<form
-  method="POST"
-  action="{{ url_for('slowniki.lowisko_usun', lid=lowisko.id) }}"
-  id="form-usun"
-  onsubmit="return confirm('Usunąć to łowisko?')"
-></form>
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edytuj' if lowisko else 'Nowe' }} łowisko{% endblock %}
+{% block page_title %}{{ 'Edytuj łowisko' if lowisko else 'Nowe łowisko' }}{% endblock %}
+
+{% block content %}
+
+{% if lowisko %}
+<form method="POST" action="{{ url_for('slowniki.lowisko_usun', lid=lowisko.id) }}" id="form-usun"
+      onsubmit="return confirm('Usunąć to łowisko?')"></form>
 {% endif %}
 
-<form method="POST" id="form-glowny" class="max-w-lg">
-  <div
-    class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6 space-y-4"
-  >
-    <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-        >Nazwa *</label
-      >
-      <input
-        type="text"
-        name="nazwa"
-        required
-        value="{{ lowisko.nazwa if lowisko else '' }}"
-        class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
-      />
+<form method="POST" id="form-glowny" class="max-w-2xl mx-auto space-y-8">
+    <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-sm overflow-hidden">
+        <div class="px-8 py-5 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
+            <h2 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 opacity-80">Szczegóły łowiska</h2>
+        </div>
+        <div class="p-8 space-y-6">
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Nazwa łowiska *</label>
+                <input type="text" name="nazwa" required value="{{ lowisko.nazwa if lowisko else '' }}"
+                       class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Miejscowość *</label>
+                <input type="text" name="miejscowosc" required value="{{ lowisko.miejscowosc if lowisko else '' }}"
+                       class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Dodatkowy opis</label>
+                <textarea name="opis" rows="4"
+                          class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">{{ lowisko.opis if lowisko else '' }}</textarea>
+            </div>
+        </div>
     </div>
 
-    <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-        >Miejscowość *</label
-      >
-      <input
-        type="text"
-        name="miejscowosc"
-        required
-        value="{{ lowisko.miejscowosc if lowisko else '' }}"
-        class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
-      />
+    <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-xl p-8 space-y-4">
+        <button type="submit" form="form-glowny"
+                class="w-full py-4 bg-gold-500 hover:bg-gold-600 text-white font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-gold-500/20 transition-all active:scale-[0.98]">
+            {{ 'Zapisz zmiany' if lowisko else 'Dodaj łowisko' }}
+        </button>
+        <a href="{{ url_for('slowniki.index') }}"
+           class="block w-full py-4 text-xs font-black text-center text-gray-400 uppercase tracking-widest hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+            Anuluj i wróć
+        </a>
+        {% if lowisko %}
+        <div class="pt-4 border-t border-water-50 dark:border-gray-700">
+            <button type="submit" form="form-usun"
+                    class="w-full py-3 text-[10px] font-black text-red-400 hover:text-red-600 uppercase tracking-widest transition-all">
+                Usuń łowisko na stałe
+            </button>
+        </div>
+        {% endif %}
     </div>
-
-    <div>
-      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-        >Opis</label
-      >
-      <textarea
-        name="opis"
-        rows="3"
-        class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500"
-      >
-{{ lowisko.opis if lowisko else '' }}</textarea
-      >
-    </div>
-  </div>
-
-  <div class="flex items-center justify-between mt-4">
-    <a
-      href="{{ url_for('slowniki.index') }}"
-      class="text-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-    >
-      Anuluj
-    </a>
-    <div class="flex items-center gap-3">
-      {% if lowisko %}
-      <button
-        type="submit"
-        form="form-usun"
-        class="text-sm text-red-500 hover:text-red-700 transition-colors"
-      >
-        Usuń
-      </button>
-      {% endif %}
-      <button
-        type="submit"
-        form="form-glowny"
-        class="px-5 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors"
-      >
-        {{ 'Zapisz zmiany' if lowisko else 'Dodaj łowisko' }}
-      </button>
-    </div>
-  </div>
 </form>
 {% endblock %}

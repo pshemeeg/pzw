@@ -6,93 +6,59 @@
 {% block content %}
 
 {% if dyscyplina %}
-<form method="POST"
-      action="{{ url_for('slowniki.dyscyplina_usun', did=dyscyplina.id) }}"
-      id="form-usun"
+<form method="POST" action="{{ url_for('slowniki.dyscyplina_usun', did=dyscyplina.id) }}" id="form-usun"
       onsubmit="return confirm('Usunąć tę dyscyplinę?')"></form>
 {% endif %}
 
-<form method="POST" id="form-glowny" class="max-w-lg">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl border
-                border-water-200 dark:border-gray-700 p-6 space-y-4">
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700
-                          dark:text-gray-300 mb-1">Nazwa *</label>
-            <input type="text" name="nazwa" required
-                   value="{{ dyscyplina.nazwa if dyscyplina else '' }}"
-                   class="w-full px-3 py-2 text-sm rounded-lg border
-                          border-gray-300 dark:border-gray-600
-                          bg-white dark:bg-gray-700
-                          text-gray-800 dark:text-gray-100
-                          focus:outline-none focus:ring-2 focus:ring-water-500">
+<form method="POST" id="form-glowny" class="max-w-2xl mx-auto space-y-8">
+    <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-sm overflow-hidden">
+        <div class="px-8 py-5 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
+            <h2 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 opacity-80">Parametry dyscypliny</h2>
         </div>
+        <div class="p-8 space-y-6">
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Pełna nazwa *</label>
+                <input type="text" name="nazwa" required value="{{ dyscyplina.nazwa if dyscyplina else '' }}"
+                       class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+            </div>
 
-        <div>
-            <label class="block text-sm font-medium text-gray-700
-                          dark:text-gray-300 mb-1">
-                Kod *
-                <span class="font-normal text-gray-400 ml-1">
-                    (unikalny, bez spacji, małe litery)
-                </span>
-            </label>
-            <input type="text" name="kod" required
-                   value="{{ dyscyplina.kod if dyscyplina else '' }}"
-                   placeholder="np. splawik, feeder"
-                   pattern="[a-z0-9_]+"
-                   title="Tylko małe litery, cyfry i podkreślnik"
-                   class="w-full px-3 py-2 text-sm rounded-lg border
-                          border-gray-300 dark:border-gray-600
-                          bg-white dark:bg-gray-700
-                          text-gray-800 dark:text-gray-100
-                          focus:outline-none focus:ring-2 focus:ring-water-500">
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Kod identyfikacyjny *</label>
+                <input type="text" name="kod" required value="{{ dyscyplina.kod if dyscyplina else '' }}" placeholder="np. splawik, feeder"
+                       pattern="[a-z0-9_]+" title="Tylko małe litery, cyfry i podkreślnik"
+                       class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all font-mono">
+                <p class="text-[8px] text-gray-400 font-medium ml-1">Unikalny identyfikator techniczny (bez spacji, małe litery).</p>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">System punktacji *</label>
+                <select name="typ_wyniku" required
+                        class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
+                    {% for wartosc, etykieta in [('wagowy', 'Wagowy (gramy)'), ('punktowy', 'Punktowy (długość ryby)'), ('karpie', 'Karpiówka')] %}
+                    <option value="{{ wartosc }}" {% if dyscyplina and dyscyplina.typ_wyniku == wartosc %}selected{% endif %}>{{ etykieta }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700
-                          dark:text-gray-300 mb-1">Typ wyniku *</label>
-            <select name="typ_wyniku" required
-                    class="w-full px-3 py-2 text-sm rounded-lg border
-                           border-gray-300 dark:border-gray-600
-                           bg-white dark:bg-gray-700
-                           text-gray-800 dark:text-gray-100
-                           focus:outline-none focus:ring-2 focus:ring-water-500">
-                {% for wartosc, etykieta in [
-                    ('wagowy', 'Wagowy (gramy)'),
-                    ('punktowy', 'Punktowy (długość ryby)'),
-                    ('karpie', 'Karpiówka'),
-                ] %}
-                <option value="{{ wartosc }}"
-                    {% if dyscyplina and dyscyplina.typ_wyniku == wartosc %}
-                        selected
-                    {% endif %}>
-                    {{ etykieta }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-
     </div>
 
-    <div class="flex items-center justify-between mt-4">
-        <a href="{{ url_for('slowniki.index') }}"
-           class="text-sm text-gray-400 hover:text-gray-600
-                  dark:hover:text-gray-200 transition-colors">
-            Anuluj
+    <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-xl p-8 space-y-4">
+        <button type="submit" form="form-glowny"
+                class="w-full py-4 bg-gold-500 hover:bg-gold-600 text-white font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-gold-500/20 transition-all active:scale-[0.98]">
+            {{ 'Zapisz zmiany' if dyscyplina else 'Dodaj dyscyplinę' }}
+        </button>
+        <a href="{{ url_for('slowniki.index', _anchor='dyscypliny') }}"
+           class="block w-full py-4 text-xs font-black text-center text-gray-400 uppercase tracking-widest hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+            Anuluj i wróć
         </a>
-        <div class="flex items-center gap-3">
-            {% if dyscyplina %}
+        {% if dyscyplina %}
+        <div class="pt-4 border-t border-water-50 dark:border-gray-700">
             <button type="submit" form="form-usun"
-                    class="text-sm text-red-500 hover:text-red-700 transition-colors">
-                Usuń
-            </button>
-            {% endif %}
-            <button type="submit" form="form-glowny"
-                    class="px-5 py-2 text-sm font-medium bg-gold-500
-                           hover:bg-gold-600 text-white rounded-lg transition-colors">
-                {{ 'Zapisz zmiany' if dyscyplina else 'Dodaj dyscyplinę' }}
+                    class="w-full py-3 text-[10px] font-black text-red-400 hover:text-red-600 uppercase tracking-widest transition-all">
+                Usuń dyscyplinę na stałe
             </button>
         </div>
+        {% endif %}
     </div>
 </form>
 {% endblock %}

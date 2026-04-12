@@ -5,6 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.png') }}">
     <title>{% block title %}PZW{% endblock %} — System Zawodów</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -145,7 +146,7 @@
                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all
                           {{ 'bg-water-500 text-white shadow-md shadow-water-500/20' if request.endpoint.startswith('slowniki') else 'text-gray-600 dark:text-gray-400 hover:bg-water-50 dark:hover:bg-gray-700/50 hover:text-water-700 dark:hover:text-water-200' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                    Słowniki i Łowiska
+                    Słowniki
                 </a>
                 {% if current_user.is_admin() %}
                 <a href="{{ url_for('sedziowie.lista') }}"
