@@ -24,8 +24,9 @@ def runner(app):
 def db_session(app):
     with app.app_context():
         # Setup basic DB state for tests
+        from werkzeug.security import generate_password_hash
         admin = Uzytkownik(email="admin@pzw.pl", rola="admin")
-        admin.haslo_hash = "admin" # simplified for tests
+        admin.haslo_hash = generate_password_hash("admin")
         db.session.add(admin)
 
         dyscyplina = Dyscyplina(nazwa="Spławik", kod="splawik", typ_wyniku="wagowy")
