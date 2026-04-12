@@ -133,15 +133,15 @@ def protokol_pdf(zid):
     zawody = db.session.get(Zawody, zid)
     if not zawody:
         abort(404)
-        
+
     klasyfikacja = oblicz_klasyfikacje(zawody)
-    
+
     rendered_html = render_template(
         "zawody/protokol.html",
         zawody=zawody,
         klasyfikacja=klasyfikacja,
     )
-    
+
     try:
         from weasyprint import HTML
         pdf_file = HTML(string=rendered_html).write_pdf()
@@ -151,8 +151,36 @@ def protokol_pdf(zid):
             as_attachment=True,
             download_name=f"protokol_{zawody.nr_zawodow.replace('/', '_') if zawody.nr_zawodow else zid}.pdf"
         )
-    except ImportError:
-        flash("Moduł WeasyPrint nie jest zainstalowany. Pobieranie PDF niedostępne.", "danger")
+    except Exception as e:
+        flash(f"Błąd generowania PDF: {str(e)}", "danger")
+        return redirect(url_for("zawody.szczegoly", zid=zid))
+
+@bp.route("/<int:zid>/klasyfikacja/pdf")
+@login_required
+def klasyfikacja_pdf(zid):
+    zawody = db.session.get(Zawody, zid)
+    if not zawody:
+        abort(404)
+
+    klasyfikacja = oblicz_klasyfikacje(zawody)
+
+    rendered_html = render_template(
+        "zawody/klasyfikacja_pdf.html",
+        zawody=zawody,
+        klasyfikacja=klasyfikacja,
+    )
+
+    try:
+        from weasyprint import HTML
+        pdf_file = HTML(string=rendered_html).write_pdf()
+        return send_file(
+            io.BytesIO(pdf_file),
+            mimetype="application/pdf",
+            as_attachment=True,
+            download_name=f"klasyfikacja_{zawody.nr_zawodow.replace('/', '_') if zawody.nr_zawodow else zid}.pdf"
+        )
+    except Exception as e:
+        flash(f"Błąd generowania PDF: {str(e)}", "danger")
         return redirect(url_for("zawody.szczegoly", zid=zid))
 
 @bp.route("/<int:zid>")
@@ -215,6 +243,49 @@ def usun(zid):
     db.session.commit()
     flash("Zawody zostały usunięte.", "success")
     return redirect(url_for("zawody.lista"))
+
+
+@bp.route("/<int:zid>/szybki_zawodnik", methods=["POST"])
+@login_required
+def szybki_zawodnik(zid):
+    zawody = db.session.get(Zawody, zid)
+    if not zawody:
+        flash("Nie znaleziono zawodów.", "danger")
+        return redirect(url_for("zawody.lista"))
+        
+    imie = request.form.get("imie", "").strip()
+    nazwisko = request.form.get("nazwisko", "").strip()
+    kolo = request.form.get("kolo", "").strip()
+    druzyna = request.form.get("druzyna", "").strip() or None
+    
+    if not imie or not nazwisko or not kolo:
+        flash("Wypełnij wymagane pola (Imię, Nazwisko, Koło).", "danger")
+        return redirect(url_for("zawody.szczegoly", zid=zid))
+        
+    zawodnik = Zawodnik(
+        imie=imie,
+        nazwisko=nazwisko,
+        kolo=kolo
+    )
+    db.session.add(zawodnik)
+    db.session.flush() # pobranie ID
+    
+    max_nr = (
+        db.session.query(db.func.coalesce(db.func.max(Uczestnik.numer_startowy), 0))
+        .filter_by(zawody_id=zid)
+        .scalar()
+    )
+
+    uczestnik = Uczestnik(
+        zawody_id=zid,
+        zawodnik_id=zawodnik.id,
+        druzyna=druzyna,
+        numer_startowy=max_nr + 1,
+    )
+    db.session.add(uczestnik)
+    db.session.commit()
+    flash(f"Dodano zawodnika {imie} {nazwisko} i od razu przypisano do zawodów.", "success")
+    return redirect(url_for("zawody.szczegoly", zid=zid))
 
 
 @bp.route("/<int:zid>/uczestnicy/dodaj", methods=["POST"])

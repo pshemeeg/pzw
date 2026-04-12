@@ -21,19 +21,19 @@
               hover:bg-water-100 dark:hover:bg-gray-700 transition-colors">
         Edytuj
     </a>
-    <a href="{{ url_for('zawody.protokol', zid=zawody.id) }}"
+    <a href="{{ url_for('zawody.protokol_pdf', zid=zawody.id) }}"
        target="_blank"
        class="text-sm px-3 py-1.5 rounded-lg border
               border-gold-500 bg-gold-500 text-white
               hover:bg-gold-600 hover:border-gold-600 transition-colors">
-        Drukuj protokół
+        Pobierz Protokół
     </a>
-    <a href="{{ url_for('zawody.protokol_pdf', zid=zawody.id) }}"
+    <a href="{{ url_for('zawody.klasyfikacja_pdf', zid=zawody.id) }}"
        target="_blank"
        class="text-sm px-3 py-1.5 rounded-lg border
               border-blue-500 bg-blue-500 text-white
               hover:bg-blue-600 hover:border-blue-600 transition-colors ml-2">
-        Pobierz PDF
+        Pobierz Klasyfikację
     </a>
 </div>
 
@@ -130,6 +130,10 @@
                         </div>
                     </template>
                 </div>
+                <div x-show="wyniki.length === 0 && po_wyszukaniu" class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-water-200 dark:border-gray-600 rounded-lg shadow-lg overflow-hidden p-3 text-sm text-center text-gray-500">
+                    Brak wyników. 
+                    <button type="button" @click="$dispatch('open-modal'); zamknij()" class="text-water-600 dark:text-water-400 hover:underline font-medium">Szybkie dodawanie</button>
+                </div>
             </div>
 
             {% if zawody.klasyfikacja_druzynowa %}
@@ -198,25 +202,70 @@ function szukajZawodnika() {
         fraza: '',
         wyniki: [],
         wybranyId: null,
+        po_wyszukaniu: false,
         async szukaj() {
             if (this.fraza.length < 2) {
                 this.wyniki = [];
+                this.po_wyszukaniu = false;
                 return;
             }
             const resp = await fetch(
                 `/zawodnicy/szukaj?q=${encodeURIComponent(this.fraza)}`
             );
             this.wyniki = await resp.json();
+            this.po_wyszukaniu = true;
         },
         wybierz(z) {
             this.fraza = z.nazwisko + ' ' + z.imie + ' — ' + z.kolo;
             this.wybranyId = z.id;
             this.wyniki = [];
+            this.po_wyszukaniu = false;
         },
         zamknij() {
             this.wyniki = [];
+            this.po_wyszukaniu = false;
         },
     }
 }
 </script>
+
+<!-- Modal: Szybkie dodawanie zawodnika -->
+<div x-data="{ showModal: false }" @open-modal.window="showModal = true" class="relative z-50">
+    <div x-show="showModal" style="display: none;" class="fixed inset-0 bg-black/50 transition-opacity"></div>
+    <div x-show="showModal" style="display: none;" class="fixed inset-0 z-10 w-screen overflow-y-auto">
+        <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div @click.away="showModal = false" class="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <form method="POST" action="{{ url_for('zawody.szybki_zawodnik', zid=zawody.id) }}" class="p-6">
+                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 mb-4">
+                        Dodaj nowego zawodnika
+                    </h3>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <label class="block font-medium text-gray-700 dark:text-gray-300 mb-1">Imię *</label>
+                            <input type="text" name="imie" required class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                        </div>
+                        <div>
+                            <label class="block font-medium text-gray-700 dark:text-gray-300 mb-1">Nazwisko *</label>
+                            <input type="text" name="nazwisko" required class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                        </div>
+                        <div>
+                            <label class="block font-medium text-gray-700 dark:text-gray-300 mb-1">Koło PZW *</label>
+                            <input type="text" name="kolo" required class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                        </div>
+                        {% if zawody.klasyfikacja_druzynowa %}
+                        <div>
+                            <label class="block font-medium text-gray-700 dark:text-gray-300 mb-1">Drużyna *</label>
+                            <input type="text" name="druzyna" required class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="mt-6 flex justify-end gap-3">
+                        <button type="button" @click="showModal = false" class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">Anuluj</button>
+                        <button type="submit" class="px-4 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg">Zapisz i dodaj</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
