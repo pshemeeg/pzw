@@ -55,10 +55,11 @@ def oblicz_klasyfikacje(zawody):
             elif typ_wyniku == 'punktowy':
                 if stan.wyniki_ryby:
                     suma_pkt = sum(r.punkty for r in stan.wyniki_ryby if r.zaliczona)
-                    suma_dlugosci = sum(r.dlugosc_mm for r in stan.wyniki_ryby if r.zaliczona)
-                    # Do remisów użyjemy sumy punktów (zamiast wagi)
                     waga_do_remisow = suma_pkt
                     wynik_sort = (suma_pkt,)
+                    for r in stan.wyniki_ryby:
+                        if r.zaliczona and r.dlugosc_mm > najdluzsza_ryba:
+                            najdluzsza_ryba = r.dlugosc_mm
                     if suma_pkt <= 0:
                         zero = True
                 else:
@@ -70,7 +71,10 @@ def oblicz_klasyfikacje(zawody):
                 'wynik_sort': wynik_sort,
                 'dysk': dysk,
                 'zero': zero,
-                'waga': waga_do_remisow
+                'waga': waga_do_remisow,
+                'najdluzsza_ryba': najdluzsza_ryba,
+                'punkty_karne': punkty_karne,
+                'sztuki': sztuki
             }
 
     # 2. Obliczanie punktów sektorowych per tura
