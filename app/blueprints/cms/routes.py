@@ -86,7 +86,7 @@ Z każdej podstrony klasyfikacji możesz pobrać profesjonalny **Protokół PDF*
 
 #### V. USTAWIENIA I PREFERENCJE
 - W zakładce **Ustawienia konta** możesz zdefiniować swoje ulubione wartości domyślne.
-- System zapamięta Twoją domyślną dyscyplinę, liczbę sektorów, tur oraz ulubionych sędziów.
+- System zapamięta Twoją domyślną dyscyplinę, liczbę sektorów, tur, ulubione łowisko oraz koło organizatora.
 - Dzięki temu tworzenie nowych zawodów sprowadza się do wpisania nazwy i wybrania daty.
 """,
         'szablony': 'W tej sekcji znajdziesz wzory dokumentów potrzebnych do pracy w kole.'

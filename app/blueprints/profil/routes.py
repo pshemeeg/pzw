@@ -18,6 +18,8 @@ def ustawienia():
             "domyslny_sedzia_glowny_id": f.get("domyslny_sedzia_glowny_id", type=int),
             "domyslny_sedzia_sekretarz_id": f.get("domyslny_sedzia_sekretarz_id", type=int),
             "domyslna_kategoria": f.get("domyslna_kategoria", "").strip(),
+            "domyslny_organizator_kolo": f.get("domyslny_organizator_kolo", "").strip(),
+            "domyslne_lowisko_id": f.get("domyslne_lowisko_id", type=int),
         }
         
         current_user.ustawienia = nowe_ustawienia

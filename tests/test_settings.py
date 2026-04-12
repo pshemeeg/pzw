@@ -15,7 +15,9 @@ def test_user_settings_save(client, db_session):
         "domyslna_dyscyplina_id": d.id,
         "domyslna_liczba_sektorow": 3,
         "domyslna_liczba_tur": 2,
-        "domyslna_kategoria": "seniorzy"
+        "domyslna_kategoria": "seniorzy",
+        "domyslny_organizator_kolo": "Testowe Kolo",
+        "domyslne_lowisko_id": 1
     }, follow_redirects=True)
 
     assert response.status_code == 200
@@ -25,6 +27,7 @@ def test_user_settings_save(client, db_session):
     db_session.refresh(admin)
     assert admin.ustawienia["domyslna_dyscyplina_id"] == d.id
     assert admin.ustawienia["domyslna_liczba_sektorow"] == 3
+    assert admin.ustawienia["domyslny_organizator_kolo"] == "Testowe Kolo"
 
 def test_competition_form_uses_defaults(client, db_session):
     # Setup
@@ -38,7 +41,8 @@ def test_competition_form_uses_defaults(client, db_session):
     # Set defaults
     admin.ustawienia = {
         "domyslna_dyscyplina_id": d.id,
-        "domyslna_liczba_sektorow": 5
+        "domyslna_liczba_sektorow": 5,
+        "domyslny_organizator_kolo": "Moje Kolo"
     }
     db_session.commit()
 
@@ -50,3 +54,4 @@ def test_competition_form_uses_defaults(client, db_session):
     assert b'selected' in response.data
     assert b'name="liczba_sektorow"' in response.data
     assert b'value="5"' in response.data
+    assert b'value="Moje Kolo"' in response.data
