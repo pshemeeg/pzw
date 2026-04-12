@@ -309,6 +309,40 @@
                 {% endwith %}
 
                 {% block content %}{% endblock %}
+
+                <!-- Footer -->
+                <footer class="mt-20 pb-8 border-t border-water-100 dark:border-gray-800 pt-8">
+                    <div class="flex flex-col md:flex-row justify-between items-start gap-8">
+                        <div class="max-w-md space-y-3">
+                            <div class="flex items-center gap-2 opacity-50 grayscale">
+                                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" class="h-6 w-6 rounded-full">
+                                <span class="text-xs font-black uppercase tracking-widest text-gray-900 dark:text-white">System PZW</span>
+                            </div>
+                            <p class="text-[10px] leading-relaxed text-gray-400 dark:text-gray-500 font-medium">
+                                <strong>Nota prawna:</strong> Niniejszy system jest projektem hobbystycznym, opracowanym przy użyciu zaawansowanych technologii sztucznej inteligencji (AI). Aplikacja ma charakter niezależny i <strong>nie jest</strong> w żaden sposób powiązana, autoryzowana ani wspierana przez Polski Związek Wędkarski (PZW).
+                            </p>
+                            <p class="text-[10px] text-gray-400 dark:text-gray-500">
+                                Wszelkie prawa zastrzeżone &copy; 2026. Created with &hearts; for anglers.
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap gap-12">
+                            <div class="space-y-3">
+                                <h5 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 dark:text-white">Zasoby</h5>
+                                <ul class="space-y-2">
+                                    <li><a href="#" class="text-[10px] font-bold text-gray-400 hover:text-water-500 transition-colors uppercase tracking-wider">Dokumentacja</a></li>
+                                    <li><a href="#" class="text-[10px] font-bold text-gray-400 hover:text-water-500 transition-colors uppercase tracking-wider">Regulamin</a></li>
+                                </ul>
+                            </div>
+                            <div class="space-y-3">
+                                <h5 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-900 dark:text-white">System</h5>
+                                <ul class="space-y-2">
+                                    <li><span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Wersja 1.2.0</span></li>
+                                    <li><span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Status: Stable</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
             </div>
         </main>
 
