@@ -3,7 +3,7 @@ from flask_login import login_required
 
 from app.blueprints.slowniki import bp
 from app.extensions import db
-from app.models import Dyscyplina, Lowisko
+from app.models import Dyscyplina, Lowisko, GatunekRyby
 
 
 @bp.route("/")
@@ -11,8 +11,9 @@ from app.models import Dyscyplina, Lowisko
 def index():
     dyscypliny = Dyscyplina.query.order_by(Dyscyplina.nazwa).all()
     lowiska = Lowisko.query.order_by(Lowisko.nazwa).all()
+    ryby = GatunekRyby.query.order_by(GatunekRyby.nazwa).all()
     return render_template(
-        "slowniki/index.html", dyscypliny=dyscypliny, lowiska=lowiska
+        "slowniki/index.html", dyscypliny=dyscypliny, lowiska=lowiska, ryby=ryby
     )
 
 

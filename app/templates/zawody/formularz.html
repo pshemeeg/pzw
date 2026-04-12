@@ -138,6 +138,21 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700
                                   dark:text-gray-300 mb-1">
+                        Koło organizatora (nazwa)
+                    </label>
+                    <input type="text" name="organizator_kolo" placeholder="np. Koło nr 8 Bieruń"
+                           value="{{ zawody.organizator_kolo if zawody and zawody.organizator_kolo else '' }}"
+                           class="w-full px-3 py-2 text-sm rounded-lg border
+                                  border-gray-300 dark:border-gray-600
+                                  bg-white dark:bg-gray-700
+                                  text-gray-800 dark:text-gray-100
+                                  focus:outline-none focus:ring-2
+                                  focus:ring-water-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700
+                                  dark:text-gray-300 mb-1">
                         Sędzia główny
                     </label>
                     <select name="organizator_id"

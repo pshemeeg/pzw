@@ -184,7 +184,7 @@
         
         <div style="margin-top: 10px;">
             1. Rodzaj zawodów: <span class="dotted-line">{{ zawody.nazwa|upper }}</span><br>
-            2. Organizator Koło/Klub PZW: <span class="dotted-line">{{ zawody.organizator.kolo|upper if zawody.organizator and zawody.organizator.kolo else '........................' }}</span>
+            2. Organizator Koło/Klub PZW: <span class="dotted-line">{{ zawody.organizator_kolo|upper if zawody.organizator_kolo else (zawody.organizator.kolo|upper if zawody.organizator and zawody.organizator.kolo else '........................') }}</span>
             Rejon nr. <span class="dotted-line">{{ zawody.rejon if zawody.rejon else '......' }}</span><br>
             3. Komisja sędziowska w składzie:<br>
             &nbsp;&nbsp;&nbsp;Sędzia główny: <span class="dotted-line">{{ zawody.organizator.imie|upper ~ ' ' ~ zawody.organizator.nazwisko|upper if zawody.organizator else '........................................................................' }}</span><br>
@@ -256,7 +256,19 @@
     </div>
     
     <div style="margin-top: 10px; font-size: 9pt;">
-        * niepotrzebne skreślić <span style="float:right;">Wzór {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}B-1{% else %}A1{% endif %}</span>
+        * niepotrzebne skreślić <span style="float:right;">Wzór 
+        {% if zawody.klasyfikacja_druzynowa %}
+            {% if zawody.liczba_tur > 1 %}D-2{% else %}D-1{% endif %}
+        {% else %}
+            {% if zawody.dyscyplina.kod == 'karpiowa' %}
+                K-1
+            {% elif zawody.dyscyplina.typ_wyniku == 'punktowy' %}
+                {% if zawody.liczba_tur > 1 %}B-2{% else %}B-1{% endif %}
+            {% else %}
+                {% if zawody.liczba_tur > 1 %}A-2{% else %}A-1{% endif %}
+            {% endif %}
+        {% endif %}
+        </span>
     </div>
 
 </body>

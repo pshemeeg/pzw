@@ -43,6 +43,7 @@ def zawody_z_formularza(d, zawody=None):
     zawody.organizator_id = (
         int(d["organizator_id"]) if d.get("organizator_id") else None
     )
+    zawody.organizator_kolo = d.get("organizator_kolo", "").strip() or None
     zawody.sekretarz_id = (
         int(d["sekretarz_id"]) if d.get("sekretarz_id") else None
     )

@@ -1,37 +1,37 @@
 from app.extensions import db
-from app.models import Dyscyplina, Lowisko
+from app.models import GatunekRyby
 
-
-def seed_dyscypliny():
-    dyscypliny = [
-        {"nazwa": "Spławik", "kod": "splawik", "typ_wyniku": "wagowy"},
-        {"nazwa": "Feeder", "kod": "feeder", "typ_wyniku": "wagowy"},
-        {"nazwa": "Method feeder", "kod": "method", "typ_wyniku": "wagowy"},
-        {"nazwa": "Karpiówka", "kod": "karpie", "typ_wyniku": "karpie"},
-        {"nazwa": "Spinning", "kod": "spinning", "typ_wyniku": "punktowy"},
-        {"nazwa": "Mucha", "kod": "mucha", "typ_wyniku": "punktowy"},
-        {"nazwa": "Podlodowa", "kod": "podlodowa", "typ_wyniku": "wagowy"},
+def seed_gatunki_ryb():
+    if GatunekRyby.query.first():
+        return # already seeded
+    
+    ryby = [
+        {'nazwa': 'Sum', 'wymiar_punktowany_mm': 700, 'punkty_bazowe': 1000, 'punkty_za_mm': 10.0},
+        {'nazwa': 'Głowacica', 'wymiar_punktowany_mm': 700, 'punkty_bazowe': 1000, 'punkty_za_mm': 10.0},
+        {'nazwa': 'Szczupak', 'wymiar_punktowany_mm': 500, 'punkty_bazowe': 500, 'punkty_za_mm': 5.0},
+        {'nazwa': 'Sandacz', 'wymiar_punktowany_mm': 500, 'punkty_bazowe': 500, 'punkty_za_mm': 5.0},
+        {'nazwa': 'Boleń', 'wymiar_punktowany_mm': 400, 'punkty_bazowe': 400, 'punkty_za_mm': 5.0},
+        {'nazwa': 'Lipień', 'wymiar_punktowany_mm': 300, 'punkty_bazowe': 300, 'punkty_za_mm': 5.0},
+        {'nazwa': 'Pstrąg potokowy', 'wymiar_punktowany_mm': 300, 'punkty_bazowe': 300, 'punkty_za_mm': 5.0},
+        {'nazwa': 'Okoń', 'wymiar_punktowany_mm': 200, 'punkty_bazowe': 100, 'punkty_za_mm': 2.0},
+        {'nazwa': 'Kleń', 'wymiar_punktowany_mm': 250, 'punkty_bazowe': 250, 'punkty_za_mm': 5.0},
+        {'nazwa': 'Jaź', 'wymiar_punktowany_mm': 250, 'punkty_bazowe': 250, 'punkty_za_mm': 5.0},
+        {'nazwa': 'Brzana', 'wymiar_punktowany_mm': 300, 'punkty_bazowe': 300, 'punkty_za_mm': 5.0},
+        {'nazwa': 'Łosoś', 'wymiar_punktowany_mm': 600, 'punkty_bazowe': 600, 'punkty_za_mm': 10.0},
+        {'nazwa': 'Troć', 'wymiar_punktowany_mm': 350, 'punkty_bazowe': 350, 'punkty_za_mm': 5.0},
+        {'nazwa': 'Troć jeziorowa', 'wymiar_punktowany_mm': 500, 'punkty_bazowe': 500, 'punkty_za_mm': 5.0},
+        {'nazwa': 'Pstrąg tęczowy', 'wymiar_punktowany_mm': 300, 'punkty_bazowe': 300, 'punkty_za_mm': 5.0},
     ]
-    for d in dyscypliny:
-        if not Dyscyplina.query.filter_by(kod=d["kod"]).first():
-            db.session.add(Dyscyplina(**d))
+    
+    for r in ryby:
+        gatunek = GatunekRyby(
+            nazwa=r['nazwa'],
+            wymiar_ochronny_mm=r['wymiar_punktowany_mm'],
+            wymiar_punktowany_mm=r['wymiar_punktowany_mm'],
+            punkty_bazowe=r['punkty_bazowe'],
+            punkty_za_mm=r['punkty_za_mm']
+        )
+        db.session.add(gatunek)
+    
     db.session.commit()
-
-
-def seed_lowiska():
-    lowiska = [
-        {"nazwa": "Zalew Zegrzyński", "miejscowosc": "Zegrze"},
-        {"nazwa": "Wisła — Warszawa", "miejscowosc": "Warszawa"},
-        {"nazwa": "Narew — Pułtusk", "miejscowosc": "Pułtusk"},
-        {"nazwa": "Jeziorko Czerniakowskie", "miejscowosc": "Warszawa"},
-        {"nazwa": "Zalew Sulejowski", "miejscowosc": "Sulejów"},
-    ]
-    for l in lowiska:
-        if not Lowisko.query.filter_by(nazwa=l["nazwa"]).first():
-            db.session.add(Lowisko(**l))
-    db.session.commit()
-
-
-def run_seeds():
-    seed_dyscypliny()
-    seed_lowiska()
+    print("Gatunki ryb zostały dodane do bazy danych.")

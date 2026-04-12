@@ -112,6 +112,7 @@ class Zawody(db.Model):
     uwagi = db.Column(db.Text, nullable=True)
     sedziowie_sektorowi = db.Column(db.Text, nullable=True)
     sedziowie_kontrolni = db.Column(db.Text, nullable=True)
+    organizator_kolo = db.Column(db.String(128), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(
         db.DateTime,
@@ -143,6 +144,20 @@ class Zawody(db.Model):
 
     def __repr__(self):
         return f"<Zawody {self.nr_zawodow} {self.nazwa}>"
+
+
+class GatunekRyby(db.Model):
+    __tablename__ = "gatunki_ryb"
+
+    id = db.Column(db.Integer, primary_key=True)
+    nazwa = db.Column(db.String(64), nullable=False, unique=True)
+    wymiar_ochronny_mm = db.Column(db.Integer, nullable=False, default=0)
+    wymiar_punktowany_mm = db.Column(db.Integer, nullable=False, default=0)
+    punkty_bazowe = db.Column(db.Integer, nullable=False, default=0)
+    punkty_za_mm = db.Column(db.Float, nullable=False, default=0.0)
+
+    def __repr__(self):
+        return f"<GatunekRyby {self.nazwa}>"
 
 
 class Uczestnik(db.Model):
