@@ -46,7 +46,13 @@
         <dl class="space-y-3 text-sm">
             <div class="flex justify-between">
                 <dt class="text-gray-500 dark:text-gray-400">Data</dt>
-                <dd class="font-medium">{{ zawody.data.strftime('%d.%m.%Y') }}</dd>
+                <dd class="font-medium">
+                    {% if zawody.data_do %}
+                        {{ zawody.data.strftime('%d.%m') }}-{{ zawody.data_do.strftime('%d.%m.%Y') }}
+                    {% else %}
+                        {{ zawody.data.strftime('%d.%m.%Y') }}
+                    {% endif %}
+                </dd>
             </div>
             <div class="flex justify-between">
                 <dt class="text-gray-500 dark:text-gray-400">Dyscyplina</dt>

@@ -100,6 +100,7 @@ class Zawody(db.Model):
     nr_zawodow = db.Column(db.String(32), nullable=True)
     nazwa = db.Column(db.String(256), nullable=False)
     data = db.Column(db.Date, nullable=False)
+    data_do = db.Column(db.Date, nullable=True)
     godzina_start = db.Column(db.Time, nullable=True)
     godzina_koniec = db.Column(db.Time, nullable=True)
     kategoria = db.Column(db.String(64), nullable=True)

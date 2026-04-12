@@ -174,7 +174,13 @@
         </div>
         
         <div style="margin-top: 5px;">
-            Przeprowadzonych w dniu: <span class="dotted-line">{{ zawody.data.strftime('%d.%m.%Y') }}</span>
+            Przeprowadzonych w dniach: <span class="dotted-line">
+                {% if zawody.data_do %}
+                    {{ zawody.data.strftime('%d.%m') }}-{{ zawody.data_do.strftime('%d.%m.%Y') }}
+                {% else %}
+                    {{ zawody.data.strftime('%d.%m.%Y') }}
+                {% endif %}
+            </span>
             w godzinach: <span class="dotted-line">{{ zawody.godzina_start.strftime('%H:%M') if zawody.godzina_start else '......' }} - {{ zawody.godzina_koniec.strftime('%H:%M') if zawody.godzina_koniec else '......' }}</span>
         </div>
         <div style="margin-top: 5px;">

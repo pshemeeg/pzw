@@ -38,6 +38,7 @@ def zawody_z_formularza(d, zawody=None):
     zawody.nazwa = d["nazwa"].strip()
     zawody.nr_zawodow = d.get("nr_zawodow", "").strip() or None
     zawody.data = parse_date(d.get("data"))
+    zawody.data_do = parse_date(d.get("data_do"))
     zawody.dyscyplina_id = int(d["dyscyplina_id"])
     zawody.lowisko_id = int(d["lowisko_id"]) if d.get("lowisko_id") else None
     zawody.organizator_id = (

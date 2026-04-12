@@ -74,7 +74,11 @@
           {% endif %}
         </td>
         <td class="px-5 py-3 text-gray-500 dark:text-gray-400">
-          {{ z.data.strftime('%d.%m.%Y') }}
+          {% if z.data_do %}
+            {{ z.data.strftime('%d.%m') }}-{{ z.data_do.strftime('%d.%m.%Y') }}
+          {% else %}
+            {{ z.data.strftime('%d.%m.%Y') }}
+          {% endif %}
         </td>
         <td class="px-5 py-3 text-gray-500 dark:text-gray-400">
           {{ z.dyscyplina.nazwa }}

@@ -107,3 +107,52 @@ def dyscyplina_usun(did):
     db.session.commit()
     flash("Dyscyplina została usunięta.", "success")
     return redirect(url_for("slowniki.index"))
+
+@bp.route("/ryby/nowe", methods=["GET", "POST"])
+@login_required
+def ryba_nowa():
+    if request.method == "POST":
+        ryba = GatunekRyby(
+            nazwa=request.form["nazwa"].strip(),
+            wymiar_ochronny_mm=int(request.form.get("wymiar_ochronny_mm") or 0),
+            wymiar_punktowany_mm=int(request.form.get("wymiar_punktowany_mm") or 0),
+            punkty_bazowe=int(request.form.get("punkty_bazowe") or 0),
+            punkty_za_mm=float(request.form.get("punkty_za_mm") or 0.0),
+        )
+        db.session.add(ryba)
+        db.session.commit()
+        flash("Gatunek ryby został dodany.", "success")
+        return redirect(url_for("slowniki.index"))
+    return render_template("slowniki/ryba_form.html", ryba=None)
+
+
+@bp.route("/ryby/<int:rid>/edytuj", methods=["GET", "POST"])
+@login_required
+def ryba_edytuj(rid):
+    ryba = db.session.get(GatunekRyby, rid)
+    if not ryba:
+        flash("Nie znaleziono gatunku.", "danger")
+        return redirect(url_for("slowniki.index"))
+    if request.method == "POST":
+        ryba.nazwa = request.form["nazwa"].strip()
+        ryba.wymiar_ochronny_mm = int(request.form.get("wymiar_ochronny_mm") or 0)
+        ryba.wymiar_punktowany_mm = int(request.form.get("wymiar_punktowany_mm") or 0)
+        ryba.punkty_bazowe = int(request.form.get("punkty_bazowe") or 0)
+        ryba.punkty_za_mm = float(request.form.get("punkty_za_mm") or 0.0)
+        db.session.commit()
+        flash("Gatunek ryby został zaktualizowany.", "success")
+        return redirect(url_for("slowniki.index"))
+    return render_template("slowniki/ryba_form.html", ryba=ryba)
+
+
+@bp.route("/ryby/<int:rid>/usun", methods=["POST"])
+@login_required
+def ryba_usun(rid):
+    ryba = db.session.get(GatunekRyby, rid)
+    if not ryba:
+        flash("Nie znaleziono gatunku.", "danger")
+        return redirect(url_for("slowniki.index"))
+    db.session.delete(ryba)
+    db.session.commit()
+    flash("Gatunek ryby został usunięty.", "success")
+    return redirect(url_for("slowniki.index"))
