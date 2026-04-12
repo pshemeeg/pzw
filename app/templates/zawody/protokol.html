@@ -207,48 +207,15 @@
     </div>
 
     <!-- TABLE -->
-    <table>
-        <thead>
-            <tr>
-                <th class="col-lp">L.p.</th>
-                <th class="col-name">Nazwisko i Imię</th>
-                <th class="col-kolo">Nr/nazwa koła</th>
-                {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}
-                    <th class="col-num">Najdłuższa<br>ryba</th>
-                {% endif %}
-                <th class="col-num">Waga/pkt</th>
-                <th class="col-num">Pkt/sekt.</th>
-                <th class="col-num-small">M-ce</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for r in klasyfikacja.indywidualna %}
-            <tr>
-                <td class="col-lp">{{ loop.index }}</td>
-                <td class="col-name {% if r.miejsce == 1 %}text-red{% elif r.miejsce == 2 %}text-blue{% endif %}">
-                    {{ r.uczestnik.zawodnik.nazwisko|upper }} {{ r.uczestnik.zawodnik.imie|upper }}
-                </td>
-                <td class="col-kolo">
-                    {{ r.uczestnik.zawodnik.kolo|upper }}
-                </td>
-                {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}
-                    <td class="col-num">
-                        {{ r.najdluzsza_ryba_cm|string|replace('.0', '') if r.status == 'OK' else '0' }}
-                    </td>
-                {% endif %}
-                <td class="col-num {% if r.miejsce == 1 %}text-red{% elif r.miejsce == 2 %}text-blue{% endif %}">
-                    {{ r.suma_wag|string|replace('.0', '') if r.status == 'OK' else '0' }}
-                </td>
-                <td class="col-num">
-                    {{ r.suma_sektorowych|string|replace('.0', '') if r.status == 'OK' else 'NK' }}
-                </td>
-                <td class="col-num-small {% if r.miejsce == 1 %}text-red{% elif r.miejsce == 2 %}text-blue{% endif %}">
-                    {{ r.miejsce }}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% if zawody.klasyfikacja_druzynowa %}
+        {% include "zawody/protokoly/_tabela_D.html" %}
+    {% elif zawody.dyscyplina.kod == "karpiowa" %}
+        {% include "zawody/protokoly/_tabela_K.html" %}
+    {% elif zawody.dyscyplina.typ_wyniku == "punktowy" %}
+        {% include "zawody/protokoly/_tabela_B.html" %}
+    {% else %}
+        {% include "zawody/protokoly/_tabela_A.html" %}
+    {% endif %}
 
     <div class="signatures">
         <div class="sig-box">

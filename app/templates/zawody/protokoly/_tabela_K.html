@@ -1,0 +1,65 @@
+<table>
+    <thead>
+        <tr>
+            <th class="col-lp" rowspan="2">Lp</th>
+            <th class="col-name" rowspan="2">Nazwa teamu</th>
+            <th class="col-name" rowspan="2">Imię i Nazwisko</th>
+            <th class="col-num-small" rowspan="2">Nr.<br>stan.</th>
+            <th colspan="3">Razem</th>
+            <th class="col-num-small" rowspan="2">Pkt<br>karne</th>
+            <th class="col-num" rowspan="2">Pkt/<br>sekt.</th>
+            <th class="col-num-small" rowspan="2">M-ce</th>
+        </tr>
+        <tr>
+            <th class="col-num" style="font-size: 8pt;">sztuk</th>
+            <th class="col-num" style="font-size: 8pt;">Waga ryb<br>Punkty</th>
+            <th class="col-num" style="font-size: 8pt;">Najcięższa<br>ryba</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% set team_dict = {} %}
+        {% for r in klasyfikacja.indywidualna %}
+            {% set team_name = r.uczestnik.druzyna %}
+            {% if team_name %}
+                {% if not team_dict.get(team_name) %}
+                    {% set _ = team_dict.update({team_name: []}) %}
+                {% endif %}
+                {% set _ = team_dict[team_name].append(r) %}
+            {% endif %}
+        {% endfor %}
+        
+        {% set sorted_teams = [] %}
+        {% for team_name, members in team_dict.items() %}
+            {% set t_waga = members | sum(attribute='suma_wag') %}
+            {% set t_sztuki = members | map(attribute='punkty_tury') | sum(start=[]) | map(attribute='sztuki') | sum %}
+            {% set _ = sorted_teams.append({'name': team_name, 'members': members, 'waga': t_waga}) %}
+        {% endfor %}
+        
+        {% for r in klasyfikacja.indywidualna %}
+            {# In carp competitions often players are registered as individuals but treated as a team if they have the same team name or they just sit at the same stand. Let's just output individually, but group names if possible, or just standard output with all required K columns. Assuming individuals sit on their own stand. #}
+            {% set dt = r.punkty_tury.get(1) %}
+        <tr>
+            <td class="col-lp">{{ loop.index }}</td>
+            <td class="col-name">{{ r.uczestnik.druzyna|upper if r.uczestnik.druzyna else r.uczestnik.zawodnik.kolo|upper }}</td>
+            <td class="col-name {% if r.miejsce == 1 %}text-red{% elif r.miejsce == 2 %}text-blue{% endif %}">
+                {{ r.uczestnik.zawodnik.nazwisko|upper }} {{ r.uczestnik.zawodnik.imie|upper }}
+            </td>
+            <td class="col-num-small">{{ dt.stanowisko if dt else '' }}</td>
+            
+            <td class="col-num">{{ dt.sztuki if dt else '0' }}</td>
+            <td class="col-num {% if r.miejsce == 1 %}text-red{% elif r.miejsce == 2 %}text-blue{% endif %}">
+                {{ r.suma_wag|string|replace('.0', '') if r.status == 'OK' else '0' }}
+            </td>
+            <td class="col-num">{{ (dt.najdluzsza_ryba)|string|replace('.0', '') if dt and dt.najdluzsza_ryba > 0 else '0' }}</td>
+            <td class="col-num-small">{{ dt.punkty_karne if dt else '0' }}</td>
+            
+            <td class="col-num">
+                {{ r.suma_sektorowych|string|replace('.0', '') if r.status == 'OK' else 'NK' }}
+            </td>
+            <td class="col-num-small {% if r.miejsce == 1 %}text-red{% elif r.miejsce == 2 %}text-blue{% endif %}">
+                {{ r.miejsce }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

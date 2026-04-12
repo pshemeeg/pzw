@@ -1,0 +1,105 @@
+<table>
+    <thead>
+        <tr>
+            <th class="col-lp" rowspan="2">Lp.</th>
+            <th class="col-name" rowspan="2">Nazwa drużyny/koła</th>
+            {% if zawody.liczba_tur == 1 %}
+                <th class="col-num" rowspan="2">Najlepszy wynik<br>zawodnika<br>w drużynie</th>
+                <th class="col-num" rowspan="2">Pkt/waga</th>
+                <th class="col-num" rowspan="2">Pkt/sekt</th>
+            {% else %}
+                {% for t in range(1, zawody.liczba_tur + 1) %}
+                    <th colspan="{% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}3{% else %}2{% endif %}">{{ t }} - tura</th>
+                {% endfor %}
+                <th class="col-num" rowspan="2">Najlepszy wynik<br>zawodnika<br>w zawodach</th>
+                <th class="col-num" rowspan="2">Suma<br>waga/pkt</th>
+                <th class="col-num" rowspan="2">Suma<br>pkt. sekt</th>
+            {% endif %}
+            <th class="col-num-small" rowspan="2">M-ce</th>
+        </tr>
+        {% if zawody.liczba_tur > 1 %}
+        <tr>
+            {% for t in range(1, zawody.liczba_tur + 1) %}
+                {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}
+                    <th class="col-num" style="font-size: 8pt;">Najdł.<br>ryba</th>
+                {% endif %}
+                <th class="col-num" style="font-size: 8pt;">Suma<br>waga/pkt</th>
+                <th class="col-num" style="font-size: 8pt;">Suma<br>pkt. sekt</th>
+            {% endfor %}
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% for d in klasyfikacja.druzynowa %}
+        <tr>
+            <td class="col-lp" rowspan="{% if d.status == 'OK' %}{{ d.zawodnicy|length + 1 }}{% else %}1{% endif %}">{{ loop.index }}</td>
+            <td class="col-name" style="font-weight: bold; font-size: 11pt; color: {% if d.miejsce == 1 %}#d00{% elif d.miejsce == 2 %}#00d{% elif d.miejsce == 3 %}#a60{% else %}#000{% endif %};">
+                {{ d.druzyna|upper }}
+            </td>
+            
+            {% if zawody.liczba_tur == 1 %}
+                <td class="col-num">
+                    {% set best_player = d.zawodnicy | max(attribute='suma_wag') %}
+                    {{ best_player.suma_wag|string|replace('.0', '') if d.status == 'OK' else '0' }}
+                </td>
+                <td class="col-num" style="font-size: 12pt; color: {% if d.miejsce == 1 %}#d00{% elif d.miejsce == 2 %}#00d{% elif d.miejsce == 3 %}#a60{% else %}#000{% endif %};">
+                    {{ d.suma_wag|string|replace('.0', '') if d.status == 'OK' else '0' }}
+                </td>
+                <td class="col-num" style="font-size: 12pt; color: {% if d.miejsce == 1 %}#d00{% elif d.miejsce == 2 %}#00d{% elif d.miejsce == 3 %}#a60{% else %}#000{% endif %};">
+                    {{ d.suma_sektorowych|string|replace('.0', '') if d.status == 'OK' else 'NK' }}
+                </td>
+            {% else %}
+                {% for t in range(1, zawody.liczba_tur + 1) %}
+                    {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}
+                        {% set best_fish = d.zawodnicy | map(attribute='punkty_tury') | map('[]', t) | select('!=', None) | map(attribute='najdluzsza_ryba_cm') | max | default(0) %}
+                        <td class="col-num">{{ best_fish|string|replace('.0', '') }}</td>
+                    {% endif %}
+                    {% set t_waga = d.zawodnicy | map(attribute='punkty_tury') | map('[]', t) | select('!=', None) | map(attribute='waga') | sum %}
+                    {% set t_sekt = d.zawodnicy | map(attribute='punkty_tury') | map('[]', t) | select('!=', None) | map(attribute='sektorowe') | sum %}
+                    <td class="col-num">{{ t_waga|string|replace('.0', '') if d.status == 'OK' else '0' }}</td>
+                    <td class="col-num">{{ t_sekt|string|replace('.0', '') if d.status == 'OK' else 'NK' }}</td>
+                {% endfor %}
+                <td class="col-num">
+                    {% set best_player = d.zawodnicy | max(attribute='suma_wag') %}
+                    {{ best_player.suma_wag|string|replace('.0', '') if d.status == 'OK' else '0' }}
+                </td>
+                <td class="col-num">
+                    {{ d.suma_wag|string|replace('.0', '') if d.status == 'OK' else '0' }}
+                </td>
+                <td class="col-num">
+                    {{ d.suma_sektorowych|string|replace('.0', '') if d.status == 'OK' else 'NK' }}
+                </td>
+            {% endif %}
+            <td class="col-num-small" style="font-size: 12pt; color: {% if d.miejsce == 1 %}#d00{% elif d.miejsce == 2 %}#00d{% elif d.miejsce == 3 %}#a60{% else %}#000{% endif %};" rowspan="{% if d.status == 'OK' %}{{ d.zawodnicy|length + 1 }}{% else %}1{% endif %}">
+                {{ d.miejsce }}
+            </td>
+        </tr>
+        {% if d.status == 'OK' %}
+            {% for r in d.zawodnicy %}
+            <tr>
+                <td class="col-name" style="padding-left: 20px; font-size: 9pt;">
+                    {{ r.uczestnik.zawodnik.nazwisko|upper }} {{ r.uczestnik.zawodnik.imie|upper }}
+                </td>
+                {% if zawody.liczba_tur == 1 %}
+                    <td class="col-num" style="font-size: 9pt; color: #555;">{{ r.suma_wag|string|replace('.0', '') }}</td>
+                    <td class="col-num" style="font-size: 9pt; color: #555;">{{ r.suma_wag|string|replace('.0', '') }}</td>
+                    <td class="col-num" style="font-size: 9pt; color: #555;">{{ r.suma_sektorowych|string|replace('.0', '') }}</td>
+                {% else %}
+                    {% for t in range(1, zawody.liczba_tur + 1) %}
+                        {% set dt = r.punkty_tury.get(t) %}
+                        {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}
+                            <td class="col-num" style="font-size: 9pt; color: #555;">{{ dt.najdluzsza_ryba_cm|string|replace('.0', '') if dt else '0' }}</td>
+                        {% endif %}
+                        <td class="col-num" style="font-size: 9pt; color: #555;">{{ dt.waga|string|replace('.0', '') if dt else '0' }}</td>
+                        <td class="col-num" style="font-size: 9pt; color: #555;">{{ dt.sektorowe|string|replace('.0', '') if dt else 'NK' }}</td>
+                    {% endfor %}
+                    <td class="col-num" style="font-size: 9pt; color: #555;">{{ r.suma_wag|string|replace('.0', '') }}</td>
+                    <td class="col-num" style="font-size: 9pt; color: #555;">{{ r.suma_wag|string|replace('.0', '') }}</td>
+                    <td class="col-num" style="font-size: 9pt; color: #555;">{{ r.suma_sektorowych|string|replace('.0', '') }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>

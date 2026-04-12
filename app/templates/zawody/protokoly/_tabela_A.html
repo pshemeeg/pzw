@@ -1,0 +1,73 @@
+<table>
+    <thead>
+        <tr>
+            <th class="col-lp" rowspan="2">Lp.</th>
+            <th class="col-name" rowspan="2">Nazwisko i Imię</th>
+            <th class="col-kolo" rowspan="2">Nr/nazwa koła</th>
+            {% if zawody.liczba_tur == 1 %}
+                <th class="col-num" rowspan="2">Waga/pkt</th>
+                <th class="col-num" rowspan="2">Pkt/sekt.</th>
+            {% else %}
+                {% for t in range(1, zawody.liczba_tur + 1) %}
+                    <th colspan="2">{{ t }} tura</th>
+                {% endfor %}
+                <th class="col-num" rowspan="2">Suma<br>waga/pkt</th>
+                <th class="col-num" rowspan="2">Suma<br>pkt./sekt</th>
+            {% endif %}
+            <th class="col-num-small" rowspan="2">M-ce</th>
+        </tr>
+        {% if zawody.liczba_tur > 1 %}
+        <tr>
+            {% for t in range(1, zawody.liczba_tur + 1) %}
+                <th class="col-num" style="font-size: 8pt;">waga/pkt.</th>
+                <th class="col-num" style="font-size: 8pt;">pkt./sek.</th>
+            {% endfor %}
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% for r in klasyfikacja.indywidualna %}
+        <tr>
+            <td class="col-lp">{{ loop.index }}</td>
+            <td class="col-name {% if r.miejsce == 1 %}text-red{% elif r.miejsce == 2 %}text-blue{% endif %}">
+                {{ r.uczestnik.zawodnik.nazwisko|upper }} {{ r.uczestnik.zawodnik.imie|upper }}
+            </td>
+            <td class="col-kolo">
+                {{ r.uczestnik.zawodnik.kolo|upper }}
+            </td>
+            {% if zawody.liczba_tur == 1 %}
+                <td class="col-num {% if r.miejsce == 1 %}text-red{% elif r.miejsce == 2 %}text-blue{% endif %}">
+                    {{ r.suma_wag|string|replace('.0', '') if r.status == 'OK' else '0' }}
+                </td>
+                <td class="col-num">
+                    {{ r.suma_sektorowych|string|replace('.0', '') if r.status == 'OK' else 'NK' }}
+                </td>
+            {% else %}
+                {% for t in range(1, zawody.liczba_tur + 1) %}
+                    {% set dt = r.punkty_tury.get(t) %}
+                    {% if dt %}
+                        <td class="col-num">
+                            {{ dt.waga|string|replace('.0', '') if dt.status != 'NK' else '0' }}
+                        </td>
+                        <td class="col-num">
+                            {{ dt.sektorowe|string|replace('.0', '') if dt.status != 'NK' else '8' }}
+                        </td>
+                    {% else %}
+                        <td class="col-num">0</td>
+                        <td class="col-num">8</td>
+                    {% endif %}
+                {% endfor %}
+                <td class="col-num {% if r.miejsce == 1 %}text-red{% elif r.miejsce == 2 %}text-blue{% endif %}">
+                    {{ r.suma_wag|string|replace('.0', '') if r.status == 'OK' else '0' }}
+                </td>
+                <td class="col-num">
+                    {{ r.suma_sektorowych|string|replace('.0', '') if r.status == 'OK' else 'NK' }}
+                </td>
+            {% endif %}
+            <td class="col-num-small {% if r.miejsce == 1 %}text-red{% elif r.miejsce == 2 %}text-blue{% endif %}">
+                {{ r.miejsce }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

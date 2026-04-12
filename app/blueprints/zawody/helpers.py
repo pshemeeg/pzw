@@ -162,6 +162,8 @@ def oblicz_klasyfikacje(zawody):
         zera_lub_dyski = 0
         ma_wszystkie_tury = True
         
+        dane_tur = {}
+        
         for t in tury:
             if t in pkt_sektorowe[u.id]:
                 p = pkt_sektorowe[u.id][t]
@@ -170,8 +172,21 @@ def oblicz_klasyfikacje(zawody):
                 wagi_u.append(data['waga'])
                 if data['zero'] or data['dysk']:
                     zera_lub_dyski += 1
+                
+                dane_tur[t] = {
+                    'sektorowe': p,
+                    'waga': data['waga'],
+                    'najdluzsza_ryba': data['najdluzsza_ryba'],
+                    'najdluzsza_ryba_cm': round(data['najdluzsza_ryba'] / 10, 1) if data['najdluzsza_ryba'] > 0 else 0,
+                    'punkty_karne': data['punkty_karne'],
+                    'sztuki': data['sztuki'],
+                    'stanowisko': f"{data['stanowisko'].sektor}{data['stanowisko'].numer}",
+                    'zero': data['zero'],
+                    'dysk': data['dysk']
+                }
             else:
                 ma_wszystkie_tury = False
+                dane_tur[t] = None
                 break
                 
         # N/C jeśli zawodnik nie miał stanowiska, lub miał 0 / DYS we wszystkich turach
@@ -195,7 +210,7 @@ def oblicz_klasyfikacje(zawody):
             'uczestnik': u,
             'suma_sektorowych': suma_pkt,
             'suma_wag': suma_wag,
-            'punkty_tury': {t: pkt_sektorowe[u.id].get(t, '-') for t in tury},
+            'punkty_tury': dane_tur,
             'najdluzsza_ryba_cm': round(max_ryba_mm / 10, 1) if max_ryba_mm > 0 else 0,
             'status': status
         })
