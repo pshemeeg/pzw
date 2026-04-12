@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required, current_user
 from app.blueprints.profil import bp
 from app.extensions import db
-from app.models import Dyscyplina, Sedzia
+from app.models import Dyscyplina, Sedzia, Lowisko
 
 @bp.route("/ustawienia", methods=["GET", "POST"])
 @login_required
@@ -29,6 +29,7 @@ def ustawienia():
 
     dyscypliny = Dyscyplina.query.order_by(Dyscyplina.nazwa).all()
     sedziowie = Sedzia.query.order_by(Sedzia.nazwisko).all()
+    lowiska = Lowisko.query.order_by(Lowisko.nazwa).all()
     
     # Pobierz obecne ustawienia lub zainicjuj pustym słownikiem
     u = current_user.ustawienia or {}
@@ -37,5 +38,6 @@ def ustawienia():
         "profil/ustawienia.html", 
         dyscypliny=dyscypliny, 
         sedziowie=sedziowie,
+        lowiska=lowiska,
         u=u
     )
