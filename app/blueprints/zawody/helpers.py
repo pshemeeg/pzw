@@ -26,6 +26,9 @@ def oblicz_klasyfikacje(zawody):
             zero = False
             waga_do_remisow = 0
             wynik_sort = ()
+            najdluzsza_ryba = 0
+            punkty_karne = 0
+            sztuki = 0
             
             if typ_wyniku == 'wagowy':
                 if stan.wynik_wagowy:
