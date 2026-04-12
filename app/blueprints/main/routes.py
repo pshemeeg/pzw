@@ -1,20 +1,22 @@
 import io
-from flask import render_template, send_file, request, abort
+from flask import render_template, send_file, request, abort, flash, redirect, url_for
 from flask_login import login_required, current_user
 from sqlalchemy import desc, func
 from datetime import datetime
 
 from app.blueprints.main import bp
 from app.extensions import db
-from app.models import Zawody, Zawodnik, Sedzia, Uczestnik
-from app.blueprints.main.helpers import generate_csv_template
+from app.models import Zawody, Zawodnik, Sedzia
+from app.blueprints.main.helpers import generate_csv_template, calculate_gp_ranking
 
 
 @bp.route("/")
 def index():
     # Pokazujemy tylko te, które wg daty są już zakończone
-    teraz = datetime.now()
-    ostatnie_zawody = [z for z in Zawody.query.order_by(desc(Zawody.data)).all() if z.computed_status == "zakonczone"][:5]
+    ostatnie_zawody = [
+        z for z in Zawody.query.order_by(desc(Zawody.data)).all()
+        if z.computed_status == "zakonczone"
+    ][:5]
     return render_template("main/index.html", ostatnie_zawody=ostatnie_zawody)
 
 
@@ -23,8 +25,10 @@ def index():
 def dashboard():
     teraz = datetime.now()
     wszystkie = Zawody.query.all()
-    
-    ostatnie_zawody = sorted(wszystkie, key=lambda x: x.updated_at or x.created_at, reverse=True)[:10]
+
+    ostatnie_zawody = sorted(
+        wszystkie, key=lambda x: x.updated_at or x.created_at, reverse=True
+    )[:10]
     liczba_zawodow = len(wszystkie)
     liczba_zawodnikow = Zawodnik.query.count()
     liczba_sedziow = Sedzia.query.count()
@@ -33,15 +37,25 @@ def dashboard():
     moje_aktywne = []
     if current_user.sedzia:
         sid = current_user.sedzia.id
-        moje_aktywne = [z for z in wszystkie if (z.organizator_id == sid or z.sekretarz_id == sid or sid in [s.id for s in z.sedziowie]) and z.computed_status == "w_trakcie"]
+        moje_aktywne = [
+            z for z in wszystkie
+            if (z.organizator_id == sid or z.sekretarz_id == sid or
+                sid in [s.id for s in z.sedziowie]) and
+            z.computed_status == "w_trakcie"
+        ]
 
     # Statystyki do wykresu: Zawody na miesiąc w bieżącym sezonie
     obecny_rok = teraz.year
     stats_raw = db.session.query(
         func.strftime("%m", Zawody.data), func.count(Zawody.id)
-    ).filter(Zawody.sezon == obecny_rok).group_by(func.strftime("%m", Zawody.data)).all()
-    
-    chart_labels = ["Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru"]
+    ).filter(Zawody.sezon == obecny_rok).group_by(
+        func.strftime("%m", Zawody.data)
+    ).all()
+
+    chart_labels = [
+        "Sty", "Lut", "Mar", "Kwi", "Maj", "Cze",
+        "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru"
+    ]
     chart_data = [0] * 12
     for m_str, count in stats_raw:
         chart_data[int(m_str) - 1] = count
@@ -58,14 +72,14 @@ def dashboard():
     )
 
 
-from app.blueprints.main.helpers import generate_csv_template, calculate_gp_ranking
-
 @bp.route("/grand-prix")
 def grand_prix():
     sezon = request.args.get("sezon", datetime.now().year, type=int)
     ranking, zawody_gp, detale_zawodow = calculate_gp_ranking(sezon)
-    
-    sezymy_raw = db.session.query(Zawody.sezon).distinct().order_by(Zawody.sezon.desc()).all()
+
+    sezymy_raw = db.session.query(
+        Zawody.sezon
+    ).distinct().order_by(Zawody.sezon.desc()).all()
     sezony = [s[0] for s in sezymy_raw]
 
     return render_template(
@@ -77,13 +91,14 @@ def grand_prix():
         sezony=sezony
     )
 
+
 @bp.route("/grand-prix/pdf")
 def grand_prix_pdf():
     sezon = request.args.get("sezon", datetime.now().year, type=int)
-    typ = request.args.get("typ", "prosty") # 'prosty' lub 'zaawansowany'
-    
+    typ = request.args.get("typ", "prosty")  # 'prosty' lub 'zaawansowany'
+
     ranking, zawody_gp, detale_zawodow = calculate_gp_ranking(sezon)
-    
+
     rendered_html = render_template(
         "main/grand_prix_pdf.html",
         ranking=ranking,
@@ -104,7 +119,6 @@ def grand_prix_pdf():
             download_name=f"grand_prix_{sezon}_{typ}.pdf"
         )
     except Exception as e:
-        from flask import flash, redirect, url_for
         flash(f"Błąd generowania PDF: {str(e)}", "danger")
         return redirect(url_for("main.grand_prix", sezon=sezon))
 
@@ -114,16 +128,18 @@ def grand_prix_pdf():
 def download_csv_template(typ):
     """Pobieranie wzorcowych plików CSV."""
     cols_map = {
-        "zawodnicy": ["imie", "nazwisko", "kolo", "nr_licencji"],
+        "zawodnicy": ["imie", "nazwisko", "kolo", "nr_licencji", "rodo_zgoda"],
         "lowiska": ["nazwa", "miejscowosc", "opis"],
         "dyscypliny": ["nazwa", "kod", "typ_wyniku"],
-        "ryby": ["nazwa", "wymiar_ochronny_mm", "wymiar_punktowany_mm", "punkty_bazowe", "punkty_za_mm"]
+        "ryby": [
+            "nazwa", "wymiar_ochronny_mm", "wymiar_punktowany_mm",
+            "punkty_bazowe", "punkty_za_mm"
+        ]
     }
-    
+
     if typ not in cols_map:
-        from flask import abort
         abort(404)
-        
+
     mem = generate_csv_template(cols_map[typ])
     return send_file(
         mem,
@@ -131,6 +147,3 @@ def download_csv_template(typ):
         as_attachment=True,
         download_name=f"szablon_{typ}.csv"
     )
-
-
-

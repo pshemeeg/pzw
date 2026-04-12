@@ -16,7 +16,7 @@
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
                     </span>
-                    <span class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">Twoje zawody trwają teraz</span>
+                    <span class="text-xs font-black uppercase tracking-[0.2em] opacity-80">Twoje zawody trwają teraz</span>
                 </div>
                 <h2 class="text-3xl font-black uppercase tracking-tighter">{{ z.nazwa }}</h2>
                 <p class="text-sm font-medium opacity-90">{{ z.lowisko.nazwa if z.lowisko else 'Łowisko nieokreślone' }} — {{ z.dyscyplina.nazwa }}</p>
@@ -41,7 +41,7 @@
             <div class="w-12 h-12 rounded-2xl bg-water-50 dark:bg-water-900/30 flex items-center justify-center text-water-600 dark:text-water-400 group-hover:scale-110 transition-transform">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             </div>
-            <span class="text-[10px] font-black uppercase tracking-widest text-gray-300 dark:text-gray-600">Statystyka</span>
+            <span class="text-xs font-black uppercase tracking-widest text-gray-300 dark:text-gray-600">Statystyka</span>
         </div>
         <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Wszystkie zawody</p>
         <p class="text-4xl font-black text-gray-900 dark:text-white">{{ liczba_zawodow }}</p>
@@ -52,7 +52,7 @@
             <div class="w-12 h-12 rounded-2xl bg-gold-50 dark:bg-amber-900/30 flex items-center justify-center text-gold-600 dark:text-amber-400 group-hover:scale-110 transition-transform">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
             </div>
-            <span class="text-[10px] font-black uppercase tracking-widest text-gray-300 dark:text-gray-600">Baza danych</span>
+            <span class="text-xs font-black uppercase tracking-widest text-gray-300 dark:text-gray-600">Baza danych</span>
         </div>
         <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Aktywni zawodnicy</p>
         <p class="text-4xl font-black text-gray-900 dark:text-white">{{ liczba_zawodnikow }}</p>
@@ -63,7 +63,7 @@
             <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
             </div>
-            <span class="text-[10px] font-black uppercase tracking-widest text-gray-300 dark:text-gray-600">Kadra</span>
+            <span class="text-xs font-black uppercase tracking-widest text-gray-300 dark:text-gray-600">Kadra</span>
         </div>
         <p class="text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-1">Sędziowie PZW</p>
         <p class="text-4xl font-black text-gray-900 dark:text-white">{{ liczba_sedziow }}</p>
@@ -77,7 +77,7 @@
             <h2 class="text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Aktywność w sezonie {{ chart_labels[0] }}</h2>
             <div class="flex items-center gap-2">
                 <span class="w-3 h-3 rounded-full bg-water-500"></span>
-                <span class="text-[10px] font-bold text-gray-400 uppercase">Liczba zawodów</span>
+                <span class="text-xs font-bold text-gray-400 uppercase">Liczba zawodów</span>
             </div>
         </div>
         <div class="h-64">
@@ -90,19 +90,19 @@
         <div class="grid grid-cols-2 gap-4 flex-1">
             <a href="{{ url_for('zawody.nowe') }}" class="flex flex-col items-center justify-center p-4 rounded-3xl bg-water-50 dark:bg-water-900/20 text-water-600 dark:text-water-400 hover:bg-water-500 hover:text-white transition-all group">
                 <svg class="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                <span class="text-[10px] font-black uppercase">Zawody</span>
+                <span class="text-xs font-black uppercase">Zawody</span>
             </a>
             <a href="{{ url_for('zawodnicy.nowy') }}" class="flex flex-col items-center justify-center p-4 rounded-3xl bg-gold-50 dark:bg-amber-900/20 text-gold-600 dark:text-amber-400 hover:bg-gold-500 hover:text-white transition-all group">
                 <svg class="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
-                <span class="text-[10px] font-black uppercase">Zawodnik</span>
+                <span class="text-xs font-black uppercase">Zawodnik</span>
             </a>
             <a href="{{ url_for('slowniki.lowisko_nowe') }}" class="flex flex-col items-center justify-center p-4 rounded-3xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-500 hover:text-white transition-all group">
                 <svg class="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                <span class="text-[10px] font-black uppercase">Łowisko</span>
+                <span class="text-xs font-black uppercase">Łowisko</span>
             </a>
             <a href="{{ url_for('uzytkownicy.lista') }}" class="flex flex-col items-center justify-center p-4 rounded-3xl bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 hover:bg-gray-500 hover:text-white transition-all group">
                 <svg class="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z"/></svg>
-                <span class="text-[10px] font-black uppercase">Dostęp</span>
+                <span class="text-xs font-black uppercase">Dostęp</span>
             </a>
         </div>
     </div>
@@ -114,14 +114,14 @@
         <h2 class="text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">
             Ostatnia aktywność w systemie
         </h2>
-        <a href="{{ url_for('zawody.lista') }}" class="text-[10px] font-black uppercase text-water-600 dark:text-water-400 hover:underline">Zarządzaj wszystkimi</a>
+        <a href="{{ url_for('zawody.lista') }}" class="text-xs font-black uppercase text-water-600 dark:text-water-400 hover:underline">Zarządzaj wszystkimi</a>
     </div>
 
     {% if ostatnie_zawody %}
     <div class="overflow-x-auto">
         <table class="w-full text-sm text-left">
             <thead>
-                <tr class="text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-water-50 dark:border-gray-700">
+                <tr class="text-gray-400 uppercase text-xs font-black tracking-widest border-b border-water-50 dark:border-gray-700">
                     <th class="px-8 py-4">Nazwa</th>
                     <th class="px-6 py-4">Data</th>
                     <th class="px-6 py-4 hidden sm:table-cell">Łowisko</th>
@@ -134,7 +134,7 @@
                 <tr class="hover:bg-water-50/30 dark:hover:bg-gray-700/30 transition-colors group">
                     <td class="px-8 py-5">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-water-50 dark:bg-water-900/30 flex items-center justify-center text-water-600 dark:text-water-400 font-bold text-[10px]">
+                            <div class="w-8 h-8 rounded-lg bg-water-50 dark:bg-water-900/30 flex items-center justify-center text-water-600 dark:text-water-400 font-bold text-xs">
                                 {{ z.dyscyplina.nazwa[0]|upper }}
                             </div>
                             <a href="{{ url_for('zawody.szczegoly', zid=z.id) }}" class="font-bold text-gray-900 dark:text-white hover:text-water-600 transition-colors">
@@ -150,7 +150,7 @@
                     </td>
                     <td class="px-6 py-5 text-center">
                         {% set s_display = z.status_display %}
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider {{ s_display[1] }}">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-black uppercase tracking-wider {{ s_display[1] }}">
                             {{ s_display[0] }}
                         </span>
                     </td>

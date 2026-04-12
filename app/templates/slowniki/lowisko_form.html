@@ -17,19 +17,19 @@
         </div>
         <div class="p-8 space-y-6">
             <div class="space-y-2">
-                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Nazwa łowiska *</label>
+                <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Nazwa łowiska *</label>
                 <input type="text" name="nazwa" required value="{{ lowisko.nazwa if lowisko else '' }}"
                        class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
             </div>
 
             <div class="space-y-2">
-                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Miejscowość *</label>
+                <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Miejscowość *</label>
                 <input type="text" name="miejscowosc" required value="{{ lowisko.miejscowosc if lowisko else '' }}"
                        class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
             </div>
 
             <div class="space-y-2">
-                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Dodatkowy opis</label>
+                <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Dodatkowy opis</label>
                 <textarea name="opis" rows="4"
                           class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">{{ lowisko.opis if lowisko else '' }}</textarea>
             </div>
@@ -48,7 +48,7 @@
         {% if lowisko %}
         <div class="pt-4 border-t border-water-50 dark:border-gray-700">
             <button type="submit" form="form-usun"
-                    class="w-full py-3 text-[10px] font-black text-red-400 hover:text-red-600 uppercase tracking-widest transition-all">
+                    class="w-full py-3 text-xs font-black text-red-400 hover:text-red-600 uppercase tracking-widest transition-all">
                 Usuń łowisko na stałe
             </button>
         </div>

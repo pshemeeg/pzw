@@ -1,3 +1,5 @@
+import csv
+import io
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_required
 
@@ -17,16 +19,13 @@ def index():
     )
 
 
-import csv
-import io
-
 @bp.route("/import/<string:typ>", methods=["POST"])
 @login_required
 def import_csv(typ):
     if "file" not in request.files:
         flash("Brak pliku.", "danger")
         return redirect(url_for("slowniki.index", _anchor=typ))
-    
+
     file = request.files["file"]
     if file.filename == "":
         flash("Nie wybrano pliku.", "danger")
@@ -45,11 +44,15 @@ def import_csv(typ):
                 if not nazwa or not miejscowosc:
                     pominieto += 1
                     continue
-                istniejacy = Lowisko.query.filter_by(nazwa=nazwa, miejscowosc=miejscowosc).first()
+                istniejacy = Lowisko.query.filter_by(
+                    nazwa=nazwa, miejscowosc=miejscowosc
+                ).first()
                 if istniejacy:
                     pominieto += 1
                     continue
-                db.session.add(Lowisko(nazwa=nazwa, miejscowosc=miejscowosc, opis=row.get("opis", "")))
+                db.session.add(Lowisko(
+                    nazwa=nazwa, miejscowosc=miejscowosc, opis=row.get("opis", "")
+                ))
                 dodano += 1
 
         elif typ == "dyscypliny":
@@ -57,14 +60,19 @@ def import_csv(typ):
                 nazwa = row.get("nazwa", "").strip()
                 kod = row.get("kod", "").strip().lower()
                 typ_wyniku = row.get("typ_wyniku", "").strip()
-                if not nazwa or not kod or typ_wyniku not in ["wagowy", "punktowy", "karpie"]:
+                if (not nazwa or not kod or
+                        typ_wyniku not in ["wagowy", "punktowy", "karpie"]):
                     pominieto += 1
                     continue
-                istniejacy = Dyscyplina.query.filter(db.or_(Dyscyplina.kod == kod, Dyscyplina.nazwa == nazwa)).first()
+                istniejacy = Dyscyplina.query.filter(db.or_(
+                    Dyscyplina.kod == kod, Dyscyplina.nazwa == nazwa
+                )).first()
                 if istniejacy:
                     pominieto += 1
                     continue
-                db.session.add(Dyscyplina(nazwa=nazwa, kod=kod, typ_wyniku=typ_wyniku))
+                db.session.add(Dyscyplina(
+                    nazwa=nazwa, kod=kod, typ_wyniku=typ_wyniku
+                ))
                 dodano += 1
 
         elif typ == "ryby":
@@ -87,12 +95,16 @@ def import_csv(typ):
                 dodano += 1
 
         db.session.commit()
-        flash(f"Import {typ} zakończony. Dodano: {dodano}, Pominięto: {pominieto}.", "success")
+        flash(
+            f"Import {typ} zakończony. Dodano: {dodano}, Pominięto: {pominieto}.",
+            "success"
+        )
     except Exception as e:
         db.session.rollback()
         flash(f"Błąd importu: {str(e)}", "danger")
 
     return redirect(url_for("slowniki.index", _anchor=typ))
+
 
 @bp.route("/lowiska/nowe", methods=["GET", "POST"])
 @login_required
@@ -185,6 +197,7 @@ def dyscyplina_usun(did):
     flash("Dyscyplina została usunięta.", "success")
     return redirect(url_for("slowniki.index"))
 
+
 @bp.route("/ryby/nowe", methods=["GET", "POST"])
 @login_required
 def ryba_nowa():
@@ -213,7 +226,9 @@ def ryba_edytuj(rid):
     if request.method == "POST":
         ryba.nazwa = request.form["nazwa"].strip()
         ryba.wymiar_ochronny_mm = int(request.form.get("wymiar_ochronny_mm") or 0)
-        ryba.wymiar_punktowany_mm = int(request.form.get("wymiar_punktowany_mm") or 0)
+        ryba.wymiar_punktowany_mm = int(
+            request.form.get("wymiar_punktowany_mm") or 0
+        )
         ryba.punkty_bazowe = int(request.form.get("punkty_bazowe") or 0)
         ryba.punkty_za_mm = float(request.form.get("punkty_za_mm") or 0.0)
         db.session.commit()

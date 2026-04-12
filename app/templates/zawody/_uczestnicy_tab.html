@@ -2,14 +2,14 @@
     <div class="flex items-center justify-between px-8 py-5 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
         <h2 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 opacity-80">
             Lista startowa uczestników
-            <span class="ml-2 px-2 py-0.5 bg-water-100 dark:bg-water-900/50 text-water-600 dark:text-water-400 rounded-lg text-[10px]">{{ zawody.uczestnicy|length }} osób</span>
+            <span class="ml-2 px-2 py-0.5 bg-water-100 dark:bg-water-900/50 text-water-600 dark:text-water-400 rounded-lg text-xs">{{ zawody.uczestnicy|length }} osób</span>
         </h2>
     </div>
 
     {% if zawody.uczestnicy %}
     <table class="w-full text-sm text-left">
         <thead>
-            <tr class="text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-water-50 dark:border-gray-700">
+            <tr class="text-gray-400 uppercase text-xs font-black tracking-widest border-b border-water-50 dark:border-gray-700">
                 <th class="px-8 py-4 w-20">Nr</th>
                 <th class="px-6 py-4">Zawodnik</th>
                 <th class="px-6 py-4 hidden sm:table-cell">Koło PZW</th>
@@ -43,7 +43,7 @@
                 </td>
                 <td class="px-6 py-4 hidden md:table-cell">
                     {% if u.druzyna %}
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400 text-[10px] font-black uppercase tracking-tight border border-water-50 dark:border-gray-700">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400 text-xs font-black uppercase tracking-tight border border-water-50 dark:border-gray-700">
                         {{ u.druzyna }}
                     </span>
                     {% else %}

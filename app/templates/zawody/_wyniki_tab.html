@@ -15,7 +15,7 @@
                 {% for tura in tury %}
                 <button @click="aktywna_tura = {{ tura }}"
                         :class="aktywna_tura === {{ tura }} ? 'bg-water-50 dark:bg-water-900/30 text-water-600 dark:text-water-400' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'"
-                        class="px-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] rounded-t-xl transition-all whitespace-nowrap">
+                        class="px-6 py-2 text-xs font-black uppercase tracking-[0.2em] rounded-t-xl transition-all whitespace-nowrap">
                     Tura {{ tura }}
                 </button>
                 {% endfor %}
@@ -28,7 +28,7 @@
                         {% set sektory = stanowiska | selectattr('tura', 'equalto', tura) | map(attribute='sektor') | unique | sort | list %}
                         {% for sektor in sektory %}
                         <div class="space-y-3">
-                            <h3 class="text-[10px] font-black uppercase tracking-widest text-water-600 dark:text-water-400 ml-2">Sektor {{ sektor }}</h3>
+                            <h3 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 ml-2">Sektor {{ sektor }}</h3>
                             
                             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
                                 {% for s in stanowiska | selectattr('tura', 'equalto', tura) | selectattr('sektor', 'equalto', sektor) | sort(attribute='numer') %}
@@ -52,7 +52,7 @@
                                             </div>
                                             <div class="min-w-0 flex-1 sm:w-48">
                                                 <div class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ s.uczestnik.zawodnik | display_name }}</div>
-                                                <div class="text-[10px] text-gray-400 uppercase font-medium truncate">{{ s.uczestnik.zawodnik.kolo }}</div>
+                                                <div class="text-xs text-gray-400 uppercase font-medium truncate">{{ s.uczestnik.zawodnik.kolo }}</div>
                                             </div>
                                         </div>
 
@@ -62,11 +62,11 @@
                                                     <div class="flex-1 relative">
                                                         <input type="number" name="waga_{{ s.id }}" value="{{ s.wynik_wagowy.waga_g if s.wynik_wagowy else '' }}" 
                                                                placeholder="Waga (g)" class="w-full pl-4 pr-10 py-2.5 text-sm font-black rounded-xl border border-water-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
-                                                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-300 uppercase">g</span>
+                                                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-black text-gray-300 uppercase">g</span>
                                                     </div>
                                                     <label class="flex flex-col items-center gap-1 cursor-pointer group/dysk">
                                                         <input type="checkbox" name="dysk_{{ s.id }}" {% if s.wynik_wagowy and s.wynik_wagowy.dyskwalifikacja %}checked{% endif %} class="w-5 h-5 text-red-500 rounded-lg border-water-200 dark:border-gray-700 focus:ring-red-500/20">
-                                                        <span class="text-[8px] font-black uppercase text-gray-400 group-hover/dysk:text-red-500 transition-colors">Dysk.</span>
+                                                        <span class="text-xs font-black uppercase text-gray-400 group-hover/dysk:text-red-500 transition-colors">Dysk.</span>
                                                     </label>
                                                 </div>
                                             {% elif zawody.dyscyplina.typ_wyniku == 'karpie' %}
@@ -86,12 +86,12 @@
                                                         </div>
                                                     </template>
                                                     <div class="flex items-center justify-between">
-                                                        <button type="button" @click="dodaj()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-water-50 dark:bg-water-900/30 text-water-600 dark:text-water-400 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-water-100 transition-all">
+                                                        <button type="button" @click="dodaj()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-water-50 dark:bg-water-900/30 text-water-600 dark:text-water-400 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-water-100 transition-all">
                                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                                             Dodaj rybę
                                                         </button>
                                                         <div class="text-right">
-                                                            <span class="text-[10px] font-black uppercase text-gray-400 mr-2">Suma:</span>
+                                                            <span class="text-xs font-black uppercase text-gray-400 mr-2">Suma:</span>
                                                             <span class="text-sm font-black text-water-600 dark:text-water-400">
                                                                 {% set suma_pkt = s.wyniki_ryby | selectattr('zaliczona', 'equalto', true) | map(attribute='punkty') | sum %}
                                                                 {{ suma_pkt }} pkt

@@ -21,7 +21,7 @@
                      class="absolute right-0 top-full mt-3 w-64 bg-white dark:bg-gray-800 border border-water-200 dark:border-gray-700 rounded-2xl shadow-2xl p-5 z-50">
                     <form method="POST" action="{{ url_for('zawody.losuj', zid=zawody.id) }}" class="space-y-4 text-left">
                         <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 text-left">Wybierz turę</label>
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2 text-left">Wybierz turę</label>
                             <select name="tura" class="w-full px-3 py-2 text-sm font-bold rounded-lg border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                                 {% for t in range(1, zawody.liczba_tur + 1) %}
                                 <option value="{{ t }}">Tura {{ t }}</option>
@@ -29,7 +29,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 text-left">Metoda losowania</label>
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2 text-left">Metoda losowania</label>
                             <select name="tryb" class="w-full px-3 py-2 text-sm font-bold rounded-lg border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                                 <option value="auto">Pełna losowość</option>
                                 <option value="druzynowe">Zasada drużynowa</option>
@@ -49,7 +49,7 @@
     <div x-show="mode === 'manual'" x-cloak class="p-8 bg-gray-50 dark:bg-gray-900 border-b border-water-50 dark:border-gray-700" x-data="{ tura_wybrana: 1 }">
         <form method="POST" action="{{ url_for('zawody.stanowiska_recznie', zid=zawody.id) }}">
             <div class="mb-8 max-w-xs">
-                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Edytowana tura</label>
+                <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Edytowana tura</label>
                 <div class="flex gap-2 p-1 bg-white dark:bg-gray-800 rounded-xl border border-water-200 dark:border-gray-700 shadow-inner">
                     {% for t in range(1, zawody.liczba_tur + 1) %}
                     <button type="button" @click="tura_wybrana = {{ t }}"
@@ -62,7 +62,7 @@
                 </div>
             </div>
             
-            <p class="text-[10px] font-black uppercase tracking-widest text-water-600 dark:text-water-400 mb-6">Wpisz przydział sektorów i stanowisk dla zawodników</p>
+            <p class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 mb-6">Wpisz przydział sektorów i stanowisk dla zawodników</p>
 
             {% set litery = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
             {% for t in range(1, zawody.liczba_tur + 1) %}
@@ -72,7 +72,7 @@
                 <div class="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-water-100 dark:border-gray-700 shadow-sm group hover:border-water-300 transition-all">
                     <div class="flex-grow min-w-0">
                         <div class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ u.zawodnik | display_name }}</div>
-                        <div class="text-[10px] font-medium text-gray-400 uppercase tracking-tight truncate">{{ u.zawodnik.kolo }}</div>
+                        <div class="text-xs font-medium text-gray-400 uppercase tracking-tight truncate">{{ u.zawodnik.kolo }}</div>
                     </div>
                     <div class="flex gap-1.5 shrink-0">
                         <select name="sektor_{{ t }}_{{ u.id }}" class="w-12 px-1 py-1.5 text-xs font-black rounded-lg border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white text-center outline-none focus:border-water-500">
@@ -109,7 +109,7 @@
                     {% for tura in tury %}
                     <button @click="aktywna_tura = {{ tura }}"
                             :class="aktywna_tura === {{ tura }} ? 'bg-water-50 dark:bg-water-900/30 text-water-600 dark:text-water-400' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'"
-                            class="px-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] rounded-t-xl transition-all whitespace-nowrap">
+                            class="px-6 py-2 text-xs font-black uppercase tracking-[0.2em] rounded-t-xl transition-all whitespace-nowrap">
                         Tura {{ tura }}
                     </button>
                     {% endfor %}
@@ -122,8 +122,8 @@
                         {% for sektor in sektory %}
                         <div class="bg-gray-50/50 dark:bg-gray-900/20 rounded-2xl border border-water-50 dark:border-gray-700 p-1">
                             <div class="px-5 py-3 border-b border-water-50 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 rounded-t-2xl flex items-center justify-between">
-                                <span class="text-[10px] font-black uppercase tracking-widest text-water-600 dark:text-water-400">Sektor {{ sektor }}</span>
-                                <span class="text-[10px] font-bold text-gray-400 uppercase">{{ (stanowiska | selectattr('tura', 'equalto', tura) | selectattr('sektor', 'equalto', sektor) | list)|length }} zawodników</span>
+                                <span class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400">Sektor {{ sektor }}</span>
+                                <span class="text-xs font-bold text-gray-400 uppercase">{{ (stanowiska | selectattr('tura', 'equalto', tura) | selectattr('sektor', 'equalto', sektor) | list)|length }} zawodników</span>
                             </div>
                             <div class="divide-y divide-water-50 dark:divide-gray-700 px-2">
                                 {% for s in stanowiska | selectattr('tura', 'equalto', tura) | selectattr('sektor', 'equalto', sektor) | sort(attribute='numer') %}
@@ -135,7 +135,7 @@
                                         <div class="text-sm font-bold text-gray-900 dark:text-white truncate">
                                             {{ s.uczestnik.zawodnik | display_name }}
                                         </div>
-                                        <div class="text-[10px] text-gray-400 uppercase font-medium truncate">{{ s.uczestnik.zawodnik.kolo }}</div>
+                                        <div class="text-xs text-gray-400 uppercase font-medium truncate">{{ s.uczestnik.zawodnik.kolo }}</div>
                                     </div>
                                 </div>
                                 {% endfor %}

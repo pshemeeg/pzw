@@ -48,7 +48,7 @@
 <div class="hidden lg:block bg-white dark:bg-gray-800 rounded-3xl border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
     <table class="w-full text-sm text-left">
         <thead>
-            <tr class="bg-water-50/50 dark:bg-gray-750 text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-water-100 dark:border-gray-700">
+            <tr class="bg-water-50/50 dark:bg-gray-750 text-gray-400 uppercase text-xs font-black tracking-widest border-b border-water-100 dark:border-gray-700">
                 <th class="px-8 py-5">Nazwa zawodów</th>
                 <th class="px-6 py-5 text-center">Data</th>
                 <th class="px-6 py-5">Dyscyplina</th>
@@ -71,7 +71,7 @@
                                 {{ z.nazwa }}
                             </a>
                             {% if z.grand_prix %}
-                            <span class="inline-flex items-center px-2 py-0.5 mt-1 rounded text-[9px] font-black uppercase tracking-tighter bg-gold-100 dark:bg-amber-900/40 text-gold-700 dark:text-amber-400">Grand Prix</span>
+                            <span class="inline-flex items-center px-2 py-0.5 mt-1 rounded text-xs font-black uppercase tracking-tighter bg-gold-100 dark:bg-amber-900/40 text-gold-700 dark:text-amber-400">Grand Prix</span>
                             {% endif %}
                         </div>
                     </div>
@@ -84,14 +84,14 @@
                             {{ z.data.strftime('%d.%m.%Y') }}
                         {% endif %}
                     </div>
-                    <div class="text-[10px] text-gray-400 uppercase font-bold mt-0.5">Sezon {{ z.sezon }}</div>
+                    <div class="text-xs text-gray-400 uppercase font-bold mt-0.5">Sezon {{ z.sezon }}</div>
                 </td>
                 <td class="px-6 py-5">
                     <span class="text-gray-600 dark:text-gray-400">{{ z.dyscyplina.nazwa }}</span>
                 </td>
                 <td class="px-6 py-5">
                     <div class="text-gray-900 dark:text-gray-100 font-medium">{{ z.lowisko.nazwa if z.lowisko else '—' }}</div>
-                    <div class="text-[10px] text-gray-400">{{ z.lowisko.miejscowosc if z.lowisko else '' }}</div>
+                    <div class="text-xs text-gray-400">{{ z.lowisko.miejscowosc if z.lowisko else '' }}</div>
                 </td>
                 <td class="px-6 py-5 text-center">
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold
@@ -136,10 +136,10 @@
                 </div>
                 <div>
                     <a href="{{ url_for('zawody.szczegoly', zid=z.id) }}" class="font-bold text-gray-900 dark:text-white">{{ z.nazwa }}</a>
-                    <div class="text-[10px] text-gray-400 uppercase font-black tracking-widest mt-0.5">Sezon {{ z.sezon }}</div>
+                    <div class="text-xs text-gray-400 uppercase font-black tracking-widest mt-0.5">Sezon {{ z.sezon }}</div>
                 </div>
             </div>
-            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-black uppercase tracking-wider
                 {% if z.status == 'zakonczone' %} bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400
                 {% elif z.status == 'w_trakcie' %} bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400
                 {% else %} bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 {% endif %}">
@@ -149,13 +149,13 @@
         
         <div class="grid grid-cols-2 gap-4 py-4 border-y border-water-50 dark:border-gray-700 my-4">
             <div>
-                <div class="text-[10px] text-gray-400 uppercase font-bold mb-1">Data</div>
+                <div class="text-xs text-gray-400 uppercase font-bold mb-1">Data</div>
                 <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
                     {{ z.data.strftime('%d.%m.%Y') }}
                 </div>
             </div>
             <div>
-                <div class="text-[10px] text-gray-400 uppercase font-bold mb-1">Łowisko</div>
+                <div class="text-xs text-gray-400 uppercase font-bold mb-1">Łowisko</div>
                 <div class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                     {{ z.lowisko.nazwa if z.lowisko else '—' }}
                 </div>

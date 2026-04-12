@@ -36,7 +36,9 @@ class Zawodnik(db.Model):
     kolo = db.Column(db.String(128), nullable=False)
     nr_licencji = db.Column(db.String(32), nullable=True, unique=True)
     rodo_zgoda = db.Column(db.Boolean, default=False, nullable=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc)
+    )
 
     __table_args__ = (
         db.UniqueConstraint("imie", "nazwisko", "kolo", name="uq_zawodnik"),
@@ -60,9 +62,13 @@ class Sedzia(db.Model):
     nazwisko = db.Column(db.String(64), nullable=False)
     telefon = db.Column(db.String(32), nullable=True)
     kolo = db.Column(db.String(128), nullable=True)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc)
+    )
 
-    uzytkownik = db.relationship("Uzytkownik", back_populates="sedzia", uselist=False)
+    uzytkownik = db.relationship(
+        "Uzytkownik", back_populates="sedzia", uselist=False
+    )
 
     def __repr__(self):
         return f"<Sedzia {self.imie} {self.nazwisko}>"
@@ -77,9 +83,13 @@ class Uzytkownik(db.Model, UserMixin):
     rola = db.Column(db.String(16), nullable=False, default="sedzia")
     aktywny = db.Column(db.Boolean, default=True)
     ostatnie_logowanie = db.Column(db.DateTime, nullable=True)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc)
+    )
 
-    sedzia_id = db.Column(db.Integer, db.ForeignKey("sedziowie.id"), nullable=True)
+    sedzia_id = db.Column(
+        db.Integer, db.ForeignKey("sedziowie.id"), nullable=True
+    )
     sedzia = db.relationship(
         "Sedzia",
         back_populates="uzytkownik",
@@ -95,9 +105,15 @@ class Uzytkownik(db.Model, UserMixin):
 
 zawody_sedziowie = db.Table(
     "zawody_sedziowie",
-    db.Column("zawody_id", db.Integer, db.ForeignKey("zawody.id"), primary_key=True),
-    db.Column("sedzia_id", db.Integer, db.ForeignKey("sedziowie.id"), primary_key=True),
-    db.Column("rola_na_zawodach", db.String(32), nullable=False, default="sektorowy"),
+    db.Column(
+        "zawody_id", db.Integer, db.ForeignKey("zawody.id"), primary_key=True
+    ),
+    db.Column(
+        "sedzia_id", db.Integer, db.ForeignKey("sedziowie.id"), primary_key=True
+    ),
+    db.Column(
+        "rola_na_zawodach", db.String(32), nullable=False, default="sektorowy"
+    ),
 )
 
 
@@ -117,13 +133,18 @@ class Zawody(db.Model):
     liczba_tur = db.Column(db.Integer, nullable=False, default=1)
     grand_prix = db.Column(db.Boolean, default=False)
     klasyfikacja_druzynowa = db.Column(db.Boolean, default=False)
-    sezon = db.Column(db.Integer, nullable=False, default=lambda: datetime.now(timezone.utc).year)
+    sezon = db.Column(
+        db.Integer, nullable=False,
+        default=lambda: datetime.now(timezone.utc).year
+    )
     status = db.Column(db.String(16), nullable=False, default="planowane")
     uwagi = db.Column(db.Text, nullable=True)
     sedziowie_sektorowi = db.Column(db.Text, nullable=True)
     sedziowie_kontrolni = db.Column(db.Text, nullable=True)
     organizator_kolo = db.Column(db.String(128), nullable=True)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc)
+    )
     updated_at = db.Column(
         db.DateTime,
         default=lambda: datetime.now(timezone.utc),
@@ -133,9 +154,15 @@ class Zawody(db.Model):
     dyscyplina_id = db.Column(
         db.Integer, db.ForeignKey("dyscypliny.id"), nullable=False
     )
-    lowisko_id = db.Column(db.Integer, db.ForeignKey("lowiska.id"), nullable=True)
-    organizator_id = db.Column(db.Integer, db.ForeignKey("sedziowie.id"), nullable=True)
-    sekretarz_id = db.Column(db.Integer, db.ForeignKey("sedziowie.id"), nullable=True)
+    lowisko_id = db.Column(
+        db.Integer, db.ForeignKey("lowiska.id"), nullable=True
+    )
+    organizator_id = db.Column(
+        db.Integer, db.ForeignKey("sedziowie.id"), nullable=True
+    )
+    sekretarz_id = db.Column(
+        db.Integer, db.ForeignKey("sedziowie.id"), nullable=True
+    )
 
     dyscyplina = db.relationship("Dyscyplina", backref="zawody")
     lowisko = db.relationship("Lowisko", backref="zawody")
@@ -159,20 +186,22 @@ class Zawody(db.Model):
     def computed_status(self):
         """Dynamicznie wylicza status zawodów na podstawie daty i czasu."""
         teraz = datetime.now()
-        
+
         # Jeśli data jest w przyszłości -> planowane
-        data_start = datetime.combine(self.data, self.godzina_start or datetime.min.time())
+        data_start = datetime.combine(
+            self.data, self.godzina_start or datetime.min.time()
+        )
         if teraz < data_start:
             return "planowane"
-            
+
         # Jeśli mamy data_do i jest w przeszłości -> zakonczone
         koniec_dnia = self.data_do or self.data
         godzina_stop = self.godzina_koniec or datetime.max.time()
         data_koniec = datetime.combine(koniec_dnia, godzina_stop)
-        
+
         if teraz > data_koniec:
             return "zakonczone"
-            
+
         # W przeciwnym razie -> w trakcie
         return "w_trakcie"
 
@@ -180,11 +209,27 @@ class Zawody(db.Model):
     def status_display(self):
         s = self.computed_status
         mapping = {
-            "planowane": ("Planowane", "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400", "bg-gray-400"),
-            "w_trakcie": ("W trakcie", "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400", "bg-blue-500"),
-            "zakonczone": ("Zakończone", "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400", "bg-green-500"),
+            "planowane": (
+                "Planowane",
+                "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400",
+                "bg-gray-400"
+            ),
+            "w_trakcie": (
+                "W trakcie",
+                "bg-blue-100 text-blue-700 dark:bg-blue-900/30 "
+                "dark:text-blue-400",
+                "bg-blue-500"
+            ),
+            "zakonczone": (
+                "Zakończone",
+                "bg-green-100 text-green-700 dark:bg-green-900/30 "
+                "dark:text-green-400",
+                "bg-green-500"
+            ),
         }
-        return mapping.get(s, ("Nieznany", "bg-gray-100 text-gray-600", "bg-gray-400"))
+        return mapping.get(
+            s, ("Nieznany", "bg-gray-100 text-gray-600", "bg-gray-400")
+        )
 
 
 class GatunekRyby(db.Model):
@@ -207,10 +252,14 @@ class Uczestnik(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     numer_startowy = db.Column(db.Integer, nullable=True)
     druzyna = db.Column(db.String(128), nullable=True)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc)
+    )
 
     zawody_id = db.Column(db.Integer, db.ForeignKey("zawody.id"), nullable=False)
-    zawodnik_id = db.Column(db.Integer, db.ForeignKey("zawodnicy.id"), nullable=False)
+    zawodnik_id = db.Column(
+        db.Integer, db.ForeignKey("zawodnicy.id"), nullable=False
+    )
 
     zawody = db.relationship("Zawody", back_populates="uczestnicy")
     zawodnik = db.relationship("Zawodnik", backref="udzialy")
@@ -237,7 +286,9 @@ class Stanowisko(db.Model):
     numer = db.Column(db.Integer, nullable=False)
 
     zawody_id = db.Column(db.Integer, db.ForeignKey("zawody.id"), nullable=False)
-    uczestnik_id = db.Column(db.Integer, db.ForeignKey("uczestnicy.id"), nullable=False)
+    uczestnik_id = db.Column(
+        db.Integer, db.ForeignKey("uczestnicy.id"), nullable=False
+    )
 
     uczestnik = db.relationship("Uczestnik", back_populates="stanowiska")
     wynik_wagowy = db.relationship(
@@ -327,7 +378,9 @@ class WynikRyba(db.Model):
     punkty = db.Column(db.Integer, nullable=False, default=0)
     zaliczona = db.Column(db.Boolean, default=True)
     uwagi = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(
+        db.DateTime, default=lambda: datetime.now(timezone.utc)
+    )
 
     stanowisko_id = db.Column(
         db.Integer, db.ForeignKey("stanowiska.id"), nullable=False
@@ -342,7 +395,8 @@ class Dokument(db.Model):
     __tablename__ = "dokumenty"
 
     id = db.Column(db.Integer, primary_key=True)
-    kod = db.Column(db.String(32), unique=True, nullable=False) # e.g., 'regulamin', 'polityka'
+    # e.g., 'regulamin', 'polityka'
+    kod = db.Column(db.String(32), unique=True, nullable=False)
     tytul = db.Column(db.String(128), nullable=False)
     tresc = db.Column(db.Text, nullable=False)
     updated_at = db.Column(
@@ -353,4 +407,3 @@ class Dokument(db.Model):
 
     def __repr__(self):
         return f"<Dokument {self.kod} {self.tytul}>"
-

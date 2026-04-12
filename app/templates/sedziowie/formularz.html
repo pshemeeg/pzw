@@ -29,29 +29,29 @@
                 <div class="p-8 space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Imię *</label>
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Imię *</label>
                             <input type="text" name="imie" required x-model="imie"
                                    :class="imie.length > 0 && imie.length < 2 ? 'border-red-500 ring-red-500/10' : 'border-water-200 dark:border-gray-700'"
                                    class="w-full px-4 py-3 text-sm font-bold rounded-xl border bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
-                            <p x-show="imie.length > 0 && imie.length < 2" class="text-[10px] text-red-500 font-bold ml-1">Imię jest za krótkie</p>
+                            <p x-show="imie.length > 0 && imie.length < 2" class="text-xs text-red-500 font-bold ml-1">Imię jest za krótkie</p>
                         </div>
                         <div class="space-y-2">
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Nazwisko *</label>
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Nazwisko *</label>
                             <input type="text" name="nazwisko" required x-model="nazwisko"
                                    :class="nazwisko.length > 0 && nazwisko.length < 2 ? 'border-red-500 ring-red-500/10' : 'border-water-200 dark:border-gray-700'"
                                    class="w-full px-4 py-3 text-sm font-bold rounded-xl border bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
-                            <p x-show="nazwisko.length > 0 && nazwisko.length < 2" class="text-[10px] text-red-500 font-bold ml-1">Nazwisko jest za krótkie</p>
+                            <p x-show="nazwisko.length > 0 && nazwisko.length < 2" class="text-xs text-red-500 font-bold ml-1">Nazwisko jest za krótkie</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                         <div class="space-y-2">
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Numer telefonu</label>
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Numer telefonu</label>
                             <input type="tel" name="telefon" value="{{ sedzia.telefon if sedzia else '' }}"
                                    class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                         </div>
                         <div class="space-y-2">
-                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Koło PZW</label>
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Koło PZW</label>
                             <input type="text" name="kolo" value="{{ sedzia.kolo if sedzia else '' }}"
                                    class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                         </div>
@@ -74,13 +74,13 @@
                     </p>
 
                     <div class="space-y-2 pt-2">
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Adres Email</label>
+                        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Adres Email</label>
                         <input type="email" name="email" value="{{ sedzia.uzytkownik.email if sedzia and sedzia.uzytkownik else '' }}"
                                class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                     </div>
 
                     <div class="space-y-2 pt-2">
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Hasło</label>
+                        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Hasło</label>
                         <input type="password" name="haslo" placeholder="********"
                                class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                     </div>
@@ -103,7 +103,7 @@
                 {% if sedzia %}
                 <div class="pt-4 border-t border-water-50 dark:border-gray-700">
                     <button type="submit" form="form-usun"
-                            class="w-full py-3 text-[10px] font-black text-red-400 hover:text-red-600 uppercase tracking-widest transition-all">
+                            class="w-full py-3 text-xs font-black text-red-400 hover:text-red-600 uppercase tracking-widest transition-all">
                         Usuń sędziego na stałe
                     </button>
                 </div>

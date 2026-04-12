@@ -14,13 +14,13 @@
                 </div>
                 <div>
                     <h2 class="text-sm font-black uppercase tracking-widest text-water-600 dark:text-water-400">Wartości domyślne zawodów</h2>
-                    <p class="text-[10px] text-gray-400 font-medium uppercase tracking-tight">Dane, które będą automatycznie uzupełniane w formularzu nowych zawodów.</p>
+                    <p class="text-xs text-gray-400 font-medium uppercase tracking-tight">Dane, które będą automatycznie uzupełniane w formularzu nowych zawodów.</p>
                 </div>
             </div>
             <div class="p-8 space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Domyślna dyscyplina</label>
+                        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Domyślna dyscyplina</label>
                         <select name="domyslna_dyscyplina_id"
                                 class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
                             <option value="">— wybierz —</option>
@@ -30,7 +30,7 @@
                         </select>
                     </div>
                     <div class="space-y-2">
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Domyślna kategoria</label>
+                        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Domyślna kategoria</label>
                         <select name="domyslna_kategoria"
                                 class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
                             <option value="">— wybierz —</option>
@@ -44,12 +44,12 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Domyślna liczba sektorów</label>
+                        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Domyślna liczba sektorów</label>
                         <input type="number" name="domyslna_liczba_sektorow" min="1" max="26" value="{{ u.domyslna_liczba_sektorow or 1 }}"
                                class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                     </div>
                     <div class="space-y-2">
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Domyślna liczba tur</label>
+                        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Domyślna liczba tur</label>
                         <input type="number" name="domyslna_liczba_tur" min="1" max="10" value="{{ u.domyslna_liczba_tur or 1 }}"
                                class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                     </div>
@@ -57,7 +57,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Domyślny Sędzia Główny</label>
+                        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Domyślny Sędzia Główny</label>
                         <select name="domyslny_sedzia_glowny_id"
                                 class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
                             <option value="">— wybierz —</option>
@@ -67,7 +67,7 @@
                         </select>
                     </div>
                     <div class="space-y-2">
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Domyślny Sędzia Sekretarz</label>
+                        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Domyślny Sędzia Sekretarz</label>
                         <select name="domyslny_sedzia_sekretarz_id"
                                 class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
                             <option value="">— wybierz —</option>
@@ -80,7 +80,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Domyślne łowisko</label>
+                        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Domyślne łowisko</label>
                         <select name="domyslne_lowisko_id"
                                 class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
                             <option value="">— wybierz —</option>
@@ -90,7 +90,7 @@
                         </select>
                     </div>
                     <div class="space-y-2">
-                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Domyślne Koło Organizatora</label>
+                        <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Domyślne Koło Organizatora</label>
                         <input type="text" name="domyslny_organizator_kolo" value="{{ u.domyslny_organizator_kolo or '' }}" placeholder="np. Koło nr 8 Bieruń"
                                class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                     </div>

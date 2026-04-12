@@ -17,19 +17,19 @@
         </div>
         <div class="p-8 space-y-6">
             <div class="space-y-2">
-                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Nazwa gatunku *</label>
+                <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Nazwa gatunku *</label>
                 <input type="text" name="nazwa" required value="{{ ryba.nazwa if ryba else '' }}" placeholder="np. Szczupak"
                        class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
                 <div class="space-y-2">
-                    <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Wymiar ochronny (mm)</label>
+                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Wymiar ochronny (mm)</label>
                     <input type="number" name="wymiar_ochronny_mm" required min="0" value="{{ ryba.wymiar_ochronny_mm if ryba else '0' }}"
                            class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                 </div>
                 <div class="space-y-2">
-                    <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Wymiar punktowany (mm)</label>
+                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Wymiar punktowany (mm)</label>
                     <input type="number" name="wymiar_punktowany_mm" required min="0" value="{{ ryba.wymiar_punktowany_mm if ryba else '0' }}"
                            class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                 </div>
@@ -37,12 +37,12 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
                 <div class="space-y-2">
-                    <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Punkty bazowe</label>
+                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Punkty bazowe</label>
                     <input type="number" name="punkty_bazowe" required min="0" value="{{ ryba.punkty_bazowe if ryba else '0' }}"
                            class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                 </div>
                 <div class="space-y-2">
-                    <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Punkty za każdy dodatkowy mm</label>
+                    <label class="block text-xs font-black uppercase tracking-widest text-gray-400 ml-1">Punkty za każdy dodatkowy mm</label>
                     <input type="number" step="0.1" name="punkty_za_mm" required min="0" value="{{ ryba.punkty_za_mm if ryba else '0' }}"
                            class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                 </div>
@@ -62,7 +62,7 @@
         {% if ryba %}
         <div class="pt-4 border-t border-water-50 dark:border-gray-700">
             <button type="submit" form="form-usun"
-                    class="w-full py-3 text-[10px] font-black text-red-400 hover:text-red-600 uppercase tracking-widest transition-all">
+                    class="w-full py-3 text-xs font-black text-red-400 hover:text-red-600 uppercase tracking-widest transition-all">
                 Usuń gatunek na stałe
             </button>
         </div>

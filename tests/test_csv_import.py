@@ -45,4 +45,4 @@ def test_import_zawodnicy_csv_duplicates(client, db_session):
     response = client.post("/zawodnicy/import", data=data, content_type='multipart/form-data', follow_redirects=True)
     
     assert b"Dodano: 1" in response.data
-    assert b"Pomini\xc4\x99to (duplikaty/b\xc5\x82\xc4\x99dy): 1" in response.data
+    assert b"Pomini\xc4\x99to: 1" in response.data

@@ -42,7 +42,7 @@
                     <svg x-show="uploading" class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     <span x-text="uploading ? 'Importowanie...' : 'Import CSV'"></span>
                 </button>
-                <a href="{{ url_for('main.download_csv_template', typ='zawodnicy') }}" class="text-[9px] font-black uppercase text-gray-400 hover:text-water-500 transition-colors tracking-widest">Pobierz szablon</a>
+                <a href="{{ url_for('main.download_csv_template', typ='zawodnicy') }}" class="text-xs font-black uppercase text-gray-400 hover:text-water-500 transition-colors tracking-widest">Pobierz szablon</a>
             </div>
         </div>
         <a href="{{ url_for('zawodnicy.nowy') }}"
@@ -57,7 +57,7 @@
 <div class="bg-white dark:bg-gray-800 rounded-3xl border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
     <table class="w-full text-sm text-left">
         <thead>
-            <tr class="bg-water-50/50 dark:bg-gray-750 text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-water-100 dark:border-gray-700">
+            <tr class="bg-water-50/50 dark:bg-gray-750 text-gray-400 uppercase text-xs font-black tracking-widest border-b border-water-100 dark:border-gray-700">
                 <th class="px-8 py-5">Imię i Nazwisko</th>
                 <th class="px-6 py-5">Koło PZW</th>
                 <th class="px-6 py-5 hidden sm:table-cell">Nr licencji</th>

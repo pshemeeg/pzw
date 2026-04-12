@@ -1,6 +1,7 @@
-from flask import render_template, redirect, url_for, flash, request
+import csv
+import io
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required
-from flask import jsonify
 from app.blueprints.zawodnicy import bp
 from app.extensions import db
 from app.models import Zawodnik
@@ -26,8 +27,10 @@ def lista():
 
     zawodnicy = query.all()
 
-    kola = db.session.query(Zawodnik.kolo).distinct().order_by(Zawodnik.kolo).all()
-    kola = [k[0] for k in kola if k[0]]
+    kola_raw = db.session.query(
+        Zawodnik.kolo
+    ).distinct().order_by(Zawodnik.kolo).all()
+    kola = [k[0] for k in kola_raw if k[0]]
 
     return render_template(
         "zawodnicy/lista.html",
@@ -52,7 +55,7 @@ def nowy():
         ).first()
         if istniejacy:
             flash(
-                f"{imie} {nazwisko} z koła '{kolo}' już istnieje w bazie.",
+                f"{imie} {nazwisko} z koła '{kolo}' już istnieje.",
                 "warning",
             )
             return redirect(url_for("zawodnicy.szczegoly", zid=istniejacy.id))
@@ -76,16 +79,13 @@ def nowy():
     return render_template("zawodnicy/formularz.html", zawodnik=None)
 
 
-import csv
-import io
-
 @bp.route("/import", methods=["POST"])
 @login_required
 def import_csv():
     if "file" not in request.files:
         flash("Brak pliku w żądaniu.", "danger")
         return redirect(url_for("zawodnicy.lista"))
-    
+
     file = request.files["file"]
     if file.filename == "":
         flash("Nie wybrano pliku.", "danger")
@@ -98,10 +98,10 @@ def import_csv():
     try:
         stream = io.StringIO(file.stream.read().decode("utf-8"), newline="")
         reader = csv.DictReader(stream)
-        
+
         dodano = 0
         pominieto = 0
-        
+
         for row in reader:
             imie = row.get("imie", "").strip()
             nazwisko = row.get("nazwisko", "").strip()
@@ -109,30 +109,41 @@ def import_csv():
             nr_licencji = row.get("nr_licencji", "").strip()
             if not nr_licencji or nr_licencji.lower() == "none":
                 nr_licencji = None
+
             # Default to False for safety if not specified
-            rodo_zgoda = row.get("rodo_zgoda", "0").strip().lower() in ["1", "true", "tak", "yes"]
-            
+            rodo_val = row.get("rodo_zgoda", "0").strip().lower()
+            rodo_zgoda = rodo_val in ["1", "true", "tak", "yes"]
+
             if not imie or not nazwisko or not kolo:
                 pominieto += 1
                 continue
-                
-            istniejacy = Zawodnik.query.filter_by(imie=imie, nazwisko=nazwisko, kolo=kolo).first()
+
+            istniejacy = Zawodnik.query.filter_by(
+                imie=imie, nazwisko=nazwisko, kolo=kolo
+            ).first()
             if istniejacy:
                 pominieto += 1
                 continue
-                
-            nowy = Zawodnik(imie=imie, nazwisko=nazwisko, kolo=kolo, nr_licencji=nr_licencji, rodo_zgoda=rodo_zgoda)
-            db.session.add(nowy)
+
+            nowy_z = Zawodnik(
+                imie=imie, nazwisko=nazwisko, kolo=kolo,
+                nr_licencji=nr_licencji, rodo_zgoda=rodo_zgoda
+            )
+            db.session.add(nowy_z)
             dodano += 1
-            
+
         db.session.commit()
-        flash(f"Import zakończony. Dodano: {dodano}, Pominięto (duplikaty/błędy): {pominieto}.", "success")
-        
+        flash(
+            f"Import zakończony. Dodano: {dodano}, Pominięto: {pominieto}.",
+            "success"
+        )
+
     except Exception as e:
         db.session.rollback()
-        flash(f"Błąd podczas przetwarzania pliku CSV: {str(e)}", "danger")
+        flash(f"Błąd przetwarzania CSV: {str(e)}", "danger")
 
     return redirect(url_for("zawodnicy.lista"))
+
 
 @bp.route("/<int:zid>")
 @login_required
@@ -166,7 +177,7 @@ def edytuj(zid):
         ).first()
         if duplikat:
             flash(
-                f"{imie} {nazwisko} z koła '{kolo}' już istnieje w bazie.",
+                f"{imie} {nazwisko} z koła '{kolo}' już istnieje.",
                 "warning",
             )
             return redirect(url_for("zawodnicy.edytuj", zid=zid))
@@ -174,12 +185,12 @@ def edytuj(zid):
         zawodnik.imie = imie
         zawodnik.nazwisko = nazwisko
         zawodnik.kolo = kolo
-        
+
         nr_lic = f.get("nr_licencji", "").strip()
         if not nr_lic or nr_lic.lower() == "none":
             nr_lic = None
         zawodnik.nr_licencji = nr_lic
-        
+
         zawodnik.rodo_zgoda = bool(f.get("rodo_zgoda"))
         db.session.commit()
         flash("Dane zawodnika zostały zaktualizowane.", "success")

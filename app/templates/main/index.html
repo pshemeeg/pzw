@@ -33,7 +33,7 @@
     <div class="space-y-6">
         <div class="flex items-center justify-between border-b border-water-100 dark:border-gray-800 pb-4">
             <h3 class="text-xs font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">Ostatnio zakończone zawody</h3>
-            <a href="{{ url_for('zawody.lista', status='zakonczone') }}" class="text-[10px] font-black uppercase text-water-600 dark:text-water-400 hover:underline">Zobacz wszystkie</a>
+            <a href="{{ url_for('zawody.lista', status='zakonczone') }}" class="text-xs font-black uppercase text-water-600 dark:text-water-400 hover:underline">Zobacz wszystkie</a>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -46,13 +46,13 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-gray-900 dark:text-white">{{ z.nazwa }}</h4>
-                            <div class="text-[10px] text-gray-400 uppercase font-bold">{{ z.data.strftime('%d.%m.%Y') }}</div>
+                            <div class="text-xs text-gray-400 uppercase font-bold">{{ z.data.strftime('%d.%m.%Y') }}</div>
                         </div>
                     </div>
                     <svg class="w-5 h-5 text-gray-300 group-hover:text-water-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                 </div>
                 <div class="flex items-center justify-between mt-auto pt-4 border-t border-water-50 dark:border-gray-700">
-                    <span class="text-[10px] font-black uppercase tracking-widest text-water-600 dark:text-water-400">{{ z.dyscyplina.nazwa }}</span>
+                    <span class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400">{{ z.dyscyplina.nazwa }}</span>
                     <a href="{{ url_for('zawody.szczegoly', zid=z.id) }}" class="text-xs font-bold text-gray-400 hover:text-gray-900 dark:hover:text-white">Wyniki i Klasyfikacja</a>
                 </div>
             </div>

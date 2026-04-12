@@ -81,7 +81,7 @@ def edytuj(sid):
                 if konto.email != email:
                     zajety = Uzytkownik.query.filter_by(email=email).first()
                     if zajety:
-                        flash("Ten email jest już zajęty przez inne konto.", "danger")
+                        flash("Ten email jest już zajęty.", "danger")
                         return redirect(url_for("sedziowie.edytuj", sid=sid))
                     konto.email = email
                 if haslo:
@@ -92,7 +92,7 @@ def edytuj(sid):
                     return redirect(url_for("sedziowie.edytuj", sid=sid))
                 zajety = Uzytkownik.query.filter_by(email=email).first()
                 if zajety:
-                    flash("Ten email jest już zajęty przez inne konto.", "danger")
+                    flash("Ten email jest już zajęty.", "danger")
                     return redirect(url_for("sedziowie.edytuj", sid=sid))
                 konto = Uzytkownik(
                     email=email,
@@ -103,9 +103,8 @@ def edytuj(sid):
                 )
                 db.session.add(konto)
         else:
-            if konto:
-                if haslo:
-                    konto.haslo_hash = generate_password_hash(haslo)
+            if konto and haslo:
+                konto.haslo_hash = generate_password_hash(haslo)
 
         db.session.commit()
         flash("Dane sędziego zostały zaktualizowane.", "success")

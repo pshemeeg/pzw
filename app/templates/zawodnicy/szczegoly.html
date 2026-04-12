@@ -41,7 +41,7 @@ endblock %} {% block page_title %}{{ zawodnik | display_name }}{% endblock
         <dd class="font-medium">{{ zawodnik.nr_licencji or '—' }}</dd>
       </div>
       <div class="flex justify-between pt-2 border-t border-water-50 dark:border-gray-700">
-        <dt class="text-gray-500 dark:text-gray-400 font-bold uppercase text-[10px]">Zgoda RODO</dt>
+        <dt class="text-gray-500 dark:text-gray-400 font-bold uppercase text-xs">Zgoda RODO</dt>
         <dd>
             {% if zawodnik.rodo_zgoda %}
             <span class="text-green-500 font-bold text-xs flex items-center gap-1">

@@ -1,7 +1,10 @@
-from datetime import date, time, datetime
-from flask import render_template, redirect, url_for, request, flash, abort
-from flask_login import login_required, current_user
 import random
+import io
+from datetime import date, time, datetime
+from flask import render_template, redirect, url_for, request, flash, abort, send_file
+from flask_login import login_required, current_user
+from weasyprint import HTML
+
 from app.blueprints.zawody import bp
 from app.extensions import db
 from app.models import (
@@ -13,6 +16,7 @@ from app.models import (
     Zawodnik,
     Stanowisko,
 )
+from app.blueprints.zawody.helpers import oblicz_klasyfikacje
 
 
 def parse_date(s):
@@ -48,8 +52,12 @@ def zawody_z_formularza(d, zawody=None):
     zawody.sekretarz_id = (
         int(d["sekretarz_id"]) if d.get("sekretarz_id") else None
     )
-    zawody.sedziowie_sektorowi = d.get("sedziowie_sektorowi", "").strip() or None
-    zawody.sedziowie_kontrolni = d.get("sedziowie_kontrolni", "").strip() or None
+    zawody.sedziowie_sektorowi = d.get(
+        "sedziowie_sektorowi", ""
+    ).strip() or None
+    zawody.sedziowie_kontrolni = d.get(
+        "sedziowie_kontrolni", ""
+    ).strip() or None
     zawody.godzina_start = parse_time(d.get("godzina_start"))
     zawody.godzina_koniec = parse_time(d.get("godzina_koniec"))
     zawody.kategoria = d.get("kategoria", "").strip()
@@ -82,20 +90,25 @@ def lista():
     query = Zawody.query.order_by(Zawody.data.desc())
 
     if not current_user.is_authenticated:
-        # Gość widzi tylko zawody, których data zakończenia (lub rozpoczęcia) już minęła
+        # Gość widzi tylko te, których data zakończenia już minęła
         today = date.today()
-        query = query.filter(db.or_(Zawody.data_do < today, db.and_(Zawody.data_do == None, Zawody.data < today)))
+        query = query.filter(db.or_(
+            Zawody.data_do < today,
+            db.and_(Zawody.data_do.is_(None), Zawody.data < today)
+        ))
     elif status:
         query = query.filter_by(status=status)
-        
+
     if sezon:
         query = query.filter_by(sezon=int(sezon))
-        
+
     if q:
         query = query.filter(Zawody.nazwa.ilike(f"%{q}%"))
 
     zawody = query.all()
-    sezymy = db.session.query(Zawody.sezon).distinct().order_by(Zawody.sezon.desc()).all()
+    sezymy = db.session.query(
+        Zawody.sezon
+    ).distinct().order_by(Zawody.sezon.desc()).all()
     sezony = [s[0] for s in sezymy]
 
     return render_template(
@@ -118,10 +131,13 @@ def nowe():
         flash("Zawody zostały utworzone.", "success")
         return redirect(url_for("zawody.lista"))
 
-    return render_template("zawody/formularz.html", zawody=None, settings=current_user.ustawienia or {}, **get_slowniki())
+    return render_template(
+        "zawody/formularz.html",
+        zawody=None,
+        settings=current_user.ustawienia or {},
+        **get_slowniki()
+    )
 
-
-from app.blueprints.zawody.helpers import oblicz_klasyfikacje
 
 @bp.route("/<int:zid>/protokol")
 @login_required
@@ -129,17 +145,15 @@ def protokol(zid):
     zawody = db.session.get(Zawody, zid)
     if not zawody:
         abort(404)
-        
+
     klasyfikacja = oblicz_klasyfikacje(zawody)
-    
+
     return render_template(
         "zawody/protokol.html",
         zawody=zawody,
         klasyfikacja=klasyfikacja,
     )
 
-import io
-from flask import send_file
 
 @bp.route("/<int:zid>/protokol/pdf")
 @login_required
@@ -157,24 +171,27 @@ def protokol_pdf(zid):
     )
 
     try:
-        from weasyprint import HTML
         pdf_file = HTML(string=rendered_html).write_pdf()
         return send_file(
             io.BytesIO(pdf_file),
             mimetype="application/pdf",
             as_attachment=True,
-            download_name=f"protokol_{zawody.nr_zawodow.replace('/', '_') if zawody.nr_zawodow else zid}.pdf"
+            download_name=(
+                f"protokol_{zawody.nr_zawodow.replace('/', '_')}"
+                if zawody.nr_zawodow else f"protokol_{zid}.pdf"
+            )
         )
     except Exception as e:
         flash(f"Błąd generowania PDF: {str(e)}", "danger")
         return redirect(url_for("zawody.szczegoly", zid=zid))
+
 
 @bp.route("/<int:zid>/klasyfikacja/pdf")
 def klasyfikacja_pdf(zid):
     zawody = db.session.get(Zawody, zid)
     if not zawody:
         abort(404)
-        
+
     if not current_user.is_authenticated and zawody.status != "zakonczone":
         abort(403)
 
@@ -187,17 +204,20 @@ def klasyfikacja_pdf(zid):
     )
 
     try:
-        from weasyprint import HTML
         pdf_file = HTML(string=rendered_html).write_pdf()
         return send_file(
             io.BytesIO(pdf_file),
             mimetype="application/pdf",
             as_attachment=True,
-            download_name=f"klasyfikacja_{zawody.nr_zawodow.replace('/', '_') if zawody.nr_zawodow else zid}.pdf"
+            download_name=(
+                f"klasyfikacja_{zawody.nr_zawodow.replace('/', '_')}"
+                if zawody.nr_zawodow else f"klasyfikacja_{zid}.pdf"
+            )
         )
     except Exception as e:
         flash(f"Błąd generowania PDF: {str(e)}", "danger")
         return redirect(url_for("zawody.szczegoly", zid=zid))
+
 
 @bp.route("/<int:zid>")
 def szczegoly(zid):
@@ -205,7 +225,7 @@ def szczegoly(zid):
     if not zawody:
         flash("Nie znaleziono zawodów.", "danger")
         return redirect(url_for("zawody.lista"))
-        
+
     if not current_user.is_authenticated and zawody.status != "zakonczone":
         flash("Musisz się zalogować, aby uzyskać dostęp.", "warning")
         return redirect(url_for("auth.login", next=request.url))
@@ -248,7 +268,11 @@ def edytuj(zid):
         flash("Zawody zostały zaktualizowane.", "success")
         return redirect(url_for("zawody.szczegoly", zid=zid))
 
-    return render_template("zawody/formularz.html", zawody=zawody, **get_slowniki())
+    return render_template(
+        "zawody/formularz.html",
+        zawody=zawody,
+        **get_slowniki()
+    )
 
 
 @bp.route("/<int:zid>/usun", methods=["POST"])
@@ -271,17 +295,20 @@ def szybki_zawodnik(zid):
     if not zawody:
         flash("Nie znaleziono zawodów.", "danger")
         return redirect(url_for("zawody.lista"))
-        
+
     imie = request.form.get("imie", "").strip()
     nazwisko = request.form.get("nazwisko", "").strip()
     kolo = request.form.get("kolo", "").strip()
     druzyna = request.form.get("druzyna", "").strip() or None
     rodo_zgoda = bool(request.form.get("rodo_zgoda"))
-    
+
     if not imie or not nazwisko or not kolo:
-        flash("Wype\u0142nij wymagane pola (Imi\u0119, Nazwisko, Ko\u0142o).", "danger")
+        flash(
+            "Wypełnij wymagane pola (Imię, Nazwisko, Koło).",
+            "danger"
+        )
         return redirect(url_for("zawody.szczegoly", zid=zid))
-        
+
     zawodnik = Zawodnik(
         imie=imie,
         nazwisko=nazwisko,
@@ -289,8 +316,8 @@ def szybki_zawodnik(zid):
         rodo_zgoda=rodo_zgoda
     )
     db.session.add(zawodnik)
-    db.session.flush() # pobranie ID
-    
+    db.session.flush()  # pobranie ID
+
     max_nr = (
         db.session.query(db.func.coalesce(db.func.max(Uczestnik.numer_startowy), 0))
         .filter_by(zawody_id=zid)
@@ -305,7 +332,10 @@ def szybki_zawodnik(zid):
     )
     db.session.add(uczestnik)
     db.session.commit()
-    flash(f"Dodano zawodnika {imie} {nazwisko} i od razu przypisano do zawodów.", "success")
+    flash(
+        f"Dodano zawodnika {imie} {nazwisko} i od razu przypisano do zawodów.",
+        "success"
+    )
     return redirect(url_for("zawody.szczegoly", zid=zid))
 
 
@@ -335,7 +365,7 @@ def uczestnik_dodaj(zid):
     if zawody.klasyfikacja_druzynowa:
         if not druzyna:
             flash(
-                "W zawodach drużynowych każdy zawodnik musi mieć przypisaną drużynę.",
+                "W zawodach drużynowych każdy zawodnik musi mieć drużynę.",
                 "danger",
             )
             return redirect(url_for("zawody.szczegoly", zid=zid))
@@ -345,7 +375,8 @@ def uczestnik_dodaj(zid):
         ).count()
         if liczba_w_druzynie >= 3:
             flash(
-                f"Drużyna '{druzyna}' ma już 3 zawodników — jest kompletna.", "warning"
+                f"Drużyna '{druzyna}' ma już 3 zawodników — jest kompletna.",
+                "warning"
             )
             return redirect(url_for("zawody.szczegoly", zid=zid))
 
@@ -425,7 +456,10 @@ def losuj(zid):
         random.shuffle(losowi)
         base = n // k
         extra = n % k
-        sizes = {s: base + (1 if i < extra else 0) for i, s in enumerate(sektory)}
+        sizes = {
+            s: base + (1 if i < extra else 0)
+            for i, s in enumerate(sektory)
+        }
         nowe = []
         idx = 0
         for sek in sektory:
@@ -498,7 +532,9 @@ def losuj(zid):
         f"Losowanie tury {tura} zakończone — przydzielono {len(nowe)} stanowisk.",
         "success",
     )
-    return redirect(url_for("zawody.szczegoly", zid=zid) + "#stanowiska")
+    return redirect(url_for(
+        "zawody.szczegoly", zid=zid
+    ) + "#stanowiska")
 
 
 @bp.route("/<int:zid>/stanowiska_recznie", methods=["POST"])
@@ -510,13 +546,13 @@ def stanowiska_recznie(zid):
         return redirect(url_for("zawody.lista"))
 
     tura = int(request.form.get("tura", 1))
-    
+
     uczestnicy = Uczestnik.query.filter_by(zawody_id=zid).all()
-    obecne_stanowiska = Stanowisko.query.filter_by(zawody_id=zid, tura=tura).all()
+    obecne_stanowiska = Stanowisko.query.filter_by(
+        zawody_id=zid, tura=tura
+    ).all()
     stan_dict = {s.uczestnik_id: s for s in obecne_stanowiska}
 
-    # Tymczasowe "odsunięcie" obecnych stanowisk, aby uniknąć konfliktów UniqueConstraint
-    # podczas zamiany miejsc (swap) w bazie, np. SQLite.
     for s in obecne_stanowiska:
         s.tura += 10000
     db.session.flush()
@@ -528,28 +564,30 @@ def stanowiska_recznie(zid):
     for u in uczestnicy:
         sek = request.form.get(f"sektor_{tura}_{u.id}")
         nr = request.form.get(f"numer_{tura}_{u.id}")
-        
+
         stan = stan_dict.get(u.id)
 
         if sek and sek.strip() and nr and nr.strip():
             try:
                 nr_int = int(nr)
                 if nr_int <= 0:
-                    bledy.append(f"Nieprawidłowy numer stanowiska ({nr_int}) dla zawodnika {u.zawodnik.nazwisko}.")
+                    bledy.append(
+                        f"Błędny numer ({nr_int}) dla {u.zawodnik.nazwisko}."
+                    )
                     continue
 
                 sek_str = sek.strip().upper()
                 klucz = (sek_str, nr_int)
                 if klucz in zajete_stanowiska:
-                    bledy.append(f"Stanowisko {sek_str}{nr_int} zostało przypisane więcej niż raz.")
+                    bledy.append(f"Stanowisko {sek_str}{nr_int} już zajęte.")
                     continue
-                
+
                 zajete_stanowiska.add(klucz)
 
                 if stan:
                     stan.sektor = sek_str
                     stan.numer = nr_int
-                    stan.tura = tura  # Przywracamy poprawną turę
+                    stan.tura = tura
                 else:
                     stan = Stanowisko(
                         zawody_id=zid,
@@ -573,5 +611,8 @@ def stanowiska_recznie(zid):
         return redirect(url_for("zawody.szczegoly", zid=zid) + "#stanowiska")
 
     db.session.commit()
-    flash(f"Zapisano ręczne przypisanie stanowisk (Tura {tura}, {count} stanowisk).", "success")
+    flash(
+        f"Zapisano stanowiska (Tura {tura}, {count} stanowisk).",
+        "success"
+    )
     return redirect(url_for("zawody.szczegoly", zid=zid) + "#stanowiska")

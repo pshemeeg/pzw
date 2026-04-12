@@ -6,15 +6,20 @@ from app.blueprints.cms import bp
 from app.extensions import db
 from app.models import Dokument
 
+
 @bp.route("/<string:kod>")
 def view(kod):
     # Restricted pages
-    if kod in ['dokumentacja', 'szablony'] and not current_user.is_authenticated:
-        flash("Musisz się zalogować, aby uzyskać dostęp do tego zasobu.", "warning")
+    restricted = ['dokumentacja', 'szablony']
+    if kod in restricted and not current_user.is_authenticated:
+        flash(
+            "Musisz się zalogować, aby uzyskać dostęp do tego zasobu.",
+            "warning"
+        )
         return redirect(url_for("auth.login", next=request.url))
 
     dokument = Dokument.query.filter_by(kod=kod).first()
-    
+
     # Lawyer-grade content definitions
     tytuly = {
         'regulamin': 'Regulamin Korzystania z Systemu Obsługi Zawodów',
@@ -22,7 +27,7 @@ def view(kod):
         'dokumentacja': 'Instrukcja Obsługi i Dokumentacja Techniczna',
         'szablony': 'Centrum Szablonów i Wzorów Dokumentów'
     }
-    
+
     tresci = {
         'regulamin': """### REGULAMIN SYSTEMU
 
@@ -51,7 +56,7 @@ Dane zawodników przetwarzane są na podstawie:
 - Art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes) – w celu organizacji zawodów, losowania stanowisk i prowadzenia dokumentacji sportowej.
 
 **3. Zakres danych**
-System przetwarza: Imię, Nazwisko, Nr licencji sportowej, Przynależność do koła/klubu.
+System przechowuje: Imię, Nazwisko, Nr licencji sportowej, Przynależność do koła/klubu.
 
 **4. Prawa osób, których dane dotyczą**
 Każdy zawodnik ma prawo do:
@@ -95,7 +100,11 @@ Z każdej podstrony klasyfikacji możesz pobrać profesjonalny **Protokół PDF*
     if not dokument:
         if current_user.is_authenticated and current_user.is_admin():
             if kod in tytuly:
-                dokument = Dokument(kod=kod, tytul=tytuly[kod], tresc=tresci[kod])
+                dokument = Dokument(
+                    kod=kod,
+                    tytul=tytuly[kod],
+                    tresc=tresci[kod]
+                )
                 db.session.add(dokument)
                 db.session.commit()
             else:
@@ -105,21 +114,29 @@ Z każdej podstrony klasyfikacji możesz pobrać profesjonalny **Protokół PDF*
     else:
         # Aktualizujemy treść jeśli jest stara lub placeholderem
         if current_user.is_authenticated and current_user.is_admin():
-             if "Wstęp" in dokument.tresc or "Treść w przygotowaniu" in dokument.tresc:
-                 dokument.tresc = tresci.get(kod, dokument.tresc)
-                 dokument.tytul = tytuly.get(kod, dokument.tytul)
-                 db.session.commit()
-    
+            has_placeholder = (
+                "Wstęp" in dokument.tresc or
+                "Treść w przygotowaniu" in dokument.tresc
+            )
+            if has_placeholder:
+                dokument.tresc = tresci.get(kod, dokument.tresc)
+                dokument.tytul = tytuly.get(kod, dokument.tytul)
+                db.session.commit()
+
     if kod == 'szablony':
         return render_template("cms/szablony.html", dokument=dokument)
-        
+
     return render_template("cms/view.html", dokument=dokument)
+
 
 @bp.route("/rodo-pdf")
 @login_required
 def download_rodo_pdf():
     """Generuje gotową do druku papierową zgodę RODO."""
-    rendered_html = render_template("cms/rodo_pdf.html", data_generowania=datetime.now())
+    rendered_html = render_template(
+        "cms/rodo_pdf.html",
+        data_generowania=datetime.now()
+    )
     try:
         from weasyprint import HTML
         pdf_file = HTML(string=rendered_html).write_pdf()
@@ -133,21 +150,22 @@ def download_rodo_pdf():
         flash(f"Błąd generowania dokumentu: {str(e)}", "danger")
         return redirect(url_for("cms.view", kod="szablony"))
 
+
 @bp.route("/<string:kod>/edytuj", methods=["GET", "POST"])
 @login_required
 def edytuj(kod):
     if not current_user.is_admin():
         abort(403)
-        
+
     dokument = Dokument.query.filter_by(kod=kod).first()
     if not dokument:
         abort(404)
-        
+
     if request.method == "POST":
         dokument.tytul = request.form.get("tytul")
         dokument.tresc = request.form.get("tresc")
         db.session.commit()
         flash(f"Dokument '{dokument.tytul}' został zaktualizowany.", "success")
         return redirect(url_for("cms.view", kod=kod))
-        
+
     return render_template("cms/formularz.html", dokument=dokument)

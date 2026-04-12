@@ -11,7 +11,7 @@
 <div class="bg-white dark:bg-gray-800 rounded-3xl border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
     <table class="w-full text-sm text-left">
         <thead>
-            <tr class="bg-water-50/50 dark:bg-gray-750 text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-water-100 dark:border-gray-700">
+            <tr class="bg-water-50/50 dark:bg-gray-750 text-gray-400 uppercase text-xs font-black tracking-widest border-b border-water-100 dark:border-gray-700">
                 <th class="px-8 py-5">Użytkownik</th>
                 <th class="px-6 py-5">Rola</th>
                 <th class="px-6 py-5">Powiązany Sędzia</th>
@@ -30,13 +30,13 @@
                         <div>
                             <div class="font-bold text-gray-900 dark:text-white">{{ u.email }}</div>
                             {% if u.id == current_user.id %}
-                            <span class="inline-flex items-center px-2 py-0.5 mt-1 rounded text-[9px] font-black uppercase tracking-tighter bg-water-100 dark:bg-water-900/50 text-water-700 dark:text-water-200">To Ty</span>
+                            <span class="inline-flex items-center px-2 py-0.5 mt-1 rounded text-xs font-black uppercase tracking-tighter bg-water-100 dark:bg-water-900/50 text-water-700 dark:text-water-200">To Ty</span>
                             {% endif %}
                         </div>
                     </div>
                 </td>
                 <td class="px-6 py-5">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider
                         {% if u.rola == 'admin' %} bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400
                         {% else %} bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 {% endif %}">
                         {{ u.rola }}
@@ -45,7 +45,7 @@
                 <td class="px-6 py-5">
                     {% if u.sedzia %}
                     <div class="text-gray-900 dark:text-gray-100 font-medium">{{ u.sedzia.imie }} {{ u.sedzia.nazwisko }}</div>
-                    <div class="text-[10px] text-gray-400">{{ u.sedzia.kolo }}</div>
+                    <div class="text-xs text-gray-400">{{ u.sedzia.kolo }}</div>
                     {% else %}
                     <span class="text-gray-300 dark:text-gray-600 italic">Niepowiązany</span>
                     {% endif %}
