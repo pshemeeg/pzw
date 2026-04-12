@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Szablony i Wzory{% endblock %}
+{% block page_title %}Szablony dokumentów{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-12 py-4">
+    <!-- Header -->
+    <div class="text-center space-y-4">
+        <h1 class="text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tighter">Centrum <span class="text-water-500">Szablonów</span></h1>
+        <p class="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto font-medium">
+            Pobierz gotowe wzory plików CSV do importu oraz wzory oświadczeń RODO dla zawodników.
+        </p>
+    </div>
+
+    <!-- CSV Templates Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Zawodnicy -->
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] border border-water-200 dark:border-gray-700 shadow-sm flex flex-col justify-between group hover:border-water-400 transition-all">
+            <div class="space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-gold-100 dark:bg-amber-900/30 flex items-center justify-center text-gold-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                </div>
+                <h3 class="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Baza Zawodników</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Szablon do masowego importu członków koła. Zawiera kolumny: imię, nazwisko, koło, licencja, zgoda RODO.</p>
+            </div>
+            <a href="{{ url_for('main.download_csv_template', typ='zawodnicy') }}" 
+               class="mt-8 inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 font-black uppercase text-[10px] tracking-widest rounded-xl hover:bg-water-500 hover:text-white transition-all shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Pobierz szablon CSV
+            </a>
+        </div>
+
+        <!-- Łowiska -->
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] border border-water-200 dark:border-gray-700 shadow-sm flex flex-col justify-between group hover:border-water-400 transition-all">
+            <div class="space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </div>
+                <h3 class="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Słownik Łowisk</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Importuj listę zbiorników i rzek obsługiwanych przez Twoje koło lub okręg.</p>
+            </div>
+            <a href="{{ url_for('main.download_csv_template', typ='lowiska') }}" 
+               class="mt-8 inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 font-black uppercase text-[10px] tracking-widest rounded-xl hover:bg-water-500 hover:text-white transition-all shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Pobierz szablon CSV
+            </a>
+        </div>
+    </div>
+
+    <!-- RODO Patterns Section -->
+    <div class="space-y-6">
+        <h2 class="text-xs font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 border-b border-water-100 dark:border-gray-800 pb-4 ml-4">Wzory zapisów prawnych i zgód</h2>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-water-200 dark:border-gray-700 shadow-sm overflow-hidden">
+            <div class="p-8 md:p-12 space-y-8">
+                <!-- Osobna zgoda -->
+                <div class="space-y-4">
+                    <h4 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-gold-500"></span>
+                        Indywidualna zgoda na publikację wizerunku i danych
+                    </h4>
+                    <div class="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-water-50 dark:border-gray-700 text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed italic">
+                        "Wyrażam zgodę na przetwarzanie moich danych osobowych (imię, nazwisko, przynależność do koła) przez Koło PZW nr [NUMER] w celu publikacji list startowych oraz wyników zawodów w systemie informatycznym, na stronie internetowej oraz w mediach społecznościowych koła."
+                    </div>
+                </div>
+
+                <!-- Regulamin zawodów -->
+                <div class="space-y-4">
+                    <h4 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-water-500"></span>
+                        Wpis do Regulaminu Zawodów (RODO)
+                    </h4>
+                    <div class="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-water-50 dark:border-gray-700 text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed">
+                        "Zapisanie się na listę startową jest równoznaczne z akceptacją regulaminu zawodów. Administratorem danych jest organizator. Wyniki zawodów z pełnymi danymi zawodników będą publikowane publicznie wyłącznie w przypadku wyrażenia dobrowolnej zgody. W braku zgody, dane zawodnika zostaną zanonimizowane."
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Link to Edit -->
+    {% if current_user.is_authenticated and current_user.is_admin() %}
+    <div class="flex justify-center pt-8">
+        <a href="{{ url_for('cms.edytuj', kod=dokument.kod) }}" class="text-xs font-bold text-gray-400 hover:text-gold-500 transition-colors uppercase tracking-widest">Edytuj opisy na tej stronie</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
