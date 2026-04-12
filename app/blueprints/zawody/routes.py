@@ -1,6 +1,6 @@
-from datetime import date, time
+from datetime import date, time, datetime
 from flask import render_template, redirect, url_for, request, flash, abort
-from flask_login import login_required
+from flask_login import login_required, current_user
 import random
 from app.blueprints.zawody import bp
 from app.extensions import db
@@ -58,6 +58,7 @@ def zawody_z_formularza(d, zawody=None):
     zawody.liczba_tur = int(d.get("liczba_tur", 1))
     zawody.grand_prix = bool(d.get("grand_prix"))
     zawody.klasyfikacja_druzynowa = bool(d.get("klasyfikacja_druzynowa"))
+    zawody.sezon = int(d.get("sezon", datetime.now().year))
     zawody.status = d.get("status", "planowane")
     zawody.uwagi = d.get("uwagi", "").strip()
     return zawody
@@ -73,24 +74,35 @@ def get_slowniki():
 
 
 @bp.route("/")
-@login_required
 def lista():
     status = request.args.get("status", "")
     q = request.args.get("q", "")
+    sezon = request.args.get("sezon", "")
 
     query = Zawody.query.order_by(Zawody.data.desc())
 
-    if status:
+    if not current_user.is_authenticated:
+        query = query.filter_by(status="zakonczone")
+    elif status:
         query = query.filter_by(status=status)
+        
+    if sezon:
+        query = query.filter_by(sezon=int(sezon))
+        
     if q:
         query = query.filter(Zawody.nazwa.ilike(f"%{q}%"))
 
     zawody = query.all()
+    sezymy = db.session.query(Zawody.sezon).distinct().order_by(Zawody.sezon.desc()).all()
+    sezony = [s[0] for s in sezymy]
+
     return render_template(
         "zawody/lista.html",
         zawody=zawody,
         status=status,
         q=q,
+        sezon=sezon,
+        sezony=sezony,
     )
 
 
@@ -156,11 +168,13 @@ def protokol_pdf(zid):
         return redirect(url_for("zawody.szczegoly", zid=zid))
 
 @bp.route("/<int:zid>/klasyfikacja/pdf")
-@login_required
 def klasyfikacja_pdf(zid):
     zawody = db.session.get(Zawody, zid)
     if not zawody:
         abort(404)
+        
+    if not current_user.is_authenticated and zawody.status != "zakonczone":
+        abort(403)
 
     klasyfikacja = oblicz_klasyfikacje(zawody)
 
@@ -184,12 +198,15 @@ def klasyfikacja_pdf(zid):
         return redirect(url_for("zawody.szczegoly", zid=zid))
 
 @bp.route("/<int:zid>")
-@login_required
 def szczegoly(zid):
     zawody = db.session.get(Zawody, zid)
     if not zawody:
         flash("Nie znaleziono zawodów.", "danger")
         return redirect(url_for("zawody.lista"))
+        
+    if not current_user.is_authenticated and zawody.status != "zakonczone":
+        flash("Musisz się zalogować, aby uzyskać dostęp.", "warning")
+        return redirect(url_for("auth.login", next=request.url))
 
     druzyny = []
     if zawody.klasyfikacja_druzynowa:
