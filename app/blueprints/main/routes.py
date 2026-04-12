@@ -1,3 +1,4 @@
+import io
 from flask import render_template, send_file, request, abort
 from flask_login import login_required, current_user
 from sqlalchemy import desc, func
@@ -57,66 +58,57 @@ def dashboard():
     )
 
 
-from app.blueprints.zawody.helpers import oblicz_klasyfikacje
+from app.blueprints.main.helpers import generate_csv_template, calculate_gp_ranking
 
 @bp.route("/grand-prix")
 @login_required
 def grand_prix():
     sezon = request.args.get("sezon", datetime.now().year, type=int)
-    
-    # Pobierz wszystkie zawody GP w tym sezonie
-    zawody_gp = Zawody.query.filter_by(grand_prix=True, sezon=sezon).all()
-    
-    # Mapa: zawodnik_id -> { 'zawodnik': object, 'punkty': [lista_punktow], 'suma': X, 'waga': Y }
-    ranking = {}
-    
-    for z in zawody_gp:
-        wyniki_zawodow = oblicz_klasyfikacje(z)
-        max_miejsce = len(wyniki_zawodow['indywidualna']) + 1
-        
-        # Zapamiętaj kto startował
-        startujacy_ids = set()
-        
-        for r in wyniki_zawodow['indywidualna']:
-            zid = r['uczestnik'].zawodnik.id
-            startujacy_ids.add(zid)
-            
-            if zid not in ranking:
-                ranking[zid] = {
-                    'zawodnik': r['uczestnik'].zawodnik,
-                    'wyniki_per_zawody': {}, # zawody_id -> miejsce
-                    'suma_miejsc': 0,
-                    'suma_wag': 0
-                }
-            
-            miejsce = r['miejsce'] if isinstance(r['miejsce'], (int, float)) else max_miejsce
-            ranking[zid]['wyniki_per_zawody'][z.id] = miejsce
-            ranking[zid]['suma_miejsc'] += miejsce
-            ranking[zid]['suma_wag'] += r['suma_wag']
-            
-        # Obsługa nieobecnych (kara punktowa)
-        wszyscy_zawodnicy = Zawodnik.query.all() # Uproszczenie, można zoptymalizować
-        for v in wszyscy_zawodnicy:
-            if v.id not in startujacy_ids and v.id in ranking:
-                ranking[v.id]['wyniki_per_zawody'][z.id] = max_miejsce
-                ranking[v.id]['suma_miejsc'] += max_miejsce
-
-    # Sortowanie rankingu: 1. suma miejsc rosnąco, 2. suma wag malejąco
-    posortowany_ranking = sorted(
-        ranking.values(),
-        key=lambda x: (x['suma_miejsc'], -x['suma_wag'])
-    )
+    ranking, zawody_gp, detale_zawodow = calculate_gp_ranking(sezon)
     
     sezymy_raw = db.session.query(Zawody.sezon).distinct().order_by(Zawody.sezon.desc()).all()
     sezony = [s[0] for s in sezymy_raw]
 
     return render_template(
         "main/grand_prix.html",
-        ranking=posortowany_ranking,
+        ranking=ranking,
         zawody_gp=zawody_gp,
+        detale_zawodow=detale_zawodow,
         sezon=sezon,
         sezony=sezony
     )
+
+@bp.route("/grand-prix/pdf")
+@login_required
+def grand_prix_pdf():
+    sezon = request.args.get("sezon", datetime.now().year, type=int)
+    typ = request.args.get("typ", "prosty") # 'prosty' lub 'zaawansowany'
+    
+    ranking, zawody_gp, detale_zawodow = calculate_gp_ranking(sezon)
+    
+    rendered_html = render_template(
+        "main/grand_prix_pdf.html",
+        ranking=ranking,
+        zawody_gp=zawody_gp,
+        detale_zawodow=detale_zawodow,
+        sezon=sezon,
+        typ=typ,
+        now_datetime=datetime.now()
+    )
+
+    try:
+        from weasyprint import HTML
+        pdf_file = HTML(string=rendered_html).write_pdf()
+        return send_file(
+            io.BytesIO(pdf_file),
+            mimetype="application/pdf",
+            as_attachment=True,
+            download_name=f"grand_prix_{sezon}_{typ}.pdf"
+        )
+    except Exception as e:
+        from flask import flash, redirect, url_for
+        flash(f"Błąd generowania PDF: {str(e)}", "danger")
+        return redirect(url_for("main.grand_prix", sezon=sezon))
 
 
 @bp.route("/templates/csv/<string:typ>")

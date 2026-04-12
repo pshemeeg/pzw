@@ -4,89 +4,237 @@
 {% block page_title %}Klasyfikacja Grand Prix {{ sezon }}{% endblock %}
 
 {% block content %}
-<div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
-    <h2 class="text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Roczny ranking punktowy</h2>
-    
-    <form method="GET" class="flex gap-2">
-        <select name="sezon" onchange="this.form.submit()"
-                class="px-4 py-2.5 text-sm rounded-xl border border-water-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-water-500 outline-none shadow-sm cursor-pointer transition-all">
-            {% for s in sezony %}
-            <option value="{{ s }}" {% if sezon == s %}selected{% endif %}>Sezon {{ s }}</option>
-            {% endfor %}
-        </select>
-    </form>
-</div>
+<div x-data="{ viewMode: 'simple', generating: false }">
+    <!-- Header Actions -->
+    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-8">
+        <div class="flex items-center gap-4">
+            <h2 class="text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Roczny ranking punktowy</h2>
+            
+            <!-- Toggle Switch -->
+            <div class="flex p-1 bg-gray-100 dark:bg-gray-800 rounded-xl border border-water-100 dark:border-gray-700 shadow-inner">
+                <button @click="viewMode = 'simple'"
+                        :class="viewMode === 'simple' ? 'bg-white dark:bg-gray-700 text-water-600 dark:text-water-300 shadow-sm' : 'text-gray-400 hover:text-gray-600'"
+                        class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all">
+                    Uproszczony
+                </button>
+                <button @click="viewMode = 'advanced'"
+                        :class="viewMode === 'advanced' ? 'bg-white dark:bg-gray-700 text-water-600 dark:text-water-300 shadow-sm' : 'text-gray-400 hover:text-gray-600'"
+                        class="px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all">
+                    Zaawansowany
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex flex-wrap items-center gap-3">
+            <form method="GET" class="flex gap-2">
+                <select name="sezon" onchange="this.form.submit()"
+                        class="px-4 py-2.5 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-water-500 outline-none shadow-sm cursor-pointer transition-all">
+                    {% for s in sezony %}
+                    <option value="{{ s }}" {% if sezon == s %}selected{% endif %}>Sezon {{ s }}</option>
+                    {% endfor %}
+                </select>
+            </form>
 
-{% if ranking %}
-<div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left border-collapse">
-            <thead>
-                <tr class="bg-water-50/50 dark:bg-gray-750 text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-water-100 dark:border-gray-700">
-                    <th class="px-8 py-5 text-center w-20">Poz.</th>
-                    <th class="px-6 py-5 min-w-[200px]">Zawodnik</th>
-                    {% for z in zawody_gp %}
-                    <th class="px-4 py-5 text-center truncate max-w-[120px]" title="{{ z.nazwa }}">
-                        {{ z.nazwa[:15] }}{% if z.nazwa|length > 15 %}...{% endif %}
-                    </th>
-                    {% endfor %}
-                    <th class="px-6 py-5 text-center bg-gold-50/30 dark:bg-amber-900/10">Suma pkt</th>
-                    <th class="px-8 py-5 text-right bg-gold-50/30 dark:bg-amber-900/10">Suma wag</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-water-50 dark:divide-gray-700">
-                {% for entry in ranking %}
-                <tr class="hover:bg-water-50/30 dark:hover:bg-gray-700/30 transition-colors group">
-                    <td class="px-8 py-5 text-center">
-                        {% if loop.index == 1 %}
-                            <div class="w-10 h-10 rounded-xl bg-gold-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-gold-500/30 font-black italic text-lg">1</div>
-                        {% elif loop.index == 2 %}
-                            <div class="w-10 h-10 rounded-xl bg-gray-400 text-white flex items-center justify-center mx-auto shadow-lg shadow-gray-400/30 font-black italic text-lg">2</div>
-                        {% elif loop.index == 3 %}
-                            <div class="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-amber-600/30 font-black italic text-lg">3</div>
-                        {% else %}
-                            <span class="font-black text-gray-400 italic text-base">{{ loop.index }}</span>
-                        {% endif %}
-                    </td>
-                    <td class="px-6 py-5">
-                        <div class="font-bold text-gray-900 dark:text-white">{{ entry.zawodnik.nazwisko }} {{ entry.zawodnik.imie }}</div>
-                        <div class="text-[10px] text-gray-400 uppercase font-medium">{{ entry.zawodnik.kolo }}</div>
-                    </td>
-                    {% for z in zawody_gp %}
-                    <td class="px-4 py-5 text-center">
-                        {% set pkt = entry.wyniki_per_zawody.get(z.id) %}
-                        {% if pkt is not none %}
-                            <span class="px-2 py-1 rounded bg-gray-50 dark:bg-gray-900 border border-water-100 dark:border-gray-700 text-xs font-bold text-gray-600 dark:text-gray-400">
-                                {{ pkt|string|replace('.0', '') }}
-                            </span>
-                        {% else %}
-                            <span class="text-gray-200 dark:text-gray-700">—</span>
-                        {% endif %}
-                    </td>
-                    {% endfor %}
-                    <td class="px-6 py-5 text-center bg-gold-50/30 dark:bg-amber-900/10">
-                        <span class="text-lg font-black text-gray-900 dark:text-white">
-                            {{ entry.suma_miejsc|string|replace('.0', '') }}
-                        </span>
-                    </td>
-                    <td class="px-8 py-5 text-right bg-gold-50/30 dark:bg-amber-900/10">
-                        <div class="text-sm font-black text-water-600 dark:text-water-400">
-                            {{ entry.suma_wag }}<span class="text-[10px] ml-0.5">g</span>
+            <div class="h-8 w-px bg-gray-200 dark:bg-gray-700 mx-1 hidden md:block"></div>
+
+            <a :href="'{{ url_for('main.grand_prix_pdf') }}?sezon={{ sezon }}&typ=' + (viewMode === 'simple' ? 'prosty' : 'zaawansowany')"
+               @click="generating = true; setTimeout(() => generating = false, 3000)"
+               target="_blank"
+               class="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-bold bg-gold-500 hover:bg-gold-600 text-white rounded-xl shadow-lg shadow-gold-500/20 transition-all active:scale-95 disabled:opacity-50">
+                <template x-if="!generating">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                </template>
+                <template x-if="generating">
+                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                </template>
+                <span x-text="generating ? 'Generowanie...' : 'Pobierz PDF'"></span>
+            </a>
+        </div>
+    </div>
+
+    {% if ranking %}
+    <!-- VIEW: SIMPLE -->
+    <div x-show="viewMode === 'simple'" x-cloak class="animate-in fade-in duration-300">
+        <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left border-collapse">
+                    <thead>
+                        <tr class="bg-water-50/50 dark:bg-gray-750 text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-water-100 dark:border-gray-700">
+                            <th class="px-8 py-5 text-center w-20">Poz.</th>
+                            <th class="px-6 py-5 min-w-[200px]">Zawodnik</th>
+                            {% for z in zawody_gp %}
+                            <th class="px-4 py-5 text-center truncate max-w-[120px]" title="{{ z.nazwa }}">
+                                {{ z.nazwa[:15] }}{% if z.nazwa|length > 15 %}...{% endif %}
+                            </th>
+                            {% endfor %}
+                            <th class="px-6 py-5 text-center bg-gold-50/30 dark:bg-amber-900/10">Suma pkt</th>
+                            <th class="px-8 py-5 text-right bg-gold-50/30 dark:bg-amber-900/10">Suma wag</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-water-50 dark:divide-gray-700">
+                        {% for entry in ranking %}
+                        <tr class="hover:bg-water-50/30 dark:hover:bg-gray-700/30 transition-colors group">
+                            <td class="px-8 py-5 text-center">
+                                {% if loop.index == 1 %}
+                                    <div class="w-10 h-10 rounded-xl bg-gold-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-gold-500/30 font-black italic text-lg">1</div>
+                                {% elif loop.index == 2 %}
+                                    <div class="w-10 h-10 rounded-xl bg-gray-400 text-white flex items-center justify-center mx-auto shadow-lg shadow-gray-400/30 font-black italic text-lg">2</div>
+                                {% elif loop.index == 3 %}
+                                    <div class="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-amber-600/30 font-black italic text-lg">3</div>
+                                {% else %}
+                                    <span class="font-black text-gray-400 italic text-base">{{ loop.index }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-5">
+                                <div class="font-bold text-gray-900 dark:text-white">{{ entry.zawodnik.nazwisko }} {{ entry.zawodnik.imie }}</div>
+                                <div class="text-[10px] text-gray-400 uppercase font-medium">{{ entry.zawodnik.kolo }}</div>
+                            </td>
+                            {% for z in zawody_gp %}
+                            <td class="px-4 py-5 text-center">
+                                {% set pkt = entry.wyniki_per_zawody.get(z.id) %}
+                                {% if pkt is not none %}
+                                    <span class="px-2 py-1 rounded bg-gray-50 dark:bg-gray-900 border border-water-100 dark:border-gray-700 text-xs font-bold text-gray-600 dark:text-gray-400">
+                                        {{ pkt|string|replace('.0', '') if pkt < 9999 else 'NC' }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-gray-200 dark:text-gray-700">—</span>
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                            <td class="px-6 py-5 text-center bg-gold-50/30 dark:bg-amber-900/10">
+                                <span class="text-lg font-black text-gray-900 dark:text-white">
+                                    {{ entry.suma_miejsc|string|replace('.0', '') if entry.suma_miejsc < 9999 else '—' }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-5 text-right bg-gold-50/30 dark:bg-amber-900/10">
+                                <div class="text-sm font-black text-water-600 dark:text-water-400">
+                                    {{ entry.suma_wag }}<span class="text-[10px] ml-0.5">g</span>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW: ADVANCED -->
+    <div x-show="viewMode === 'advanced'" x-cloak class="animate-in fade-in duration-300 space-y-12">
+        <!-- Rank Changes Table -->
+        <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
+            <div class="px-8 py-6 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
+                <h3 class="text-sm font-black uppercase tracking-widest text-water-600 dark:text-water-400">Przebieg zmian pozycji w rankingu</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead>
+                        <tr class="text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-water-50 dark:border-gray-700">
+                            <th class="px-8 py-4">Zawodnik</th>
+                            {% for z in zawody_gp %}
+                            <th class="px-4 py-4 text-center">Po: {{ z.nazwa[:10] }}</th>
+                            {% endfor %}
+                            <th class="px-8 py-4 text-center">Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-water-50 dark:divide-gray-700">
+                        {% for entry in ranking %}
+                        <tr class="hover:bg-water-50/30 dark:hover:bg-gray-700/30 transition-colors">
+                            <td class="px-8 py-4 font-bold text-gray-900 dark:text-white">{{ entry.zawodnik.nazwisko }} {{ entry.zawodnik.imie }}</td>
+                            {% for pos in entry.historia_pozycji %}
+                            <td class="px-4 py-4 text-center">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center mx-auto
+                                    {% if loop.first %} bg-gray-50 dark:bg-gray-900
+                                    {% elif pos < entry.historia_pozycji[loop.index0 - 1] %} bg-green-50 dark:bg-green-900/20 text-green-600
+                                    {% elif pos > entry.historia_pozycji[loop.index0 - 1] %} bg-red-50 dark:bg-red-900/20 text-red-600
+                                    {% else %} bg-gray-50 dark:bg-gray-900 {% endif %} font-black text-xs">
+                                    {{ pos }}
+                                </div>
+                            </td>
+                            {% endfor %}
+                            <td class="px-8 py-4 text-center">
+                                {% if entry.historia_pozycji|length > 1 %}
+                                    {% set start_pos = entry.historia_pozycji[0] %}
+                                    {% set end_pos = entry.historia_pozycji[-1] %}
+                                    {% if end_pos < start_pos %}
+                                        <span class="text-green-500 flex items-center justify-center gap-1 font-black"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg> {{ start_pos - end_pos }}</span>
+                                    {% elif end_pos > start_pos %}
+                                        <span class="text-red-500 flex items-center justify-center gap-1 font-black"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg> {{ end_pos - start_pos }}</span>
+                                    {% else %}
+                                        <span class="text-gray-300 font-black">stable</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-gray-200">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Detailed Per-Competition Classifications -->
+        <div class="space-y-8">
+            <h3 class="text-xl font-black uppercase tracking-tighter text-gray-900 dark:text-white px-4">Klasyfikacje poszczególnych zawodów</h3>
+            <div class="grid grid-cols-1 gap-8">
+                {% for z in zawody_gp %}
+                {% set wyniki = detale_zawodow.get(z.id) %}
+                <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
+                    <div class="px-8 py-5 border-b border-water-50 dark:border-gray-700 bg-water-50/10 dark:bg-gray-750 flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-water-500">Zawody GP #{{ loop.index }}</span>
+                            <h4 class="text-lg font-black text-gray-900 dark:text-white uppercase tracking-tight">{{ z.nazwa }}</h4>
                         </div>
-                    </td>
-                </tr>
+                        <div class="text-right">
+                            <div class="text-sm font-bold text-gray-900 dark:text-white">{{ z.data.strftime('%d.%m.%Y') }}</div>
+                            <div class="text-[10px] font-medium text-gray-400 uppercase tracking-widest">{{ z.lowisko.nazwa if z.lowisko else '—' }}</div>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left">
+                            <thead>
+                                <tr class="text-gray-400 uppercase font-black tracking-widest border-b border-water-50 dark:border-gray-700">
+                                    <th class="px-8 py-3 w-16 text-center">M.</th>
+                                    <th class="px-6 py-3">Zawodnik</th>
+                                    <th class="px-6 py-3 text-center">Waga / Pkt</th>
+                                    <th class="px-8 py-3 text-right">Pkt Sektorowe</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-water-50 dark:divide-gray-700">
+                                {% for r in wyniki.indywidualna[:10] %}
+                                <tr class="hover:bg-water-50/20 dark:hover:bg-gray-700/20 transition-colors">
+                                    <td class="px-8 py-3 text-center font-black text-gray-400 italic">{{ r.miejsce }}</td>
+                                    <td class="px-6 py-3 font-bold text-gray-900 dark:text-white">{{ r.uczestnik.zawodnik.nazwisko }} {{ r.uczestnik.zawodnik.imie }}</td>
+                                    <td class="px-6 py-3 text-center text-gray-600 dark:text-gray-400 font-medium">{{ r.suma_wag }}{{ 'p' if z.dyscyplina.typ_wyniku == 'punktowy' else 'g' }}</td>
+                                    <td class="px-8 py-3 text-right">
+                                        <span class="px-2 py-1 rounded bg-water-50 dark:bg-water-900/30 text-water-700 dark:text-water-300 font-black">
+                                            {{ r.suma_sektorowych|string|replace('.0', '') if r.status == 'OK' else 'NC' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% if wyniki.indywidualna|length > 10 %}
+                                <tr>
+                                    <td colspan="4" class="px-8 py-2 text-center text-[10px] text-gray-400 font-bold uppercase tracking-widest bg-gray-50/30 dark:bg-gray-900/30">... oraz {{ wyniki.indywidualna|length - 10 }} pozostałych zawodników ...</td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 {% endfor %}
-            </tbody>
-        </table>
+            </div>
+        </div>
     </div>
-</div>
-{% else %}
-<div class="text-center py-32 bg-white dark:bg-gray-800 rounded-[3rem] border-2 border-dashed border-water-100 dark:border-gray-700">
-    <div class="w-20 h-20 bg-water-50 dark:bg-water-900/30 rounded-full flex items-center justify-center mx-auto mb-6 text-water-300">
-        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+    {% else %}
+    <div class="text-center py-32 bg-white dark:bg-gray-800 rounded-[3rem] border-2 border-dashed border-water-100 dark:border-gray-700">
+        <div class="w-20 h-20 bg-water-50 dark:bg-water-900/30 rounded-full flex items-center justify-center mx-auto mb-6 text-water-300">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Brak zawodów GP</h3>
+        <p class="text-gray-500 dark:text-gray-400 mb-8 max-w-sm mx-auto">W wybranym sezonie {{ sezon }} nie odnotowano jeszcze żadnych zawodów oznaczonych jako Grand Prix.</p>
     </div>
-    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Brak zawodów GP</h3>
-    <p class="text-gray-500 dark:text-gray-400 mb-8 max-w-sm mx-auto">W wybranym sezonie {{ sezon }} nie odnotowano jeszcze żadnych zawodów oznaczonych jako Grand Prix.</p>
+    {% endif %}
 </div>
-{% endif %}
 {% endblock %}

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Grand Prix {{ sezon }} - {{ typ|capitalize }}</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 1cm;
+        }
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 10pt;
+            color: #333;
+            line-height: 1.4;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #4a9cb8;
+            padding-bottom: 10px;
+        }
+        .header h1 {
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #1a3f4d;
+        }
+        .header p {
+            margin: 5px 0 0;
+            color: #666;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8fafc;
+            color: #4a9cb8;
+            text-transform: uppercase;
+            font-size: 8pt;
+            font-weight: bold;
+        }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .font-bold { font-weight: bold; }
+        .bg-gold { background-color: #fef9c3; }
+        .footer {
+            margin-top: 50px;
+            text-align: right;
+            font-size: 8pt;
+            color: #999;
+        }
+        .section-title {
+            font-size: 12pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            color: #4a9cb8;
+            page-break-before: always;
+        }
+        .section-title:first-of-type {
+            page-break-before: avoid;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Klasyfikacja Grand Prix {{ sezon }}</h1>
+        <p>Typ raportu: {{ 'Zaawansowany' if typ == 'zaawansowany' else 'Uproszczony' }}</p>
+    </div>
+
+    <!-- MAIN RANKING TABLE -->
+    <table>
+        <thead>
+            <tr>
+                <th class="text-center">Poz.</th>
+                <th>Zawodnik</th>
+                <th>Koło</th>
+                {% for z in zawody_gp %}
+                <th class="text-center">{{ z.nazwa[:10] }}</th>
+                {% endfor %}
+                <th class="text-center">Suma pkt</th>
+                <th class="text-right">Suma wag</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in ranking %}
+            <tr>
+                <td class="text-center font-bold">{{ loop.index }}</td>
+                <td class="font-bold">{{ entry.zawodnik.nazwisko }} {{ entry.zawodnik.imie }}</td>
+                <td>{{ entry.zawodnik.kolo }}</td>
+                {% for z in zawody_gp %}
+                <td class="text-center">
+                    {% set pkt = entry.wyniki_per_zawody.get(z.id) %}
+                    {% if pkt is not none %}
+                        {{ pkt|string|replace('.0', '') if pkt < 9999 else 'NC' }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                {% endfor %}
+                <td class="text-center bg-gold font-bold">{{ entry.suma_miejsc|string|replace('.0', '') if entry.suma_miejsc < 9999 else '—' }}</td>
+                <td class="text-right bg-gold font-bold">{{ entry.suma_wag }}g</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if typ == 'zaawansowany' %}
+        <!-- RANK CHANGES -->
+        <div class="section-title">Przebieg zmian pozycji</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Zawodnik</th>
+                    {% for z in zawody_gp %}
+                    <th class="text-center">Po: {{ z.nazwa[:10] }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in ranking %}
+                <tr>
+                    <td class="font-bold">{{ entry.zawodnik.nazwisko }} {{ entry.zawodnik.imie }}</td>
+                    {% for pos in entry.historia_pozycji %}
+                    <td class="text-center">{{ pos }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- DETAILED COMPETITIONS -->
+        {% for z in zawody_gp %}
+        {% set wyniki = detale_zawodow.get(z.id) %}
+        <div class="section-title">{{ z.nazwa }} - {{ z.data.strftime('%d.%m.%Y') }}</div>
+        <table>
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 40px;">M.</th>
+                    <th>Zawodnik</th>
+                    <th>Koło</th>
+                    <th class="text-center">Waga / Pkt</th>
+                    <th class="text-right">Pkt Sektorowe</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in wyniki.indywidualna %}
+                <tr>
+                    <td class="text-center">{{ r.miejsce }}</td>
+                    <td class="font-bold">{{ r.uczestnik.zawodnik.nazwisko }} {{ r.uczestnik.zawodnik.imie }}</td>
+                    <td>{{ r.uczestnik.zawodnik.kolo }}</td>
+                    <td class="text-center">{{ r.suma_wag }}{{ 'p' if z.dyscyplina.typ_wyniku == 'punktowy' else 'g' }}</td>
+                    <td class="text-right font-bold">{{ r.suma_sektorowych|string|replace('.0', '') if r.status == 'OK' else 'NC' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endfor %}
+    {% endif %}
+
+    <div class="footer">
+        Wygenerowano z systemu PZW Zawody - {{ now_datetime.strftime('%d.%m.%Y %H:%M') if now_datetime else '' }}
+    </div>
+
+</body>
+</html>
