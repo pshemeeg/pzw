@@ -84,6 +84,7 @@ class Uzytkownik(db.Model, UserMixin):
         "Sedzia",
         back_populates="uzytkownik",
     )
+    ustawienia = db.Column(db.JSON, nullable=True)
 
     def __repr__(self):
         return f"<Uzytkownik {self.email}>"

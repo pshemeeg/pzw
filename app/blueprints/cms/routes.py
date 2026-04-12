@@ -83,6 +83,11 @@ Aby rozpocząć pracę, administrator powinien uzupełnić **Słowniki**:
 
 #### IV. EKSPORT DANYCH
 Z każdej podstrony klasyfikacji możesz pobrać profesjonalny **Protokół PDF** wygenerowany przez silnik WeasyPrint.
+
+#### V. USTAWIENIA I PREFERENCJE
+- W zakładce **Ustawienia konta** możesz zdefiniować swoje ulubione wartości domyślne.
+- System zapamięta Twoją domyślną dyscyplinę, liczbę sektorów, tur oraz ulubionych sędziów.
+- Dzięki temu tworzenie nowych zawodów sprowadza się do wpisania nazwy i wybrania daty.
 """,
         'szablony': 'W tej sekcji znajdziesz wzory dokumentów potrzebnych do pracy w kole.'
     }
@@ -98,10 +103,8 @@ Z każdej podstrony klasyfikacji możesz pobrać profesjonalny **Protokół PDF*
         else:
             abort(404)
     else:
-        # Aktualizujemy treść jeśli jest stara (bazująca na Twoim zgłoszeniu)
-        # Sędzia/Admin może zawsze zresetować dokument wchodząc na link
+        # Aktualizujemy treść jeśli jest stara lub placeholderem
         if current_user.is_authenticated and current_user.is_admin():
-             # Sprawdzamy czy treść jest stara/krótka (np. zawiera placeholder)
              if "Wstęp" in dokument.tresc or "Treść w przygotowaniu" in dokument.tresc:
                  dokument.tresc = tresci.get(kod, dokument.tresc)
                  dokument.tytul = tytuly.get(kod, dokument.tytul)

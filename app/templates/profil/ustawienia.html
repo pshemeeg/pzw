@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Ustawienia Profilu{% endblock %}
+{% block page_title %}Ustawienia i Preferencje{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8">
+    <form method="POST" class="space-y-8">
+        <!-- Defaults Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-water-200 dark:border-gray-700 shadow-sm overflow-hidden">
+            <div class="px-8 py-6 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-water-100 dark:bg-water-900/40 flex items-center justify-center text-water-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </div>
+                <div>
+                    <h2 class="text-sm font-black uppercase tracking-widest text-water-600 dark:text-water-400">Wartości domyślne zawodów</h2>
+                    <p class="text-[10px] text-gray-400 font-medium uppercase tracking-tight">Dane, które będą automatycznie uzupełniane w formularzu nowych zawodów.</p>
+                </div>
+            </div>
+            <div class="p-8 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Domyślna dyscyplina</label>
+                        <select name="domyslna_dyscyplina_id"
+                                class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
+                            <option value="">— wybierz —</option>
+                            {% for d in dyscypliny %}
+                            <option value="{{ d.id }}" {% if u.domyslna_dyscyplina_id == d.id %}selected{% endif %}>{{ d.nazwa }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Domyślna kategoria</label>
+                        <select name="domyslna_kategoria"
+                                class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
+                            <option value="">— wybierz —</option>
+                            {% set kategorie = [('kadeci', 'Kadeci (do 15 lat)'), ('juniorzy', 'Juniorzy (do 20 lat)'), ('mlodziez', 'Młodzież (do 25 lat)'), ('seniorzy', 'Seniorzy'), ('weterani', 'Weterani (55+)'), ('inne', 'Inne')] %}
+                            {% for wartosc, etykieta in kategorie %}
+                            <option value="{{ wartosc }}" {% if u.domyslna_kategoria == wartosc %}selected{% endif %}>{{ etykieta }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Domyślna liczba sektorów</label>
+                        <input type="number" name="domyslna_liczba_sektorow" min="1" max="26" value="{{ u.domyslna_liczba_sektorow or 1 }}"
+                               class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Domyślna liczba tur</label>
+                        <input type="number" name="domyslna_liczba_tur" min="1" max="10" value="{{ u.domyslna_liczba_tur or 1 }}"
+                               class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Ulubiony Sędzia Główny</label>
+                        <select name="domyslny_sedzia_glowny_id"
+                                class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
+                            <option value="">— wybierz —</option>
+                            {% for s in sedziowie %}
+                            <option value="{{ s.id }}" {% if u.domyslny_sedzia_glowny_id == s.id %}selected{% endif %}>{{ s.imie }} {{ s.nazwisko }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Ulubiony Sędzia Sekretarz</label>
+                        <select name="domyslny_sedzia_sekretarz_id"
+                                class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
+                            <option value="">— wybierz —</option>
+                            {% for s in sedziowie %}
+                            <option value="{{ s.id }}" {% if u.domyslny_sedzia_sekretarz_id == s.id %}selected{% endif %}>{{ s.imie }} {{ s.nazwisko }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-xl p-8">
+            <button type="submit"
+                    class="w-full py-4 bg-gold-500 hover:bg-gold-600 text-white font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-gold-500/20 transition-all active:scale-[0.98]">
+                Zapisz preferencje
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

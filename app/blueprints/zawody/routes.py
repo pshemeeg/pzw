@@ -118,7 +118,7 @@ def nowe():
         flash("Zawody zostały utworzone.", "success")
         return redirect(url_for("zawody.lista"))
 
-    return render_template("zawody/formularz.html", zawody=None, **get_slowniki())
+    return render_template("zawody/formularz.html", zawody=None, settings=current_user.ustawienia or {}, **get_slowniki())
 
 
 from app.blueprints.zawody.helpers import oblicz_klasyfikacje

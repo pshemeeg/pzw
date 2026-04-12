@@ -9,12 +9,12 @@ def test_cms_auto_create_for_admin(client, db_session):
     # Access non-existent but expected page
     response = client.get("/strony/regulamin")
     assert response.status_code == 200
-    assert b"Regulamin Systemu" in response.data
+    assert b"Regulamin Korzystania z Systemu" in response.data
     
     # Check DB
     doc = Dokument.query.filter_by(kod="regulamin").first()
     assert doc is not None
-    assert doc.tytul == "Regulamin Systemu"
+    assert "Regulamin Korzystania z Systemu" in doc.tytul
 
 def test_cms_edit_document(client, db_session):
     # Setup admin

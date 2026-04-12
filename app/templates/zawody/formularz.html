@@ -58,7 +58,11 @@
                                     class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
                                 <option value="">— wybierz —</option>
                                 {% for d in dyscypliny %}
-                                <option value="{{ d.id }}" {% if zawody and zawody.dyscyplina_id == d.id %}selected{% endif %}>{{ d.nazwa }}</option>
+                                <option value="{{ d.id }}" 
+                                    {% if zawody and zawody.dyscyplina_id == d.id %}selected
+                                    {% elif not zawody and settings.domyslna_dyscyplina_id == d.id %}selected{% endif %}>
+                                    {{ d.nazwa }}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -109,7 +113,11 @@
                                     class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
                                 <option value="">— wybierz —</option>
                                 {% for s in sedziowie %}
-                                <option value="{{ s.id }}" {% if zawody and zawody.organizator_id == s.id %}selected{% endif %}>{{ s.imie }} {{ s.nazwisko }}</option>
+                                <option value="{{ s.id }}" 
+                                    {% if zawody and zawody.organizator_id == s.id %}selected
+                                    {% elif not zawody and settings.domyslny_sedzia_glowny_id == s.id %}selected{% endif %}>
+                                    {{ s.imie }} {{ s.nazwisko }}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -119,7 +127,11 @@
                                     class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all cursor-pointer">
                                 <option value="">— wybierz —</option>
                                 {% for s in sedziowie %}
-                                <option value="{{ s.id }}" {% if zawody and zawody.sekretarz_id == s.id %}selected{% endif %}>{{ s.imie }} {{ s.nazwisko }}</option>
+                                <option value="{{ s.id }}" 
+                                    {% if zawody and zawody.sekretarz_id == s.id %}selected
+                                    {% elif not zawody and settings.domyslny_sedzia_sekretarz_id == s.id %}selected{% endif %}>
+                                    {{ s.imie }} {{ s.nazwisko }}
+                                </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -154,7 +166,11 @@
                             <option value="">— wybierz —</option>
                             {% set kategorie = [('kadeci', 'Kadeci (do 15 lat)'), ('juniorzy', 'Juniorzy (do 20 lat)'), ('mlodziez', 'Młodzież (do 25 lat)'), ('seniorzy', 'Seniorzy'), ('weterani', 'Weterani (55+)'), ('inne', 'Inne')] %}
                             {% for wartosc, etykieta in kategorie %}
-                            <option value="{{ wartosc }}" {% if zawody and zawody.kategoria == wartosc %}selected{% endif %}>{{ etykieta }}</option>
+                            <option value="{{ wartosc }}" 
+                                {% if zawody and zawody.kategoria == wartosc %}selected
+                                {% elif not zawody and settings.domyslna_kategoria == wartosc %}selected{% endif %}>
+                                {{ etykieta }}
+                            </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -162,12 +178,14 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Sektory</label>
-                            <input type="number" name="liczba_sektorow" min="1" max="26" value="{{ zawody.liczba_sektorow if zawody else 1 }}"
+                            <input type="number" name="liczba_sektorow" min="1" max="26" 
+                                   value="{{ zawody.liczba_sektorow if zawody else (settings.domyslna_liczba_sektorow or 1) }}"
                                    class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                         </div>
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Tury</label>
-                            <input type="number" name="liczba_tur" min="1" max="10" value="{{ zawody.liczba_tur if zawody else 1 }}"
+                            <input type="number" name="liczba_tur" min="1" max="10" 
+                                   value="{{ zawody.liczba_tur if zawody else (settings.domyslna_liczba_tur or 1) }}"
                                    class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                         </div>
                     </div>
