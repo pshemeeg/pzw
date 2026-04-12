@@ -1,63 +1,85 @@
-<div class="space-y-6">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden">
-        <div class="flex items-center justify-between px-5 py-4 border-b border-water-200 dark:border-gray-700">
-            <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">Klasyfikacja Indywidualna</h2>
+<div class="space-y-12">
+    <!-- Indywidualna -->
+    <div class="bg-white dark:bg-gray-800 rounded-3xl border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
+        <div class="px-8 py-5 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
+            <h2 class="text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 text-center">Klasyfikacja Indywidualna</h2>
         </div>
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="w-full text-sm text-left">
                 <thead>
-                    <tr class="border-b border-water-100 dark:border-gray-700 text-xs text-gray-400 uppercase text-left bg-gray-50 dark:bg-gray-900">
-                        <th class="px-4 py-3 font-medium w-16">Miejsce</th>
-                        <th class="px-4 py-3 font-medium">Zawodnik</th>
-                        <th class="px-4 py-3 font-medium hidden sm:table-cell">Koło</th>
+                    <tr class="bg-white dark:bg-gray-800 text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-water-50 dark:border-gray-700">
+                        <th class="px-8 py-5 text-center w-24">Miejsce</th>
+                        <th class="px-6 py-5">Zawodnik</th>
+                        <th class="px-6 py-5 hidden lg:table-cell">Koło PZW</th>
                         {% for t in range(1, zawody.liczba_tur + 1) %}
-                            <th class="px-4 py-3 font-medium text-center">Tura {{ t }}<br><span class="text-[10px] font-normal lowercase">(pkt sekt.)</span></th>
+                            <th class="px-4 py-5 text-center">Tura {{ t }}</th>
                         {% endfor %}
-                        <th class="px-4 py-3 font-medium text-center">Suma<br>Punktów</th>
-                        <th class="px-4 py-3 font-medium text-right">Suma<br>Wyników</th>
+                        <th class="px-6 py-5 text-center bg-water-50/30 dark:bg-water-900/20">Suma pkt</th>
+                        <th class="px-8 py-5 text-right bg-water-50/30 dark:bg-water-900/20">Wynik łączny</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-water-50 dark:divide-gray-700">
                     {% for r in klasyfikacja.indywidualna %}
-                    <tr class="hover:bg-water-50 dark:hover:bg-gray-750 transition-colors {% if r.miejsce in [1, 2, 3] %}bg-gold-50 dark:bg-gold-900/10{% else %}bg-white dark:bg-gray-800{% endif %}">
-                        <td class="px-4 py-3 font-bold {% if r.miejsce == 1 %}text-yellow-500{% elif r.miejsce == 2 %}text-gray-400{% elif r.miejsce == 3 %}text-amber-600{% else %}text-gray-500{% endif %} text-center">
-                            {{ r.miejsce }}
+                    <tr class="transition-colors group
+                        {% if r.miejsce == 1 %} bg-gold-50/50 dark:bg-amber-900/10 
+                        {% elif r.miejsce == 2 %} bg-gray-50/50 dark:bg-gray-700/10
+                        {% elif r.miejsce == 3 %} bg-orange-50/30 dark:bg-orange-900/10
+                        {% else %} hover:bg-water-50/30 dark:hover:bg-gray-700/30 {% endif %}">
+                        <td class="px-8 py-5 text-center">
+                            {% if r.miejsce == 1 %}
+                                <div class="w-10 h-10 rounded-xl bg-gold-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-gold-500/30 font-black italic">1</div>
+                            {% elif r.miejsce == 2 %}
+                                <div class="w-10 h-10 rounded-xl bg-gray-400 text-white flex items-center justify-center mx-auto shadow-lg shadow-gray-400/30 font-black italic">2</div>
+                            {% elif r.miejsce == 3 %}
+                                <div class="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-amber-600/30 font-black italic">3</div>
+                            {% elif r.miejsce == 'NC' %}
+                                <span class="text-xs font-black text-gray-300">NC</span>
+                            {% else %}
+                                <span class="font-black text-gray-400 italic text-base">{{ r.miejsce }}</span>
+                            {% endif %}
                         </td>
-                        <td class="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">
-                            {{ r.uczestnik.zawodnik.nazwisko }} {{ r.uczestnik.zawodnik.imie }}
+                        <td class="px-6 py-5">
+                            <div class="font-bold text-gray-900 dark:text-white">{{ r.uczestnik.zawodnik.nazwisko }} {{ r.uczestnik.zawodnik.imie }}</div>
+                            <div class="text-[10px] text-gray-400 uppercase font-medium lg:hidden">{{ r.uczestnik.zawodnik.kolo }}</div>
                         </td>
-                        <td class="px-4 py-3 text-gray-500 dark:text-gray-400 hidden sm:table-cell">
-                            {{ r.uczestnik.zawodnik.kolo }}
+                        <td class="px-6 py-5 hidden lg:table-cell">
+                            <span class="text-gray-500 dark:text-gray-400 font-medium">{{ r.uczestnik.zawodnik.kolo }}</span>
                         </td>
                         {% for t in range(1, zawody.liczba_tur + 1) %}
-                            <td class="px-4 py-3 text-center text-gray-600 dark:text-gray-300">
+                            <td class="px-4 py-5 text-center">
                                 {% set dt = r.punkty_tury.get(t) %}
                                 {% if dt and dt.sektorowe is not none %}
-                                    {{ dt.sektorowe|string|replace('.0', '') }}
+                                    <span class="px-2.5 py-1 rounded-lg bg-white dark:bg-gray-700 border border-water-100 dark:border-gray-600 text-xs font-black text-water-700 dark:text-water-300">
+                                        {{ dt.sektorowe|string|replace('.0', '') }}
+                                    </span>
                                 {% else %}
-                                    —
+                                    <span class="text-gray-200 dark:text-gray-700">—</span>
                                 {% endif %}
                             </td>
                         {% endfor %}
-                        <td class="px-4 py-3 text-center font-bold text-gray-800 dark:text-gray-100">
-                            {{ r.suma_sektorowych|string|replace('.0', '') if r.status == 'OK' else '—' }}
+                        <td class="px-6 py-5 text-center bg-water-50/30 dark:bg-water-900/20">
+                            <span class="text-base font-black text-gray-900 dark:text-white">
+                                {{ r.suma_sektorowych|string|replace('.0', '') if r.status == 'OK' else '—' }}
+                            </span>
                         </td>
-                        <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">
+                        <td class="px-8 py-5 text-right bg-water-50/30 dark:bg-water-900/20">
                             {% if r.status == 'OK' %}
-                                {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}
-                                    {{ r.suma_wag }} pkt
-                                {% else %}
-                                    {{ r.suma_wag }} g
-                                {% endif %}
+                                <div class="text-sm font-black text-water-600 dark:text-water-400 uppercase tracking-tighter">
+                                    {{ r.suma_wag }}
+                                    <span class="text-[10px] ml-0.5">{% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}pkt{% else %}g{% endif %}</span>
+                                </div>
                             {% else %}
-                                N/C
+                                <span class="text-[10px] font-black uppercase text-red-400 tracking-widest">Niezaliczona</span>
                             {% endif %}
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="{{ 5 + zawody.liczba_tur }}" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
-                            Brak danych do klasyfikacji. Dodaj zawodników, stanowiska i wyniki.
+                        <td colspan="{{ 5 + zawody.liczba_tur }}" class="px-8 py-20 text-center">
+                            <div class="w-16 h-16 bg-water-50 dark:bg-water-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-water-300">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </div>
+                            <p class="text-gray-400 font-medium">Brak danych do wygenerowania klasyfikacji.</p>
                         </td>
                     </tr>
                     {% endfor %}
@@ -66,77 +88,95 @@
         </div>
     </div>
 
+    <!-- Drużynowa -->
     {% if zawody.klasyfikacja_druzynowa %}
-    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden">
-        <div class="flex items-center justify-between px-5 py-4 border-b border-water-200 dark:border-gray-700">
-            <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">Klasyfikacja Drużynowa</h2>
+    <div class="bg-white dark:bg-gray-800 rounded-3xl border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
+        <div class="px-8 py-5 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
+            <h2 class="text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 text-center">Klasyfikacja Drużynowa</h2>
         </div>
         <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+            <table class="w-full text-sm text-left">
                 <thead>
-                    <tr class="border-b border-water-100 dark:border-gray-700 text-xs text-gray-400 uppercase text-left bg-gray-50 dark:bg-gray-900">
-                        <th class="px-4 py-3 font-medium w-16">Miejsce</th>
-                        <th class="px-4 py-3 font-medium">Drużyna</th>
-                        <th class="px-4 py-3 font-medium text-center">Suma<br>Punktów</th>
-                        <th class="px-4 py-3 font-medium text-right">Suma<br>Wyników</th>
+                    <tr class="bg-white dark:bg-gray-800 text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-water-50 dark:border-gray-700">
+                        <th class="px-8 py-5 text-center w-24">Miejsce</th>
+                        <th class="px-6 py-5">Nazwa Drużyny</th>
+                        <th class="px-6 py-5 text-center">Suma pkt</th>
+                        <th class="px-8 py-5 text-right">Wynik łączny</th>
                     </tr>
                 </thead>
                 {% for d in klasyfikacja.druzynowa %}
-                <tbody x-data="{ open: false }" class="divide-y divide-water-50 dark:divide-gray-700 border-b border-water-50 dark:border-gray-700">
-                    <tr class="hover:bg-water-50 dark:hover:bg-gray-750 transition-colors {% if d.miejsce in [1, 2, 3] %}bg-gold-50 dark:bg-gold-900/10{% else %}bg-white dark:bg-gray-800{% endif %} cursor-pointer" @click="open = !open">
-                        <td class="px-4 py-3 font-bold {% if d.miejsce == 1 %}text-yellow-500{% elif d.miejsce == 2 %}text-gray-400{% elif d.miejsce == 3 %}text-amber-600{% else %}text-gray-500{% endif %} text-center">
-                            {{ d.miejsce }}
-                        </td>
-                        <td class="px-4 py-3 font-medium text-gray-800 dark:text-gray-100">
-                            {{ d.druzyna }}
-                            <span class="text-xs font-normal text-gray-400 ml-2">(kliknij by rozwinąć)</span>
-                        </td>
-                        <td class="px-4 py-3 text-center font-bold text-gray-800 dark:text-gray-100">
-                            {{ d.suma_sektorowych if d.status == 'OK' else '—' }}
-                        </td>
-                        <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">
-                            {% if d.status == 'OK' %}
-                                {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}
-                                    {{ d.suma_wag }} pkt
-                                {% else %}
-                                    {{ d.suma_wag }} g
-                                {% endif %}
+                <tbody x-data="{ open: false }" class="divide-y divide-water-50 dark:divide-gray-700 border-b border-water-50 dark:border-gray-700 last:border-0">
+                    <tr class="cursor-pointer transition-colors
+                        {% if d.miejsce == 1 %} bg-gold-50/50 dark:bg-amber-900/10 
+                        {% elif d.miejsce == 2 %} bg-gray-50/50 dark:bg-gray-700/10
+                        {% elif d.miejsce == 3 %} bg-orange-50/30 dark:bg-orange-900/10
+                        {% else %} hover:bg-water-50/30 dark:hover:bg-gray-700/30 {% endif %}" 
+                        @click="open = !open">
+                        <td class="px-8 py-6 text-center">
+                            {% if d.miejsce == 1 %}
+                                <div class="w-10 h-10 rounded-xl bg-gold-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-gold-500/30 font-black italic">1</div>
+                            {% elif d.miejsce == 2 %}
+                                <div class="w-10 h-10 rounded-xl bg-gray-400 text-white flex items-center justify-center mx-auto shadow-lg shadow-gray-400/30 font-black italic">2</div>
+                            {% elif d.miejsce == 3 %}
+                                <div class="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center mx-auto shadow-lg shadow-amber-600/30 font-black italic">3</div>
                             {% else %}
-                                N/C
+                                <span class="font-black text-gray-400 italic text-base">{{ d.miejsce }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-6">
+                            <div class="flex items-center justify-between">
+                                <span class="font-black text-gray-900 dark:text-white text-base">{{ d.druzyna }}</span>
+                                <svg class="w-5 h-5 text-gray-300 transition-transform duration-300" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </div>
+                        </td>
+                        <td class="px-6 py-6 text-center">
+                            <span class="text-lg font-black text-gray-900 dark:text-white">
+                                {{ d.suma_sektorowych if d.status == 'OK' else '—' }}
+                            </span>
+                        </td>
+                        <td class="px-8 py-6 text-right">
+                            {% if d.status == 'OK' %}
+                                <div class="text-sm font-black text-water-600 dark:text-water-400 uppercase tracking-tighter">
+                                    {{ d.suma_wag }}
+                                    <span class="text-[10px] ml-0.5">{% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}pkt{% else %}g{% endif %}</span>
+                                </div>
+                            {% else %}
+                                <span class="text-[10px] font-black uppercase text-red-400 tracking-widest">Niezaliczona</span>
                             {% endif %}
                         </td>
                     </tr>
-                    <!-- Rozwinięcie drużyny -->
-                    <tr x-show="open" style="display: none;" class="bg-gray-50 dark:bg-gray-900">
-                        <td colspan="4" class="p-0 border-b border-water-200 dark:border-gray-700">
-                            <table class="w-full text-xs text-gray-500 dark:text-gray-400">
-                                <tbody>
-                                    {% for r in d.zawodnicy %}
-                                    <tr class="border-b border-water-50 dark:border-gray-750 last:border-0 hover:bg-gray-100 dark:hover:bg-gray-800">
-                                        <td class="px-4 py-2 w-16 text-center">
-                                            {{ loop.index }}
-                                        </td>
-                                        <td class="px-4 py-2">
-                                            {{ r.uczestnik.zawodnik.nazwisko }} {{ r.uczestnik.zawodnik.imie }}
-                                        </td>
-                                        <td class="px-4 py-2 text-center font-medium text-gray-700 dark:text-gray-300">
-                                            {{ r.suma_sektorowych if r.status == 'OK' else 'NC' }} pkt
-                                        </td>
-                                        <td class="px-4 py-2 text-right">
-                                            {{ r.suma_wag }} {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}pkt{% else %}g{% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                    <!-- Szczegóły drużyny -->
+                    <tr x-show="open" x-cloak x-collapse class="bg-gray-50 dark:bg-gray-900/50">
+                        <td colspan="4" class="p-0 border-b border-water-100 dark:border-gray-700">
+                            <div class="px-8 py-6 flex flex-col gap-3">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Skład drużyny i wyniki cząstkowe</p>
+                                {% for r in d.zawodnicy %}
+                                <div class="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-2xl border border-water-50 dark:border-gray-700 shadow-sm">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-xs font-bold text-gray-400">{{ loop.index }}</div>
+                                        <span class="font-bold text-gray-900 dark:text-white">{{ r.uczestnik.zawodnik.nazwisko }} {{ r.uczestnik.zawodnik.imie }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-8">
+                                        <div class="text-right">
+                                            <div class="text-[8px] font-black text-gray-400 uppercase">Pkt sekt.</div>
+                                            <div class="text-sm font-black text-gray-900 dark:text-white">{{ r.suma_sektorowych if r.status == 'OK' else 'NC' }}</div>
+                                        </div>
+                                        <div class="text-right w-24">
+                                            <div class="text-[8px] font-black text-gray-400 uppercase">Wynik</div>
+                                            <div class="text-sm font-black text-water-600 dark:text-water-400">{{ r.suma_wag }}{% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}p{% else %}g{% endif %}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </td>
                     </tr>
                 </tbody>
                 {% else %}
                 <tbody>
                     <tr>
-                        <td colspan="4" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
-                            Brak poprawnych kompletnych 3-osobowych drużyn.
+                        <td colspan="4" class="px-8 py-12 text-center text-gray-400 italic">
+                            Brak poprawnych kompletnych drużyn do klasyfikacji.
                         </td>
                     </tr>
                 </tbody>

@@ -1,59 +1,80 @@
-<div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden">
-    <div class="flex items-center justify-between px-5 py-4 border-b border-water-200 dark:border-gray-700">
-        <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">
-            Uczestnicy
-            <span class="ml-2 text-xs text-gray-400">{{ zawody.uczestnicy|length }}</span>
+<div class="bg-white dark:bg-gray-800 rounded-3xl border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
+    <div class="flex items-center justify-between px-8 py-5 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
+        <h2 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 opacity-80">
+            Lista startowa uczestników
+            <span class="ml-2 px-2 py-0.5 bg-water-100 dark:bg-water-900/50 text-water-600 dark:text-water-400 rounded-lg text-[10px]">{{ zawody.uczestnicy|length }} osób</span>
         </h2>
     </div>
 
     {% if zawody.uczestnicy %}
-    <table class="w-full text-sm">
+    <table class="w-full text-sm text-left">
         <thead>
-            <tr class="border-b border-water-200 dark:border-gray-700 text-xs text-gray-400 uppercase tracking-wide">
-                <th class="text-left px-5 py-3 font-medium">Nr</th>
-                <th class="text-left px-5 py-3 font-medium">Zawodnik</th>
-                <th class="text-left px-5 py-3 font-medium hidden sm:table-cell">Koło</th>
-                <th class="text-left px-5 py-3 font-medium hidden md:table-cell">Drużyna</th>
-                <th class="px-5 py-3"></th>
+            <tr class="text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-water-50 dark:border-gray-700">
+                <th class="px-8 py-4 w-20">Nr</th>
+                <th class="px-6 py-4">Zawodnik</th>
+                <th class="px-6 py-4 hidden sm:table-cell">Koło PZW</th>
+                <th class="px-6 py-4 hidden md:table-cell">Drużyna</th>
+                <th class="px-8 py-4"></th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-water-100 dark:divide-gray-700">
+        <tbody class="divide-y divide-water-50 dark:divide-gray-700">
             {% for u in zawody.uczestnicy|sort(attribute='numer_startowy') %}
-            <tr class="hover:bg-water-50 dark:hover:bg-gray-700 transition-colors" x-data="{ edytuje: false }">
-                <td class="px-5 py-3 text-gray-500 dark:text-gray-400 w-16">
-                    <span x-show="!edytuje">{{ u.numer_startowy }}</span>
-                    <form x-show="edytuje" method="POST" action="{{ url_for('zawody.uczestnik_edytuj', zid=zawody.id, uid=u.id) }}">
+            <tr class="hover:bg-water-50/30 dark:hover:bg-gray-700/30 transition-colors group" x-data="{ edytuje: false }">
+                <td class="px-8 py-4">
+                    <span x-show="!edytuje" class="font-black text-water-600 dark:text-water-400 text-base">
+                        {{ u.numer_startowy if u.numer_startowy else '—' }}
+                    </span>
+                    <form x-show="edytuje" method="POST" action="{{ url_for('zawody.uczestnik_edytuj', zid=zawody.id, uid=u.id) }}" class="flex items-center gap-2">
                         <input type="hidden" name="druzyna" value="{{ u.druzyna or '' }}">
-                        <input type="number" name="numer_startowy" value="{{ u.numer_startowy }}" class="w-16 px-2 py-1 text-xs rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
-                        <button type="submit" class="ml-1 text-xs text-water-700 dark:text-water-200 hover:underline">Zapisz</button>
+                        <input type="number" name="numer_startowy" value="{{ u.numer_startowy }}" 
+                               class="w-16 px-2 py-1 text-sm font-bold rounded-lg border border-water-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-water-500 outline-none">
+                        <button type="submit" class="p-1.5 text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        </button>
                     </form>
                 </td>
-                <td class="px-5 py-3 font-medium text-gray-800 dark:text-gray-100">
-                    <a href="{{ url_for('zawodnicy.szczegoly', zid=u.zawodnik.id) }}" class="hover:text-water-700 dark:hover:text-water-200">
+                <td class="px-6 py-4 font-bold text-gray-900 dark:text-white">
+                    <a href="{{ url_for('zawodnicy.szczegoly', zid=u.zawodnik.id) }}" class="hover:text-water-600 transition-colors">
                         {{ u.zawodnik.nazwisko }} {{ u.zawodnik.imie }}
                     </a>
                 </td>
-                <td class="px-5 py-3 text-gray-500 dark:text-gray-400 hidden sm:table-cell">
+                <td class="px-6 py-4 text-gray-500 dark:text-gray-400 hidden sm:table-cell font-medium">
                     {{ u.zawodnik.kolo }}
                 </td>
-                <td class="px-5 py-3 text-gray-500 dark:text-gray-400 hidden md:table-cell">
-                    {{ u.druzyna or '—' }}
+                <td class="px-6 py-4 hidden md:table-cell">
+                    {% if u.druzyna %}
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400 text-[10px] font-black uppercase tracking-tight border border-water-50 dark:border-gray-700">
+                        {{ u.druzyna }}
+                    </span>
+                    {% else %}
+                    <span class="text-gray-300 dark:text-gray-600">—</span>
+                    {% endif %}
                 </td>
-                <td class="px-5 py-3 text-right">
-                    <button @click="edytuje = !edytuje" class="text-xs text-gray-400 hover:text-water-700 dark:hover:text-water-200 transition-colors mr-3">
-                        <span x-text="edytuje ? 'Anuluj' : 'Edytuj'"></span>
-                    </button>
-                    <form method="POST" class="inline" action="{{ url_for('zawody.uczestnik_usun', zid=zawody.id, uid=u.id) }}" onsubmit="return confirm('Usunąć zawodnika z zawodów?')">
-                        <button type="submit" class="text-xs text-red-400 hover:text-red-600 transition-colors">Usuń</button>
-                    </form>
+                <td class="px-8 py-4 text-right">
+                    <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button @click="edytuje = !edytuje" 
+                                class="p-2 text-gray-400 hover:text-gold-600 dark:hover:text-gold-400 hover:bg-gold-50 dark:hover:bg-amber-900/20 rounded-lg transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                        </button>
+                        <form method="POST" class="inline" action="{{ url_for('zawody.uczestnik_usun', zid=zawody.id, uid=u.id) }}" 
+                              onsubmit="return confirm('Usunąć zawodnika z zawodów?')">
+                            <button type="submit" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% else %}
-    <div class="text-center py-12 text-gray-400 dark:text-gray-500">
-        <p class="text-sm">Brak uczestników — dodaj pierwszego powyżej</p>
+    <div class="text-center py-20 bg-white dark:bg-gray-800">
+        <div class="w-16 h-16 bg-water-50 dark:bg-water-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-water-300">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+        </div>
+        <p class="text-gray-500 dark:text-gray-400 font-medium">Brak uczestników na liście.</p>
+        <p class="text-xs text-gray-400 mt-1">Użyj pola wyszukiwania powyżej, aby dodać zawodników.</p>
     </div>
     {% endif %}
 </div>

@@ -4,195 +4,206 @@
 {% block page_title %}{{ zawody.nazwa }}{% endblock %}
 
 {% block content %}
-<div class="flex items-center gap-3 mb-6">
-    <a href="{{ url_for('zawody.lista') }}"
-       class="text-sm text-gray-400 hover:text-gray-600
-              dark:hover:text-gray-200 transition-colors">
-        Zawody
-    </a>
-    <span class="text-gray-300 dark:text-gray-600">/</span>
-    <span class="text-sm text-gray-600 dark:text-gray-300">
-        {{ zawody.nazwa }}
-    </span>
-    <a href="{{ url_for('zawody.edytuj', zid=zawody.id) }}"
-       class="ml-auto text-sm px-3 py-1.5 rounded-lg border
-              border-water-200 dark:border-gray-600
-              text-water-700 dark:text-water-200
-              hover:bg-water-100 dark:hover:bg-gray-700 transition-colors">
-        Edytuj
-    </a>
-    <a href="{{ url_for('zawody.protokol_pdf', zid=zawody.id) }}"
-       target="_blank"
-       class="text-sm px-3 py-1.5 rounded-lg border
-              border-gold-500 bg-gold-500 text-white
-              hover:bg-gold-600 hover:border-gold-600 transition-colors">
-        Pobierz Protokół
-    </a>
-    <a href="{{ url_for('zawody.klasyfikacja_pdf', zid=zawody.id) }}"
-       target="_blank"
-       class="text-sm px-3 py-1.5 rounded-lg border
-              border-blue-500 bg-blue-500 text-white
-              hover:bg-blue-600 hover:border-blue-600 transition-colors ml-2">
-        Pobierz Klasyfikację
-    </a>
+<!-- Breadcrumbs & Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <nav class="flex items-center gap-2 text-sm font-medium">
+        <a href="{{ url_for('zawody.lista') }}" class="text-gray-400 hover:text-water-600 transition-colors">Zawody</a>
+        <svg class="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        <span class="text-gray-900 dark:text-white">{{ zawody.nazwa }}</span>
+    </nav>
+
+    <div class="flex flex-wrap items-center gap-2">
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('zawody.edytuj', zid=zawody.id) }}"
+           class="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-water-200 dark:border-gray-700 rounded-xl hover:bg-gray-50 transition-all active:scale-95 shadow-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 breakfast 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            Edytuj
+        </a>
+        <a href="{{ url_for('zawody.protokol_pdf', zid=zawody.id) }}" target="_blank"
+           class="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold bg-gold-500 hover:bg-gold-600 text-white rounded-xl shadow-lg shadow-gold-500/20 transition-all active:scale-95">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Protokół
+        </a>
+        {% endif %}
+        <a href="{{ url_for('zawody.klasyfikacja_pdf', zid=zawody.id) }}" target="_blank"
+           class="inline-flex items-center gap-2 px-4 py-2 text-sm font-bold bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-95">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Klasyfikacja
+        </a>
+    </div>
 </div>
 
-<!-- Info Cards (unchanged for brevity, let me just keep them full) -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6">
-        <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-4">
-            Informacje
-        </h2>
-        <dl class="space-y-3 text-sm">
-            <div class="flex justify-between">
-                <dt class="text-gray-500 dark:text-gray-400">Data</dt>
-                <dd class="font-medium">
-                    {% if zawody.data_do %}
-                        {{ zawody.data.strftime('%d.%m') }}-{{ zawody.data_do.strftime('%d.%m.%Y') }}
-                    {% else %}
-                        {{ zawody.data.strftime('%d.%m.%Y') }}
-                    {% endif %}
-                </dd>
-            </div>
-            <div class="flex justify-between">
-                <dt class="text-gray-500 dark:text-gray-400">Dyscyplina</dt>
-                <dd class="font-medium">{{ zawody.dyscyplina.nazwa }}</dd>
-            </div>
-            <div class="flex justify-between">
-                <dt class="text-gray-500 dark:text-gray-400">Łowisko</dt>
-                <dd class="font-medium">
-                    {{ zawody.lowisko.nazwa if zawody.lowisko else '—' }}
-                </dd>
-            </div>
-            <div class="flex justify-between">
-                <dt class="text-gray-500 dark:text-gray-400">Godziny</dt>
-                <dd class="font-medium">
-                    {% if zawody.godzina_start %}
-                        {{ zawody.godzina_start.strftime('%H:%M') }}
-                        {% if zawody.godzina_koniec %}
-                            — {{ zawody.godzina_koniec.strftime('%H:%M') }}
-                        {% endif %}
-                    {% else %}—{% endif %}
-                </dd>
-            </div>
-            <div class="flex justify-between">
-                <dt class="text-gray-500 dark:text-gray-400">Sektory / tury</dt>
-                <dd class="font-medium">
-                    {{ zawody.liczba_sektorow }} / {{ zawody.liczba_tur }}
-                </dd>
-            </div>
-            {% if zawody.organizator %}
-            <div class="flex justify-between">
-                <dt class="text-gray-500 dark:text-gray-400">Organizator</dt>
-                <dd class="font-medium">
-                    {{ zawody.organizator.imie }} {{ zawody.organizator.nazwisko }}
-                </dd>
-            </div>
-            {% endif %}
-            <div class="flex justify-between">
-                <dt class="text-gray-500 dark:text-gray-400">Status</dt>
-                <dd>
-                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
-                        {% if zawody.status == 'zakonczone' %}
-                            bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
-                        {% elif zawody.status == 'w_trakcie' %}
-                            bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+    <!-- Main Info Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-3xl border border-water-200 dark:border-gray-700 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
+            <h2 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 opacity-80 mb-4">Podsumowanie zawodów</h2>
+        </div>
+        <div class="p-6">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-water-100 dark:bg-water-900/40 flex items-center justify-center text-water-600 dark:text-water-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+                <div>
+                    <div class="text-sm font-black text-gray-900 dark:text-white uppercase leading-tight">
+                        {% if zawody.data_do %}
+                            {{ zawody.data.strftime('%d.%m') }} - {{ zawody.data_do.strftime('%d.%m.%Y') }}
                         {% else %}
-                            bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300
-                        {% endif %}">
-                        {{ zawody.status|replace('_', ' ')|capitalize }}
-                    </span>
-                </dd>
+                            {{ zawody.data.strftime('%d.%m.%Y') }}
+                        {% endif %}
+                    </div>
+                    <div class="text-[10px] text-gold-600 dark:text-gold-400 font-bold uppercase tracking-widest mt-1">Sezon {{ zawody.sezon }}</div>
+                </div>
             </div>
-        </dl>
+
+            <dl class="space-y-4">
+                <div class="flex justify-between items-center py-2 border-b border-water-50 dark:border-gray-700 last:border-0">
+                    <dt class="text-xs font-bold text-gray-400 uppercase tracking-tight">Dyscyplina</dt>
+                    <dd class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ zawody.dyscyplina.nazwa }}</dd>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-water-50 dark:border-gray-700 last:border-0">
+                    <dt class="text-xs font-bold text-gray-400 uppercase tracking-tight">Łowisko</dt>
+                    <dd class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ zawody.lowisko.nazwa if zawody.lowisko else '—' }}</dd>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-water-50 dark:border-gray-700 last:border-0">
+                    <dt class="text-xs font-bold text-gray-400 uppercase tracking-tight">Status</dt>
+                    <dd>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider
+                            {% if zawody.status == 'zakonczone' %} bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400
+                            {% elif zawody.status == 'w_trakcie' %} bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400
+                            {% else %} bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 {% endif %}">
+                            {{ zawody.status|replace('_', ' ') }}
+                        </span>
+                    </dd>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-water-50 dark:border-gray-700 last:border-0">
+                    <dt class="text-xs font-bold text-gray-400 uppercase tracking-tight">Sektory / Tury</dt>
+                    <dd class="text-sm font-black text-gray-900 dark:text-gray-100">{{ zawody.liczba_sektorow }} / {{ zawody.liczba_tur }}</dd>
+                </div>
+            </dl>
+        </div>
     </div>
 
-    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6">
-        <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-4">
-            Dodaj zawodnika
-        </h2>
-        <form method="POST" action="{{ url_for('zawody.uczestnik_dodaj', zid=zawody.id) }}" class="space-y-3">
-            <div x-data="szukajZawodnika()" class="relative">
-                <input type="hidden" name="zawodnik_id" x-model="wybranyId">
-                <input type="text"
-                       x-model="fraza"
-                       @input.debounce.300ms="szukaj()"
-                       @focus="szukaj()"
-                       @keydown.escape="zamknij()"
-                       placeholder="Wpisz nazwisko lub imię..."
-                       autocomplete="off"
-                       class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500">
-                <div x-show="wyniki.length > 0" class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-water-200 dark:border-gray-600 rounded-lg shadow-lg overflow-hidden">
-                    <template x-for="z in wyniki" :key="z.id">
-                        <div @click="wybierz(z)" class="px-4 py-2.5 text-sm cursor-pointer hover:bg-water-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100 border-b border-water-100 dark:border-gray-700 last:border-0">
-                            <span class="font-medium" x-text="z.nazwisko + ' ' + z.imie"></span>
-                            <span class="text-gray-400 ml-2 text-xs" x-text="z.kolo"></span>
+    {% if current_user.is_authenticated %}
+    <!-- Quick Add Participant -->
+    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-3xl border border-water-200 dark:border-gray-700 shadow-sm overflow-hidden flex flex-col">
+        <div class="p-6 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
+            <h2 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 opacity-80 mb-4">Szybkie dodawanie zawodnika</h2>
+        </div>
+        <div class="p-8 flex-1 flex flex-col justify-center">
+            <form method="POST" action="{{ url_for('zawody.uczestnik_dodaj', zid=zawody.id) }}" class="space-y-6">
+                <div x-data="szukajZawodnika()" class="relative">
+                    <input type="hidden" name="zawodnik_id" x-model="wybranyId">
+                    <div class="relative group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-water-500 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         </div>
-                    </template>
+                        <input type="text" x-model="fraza" @input.debounce.300ms="szukaj()" @focus="szukaj()" @keydown.escape="zamknij()"
+                               placeholder="Zacznij wpisywać nazwisko zawodnika..." autocomplete="off"
+                               class="w-full pl-12 pr-4 py-4 text-base font-medium rounded-2xl border border-water-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 text-gray-900 dark:text-white focus:ring-4 focus:ring-water-500/10 focus:border-water-500 transition-all outline-none">
+                    </div>
+                    
+                    <!-- Search Results Dropdown -->
+                    <div x-show="wyniki.length > 0" x-cloak
+                         class="absolute z-20 w-full mt-2 bg-white dark:bg-gray-800 border border-water-200 dark:border-gray-700 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                        <template x-for="z in wyniki" :key="z.id">
+                            <div @click="wybierz(z)" class="px-6 py-4 cursor-pointer hover:bg-water-50 dark:hover:bg-gray-700 transition-colors border-b border-water-50 dark:border-gray-700 last:border-0 flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold text-gray-900 dark:text-white" x-text="z.nazwisko + ' ' + z.imie"></div>
+                                    <div class="text-xs text-gray-400" x-text="z.kolo"></div>
+                                </div>
+                                <svg class="w-5 h-5 text-water-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            </div>
+                        </template>
+                    </div>
+                    
+                    <!-- No Results -->
+                    <div x-show="wyniki.length === 0 && po_wyszukaniu" x-cloak
+                         class="absolute z-20 w-full mt-2 bg-white dark:bg-gray-800 border border-water-200 dark:border-gray-700 rounded-2xl shadow-2xl p-8 text-center animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div class="w-12 h-12 bg-gray-50 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                        </div>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4">Nie znaleźliśmy takiego zawodnika.</p>
+                        <button type="button" @click="$dispatch('open-modal'); zamknij()" 
+                                class="inline-flex items-center gap-2 px-6 py-2.5 bg-water-500 text-white font-bold rounded-xl hover:bg-water-600 transition-all">
+                            Szybkie dodawanie nowej osoby
+                        </button>
+                    </div>
                 </div>
-                <div x-show="wyniki.length === 0 && po_wyszukaniu" class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-water-200 dark:border-gray-600 rounded-lg shadow-lg overflow-hidden p-3 text-sm text-center text-gray-500">
-                    Brak wyników. 
-                    <button type="button" @click="$dispatch('open-modal'); zamknij()" class="text-water-600 dark:text-water-400 hover:underline font-medium">Szybkie dodawanie</button>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    {% if zawody.klasyfikacja_druzynowa %}
+                    <div class="flex-1" x-data="{ druzyna: '', podpowiedzi: {{ druzyny | tojson }} }">
+                        <input type="text" name="druzyna" x-model="druzyna" placeholder="Nazwa drużyny..." required list="lista-druzyn" autocomplete="off" 
+                               class="w-full px-4 py-3 text-sm font-medium rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 text-gray-900 dark:text-white focus:border-water-500 transition-all outline-none">
+                        <datalist id="lista-druzyn">
+                            {% for d in druzyny %}
+                            <option value="{{ d }}">{{ d }}</option>
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                    {% endif %}
+                    <button type="submit" class="sm:w-48 px-6 py-3 text-sm font-black uppercase tracking-widest bg-gold-500 hover:bg-gold-600 text-white rounded-xl shadow-lg shadow-gold-500/20 transition-all active:scale-95">
+                        Przypisz
+                    </button>
                 </div>
-            </div>
-
-            {% if zawody.klasyfikacja_druzynowa %}
-            <div x-data="{ druzyna: '', podpowiedzi: {{ druzyny | tojson }} }">
-                <input type="text" name="druzyna" x-model="druzyna" placeholder="Nazwa drużyny *" required list="lista-druzyn" autocomplete="off" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500">
-                <datalist id="lista-druzyn">
-                    {% for d in druzyny %}
-                    <option value="{{ d }}">{{ d }}</option>
-                    {% endfor %}
-                </datalist>
-            </div>
-            {% endif %}
-
-            <button type="submit" class="w-full px-4 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors">
-                Dodaj do zawodów
-            </button>
-        </form>
+            </form>
+        </div>
     </div>
+    {% endif %}
 </div>
 
-<!-- TABS -->
-<div x-data="{ tab: window.location.hash ? window.location.hash.substring(1) : 'uczestnicy' }" @hashchange.window="tab = window.location.hash ? window.location.hash.substring(1) : 'uczestnicy'">
-    <div class="flex overflow-x-auto border-b border-water-200 dark:border-gray-700 mb-6 gap-2">
+<!-- DATA TABS -->
+{% set default_tab = 'klasyfikacja' if not current_user.is_authenticated else 'uczestnicy' %}
+<div x-data="{ tab: window.location.hash ? window.location.hash.substring(1) : '{{ default_tab }}' }" 
+     @hashchange.window="tab = window.location.hash ? window.location.hash.substring(1) : '{{ default_tab }}'"
+     class="space-y-8">
+    
+    <!-- Tab Navigation -->
+    <div class="flex overflow-x-auto border-b border-water-200 dark:border-gray-700 gap-8 scrollbar-hide">
+        {% if current_user.is_authenticated %}
         <button @click="window.location.hash = 'uczestnicy'"
-                :class="tab === 'uczestnicy' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
-                class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
+                :class="tab === 'uczestnicy' ? 'border-b-4 border-gold-500 text-gray-900 dark:text-white font-black' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 font-bold'"
+                class="px-2 py-4 text-xs uppercase tracking-[0.2em] whitespace-nowrap transition-all flex items-center gap-2">
             Uczestnicy
         </button>
         <button @click="window.location.hash = 'stanowiska'"
-                :class="tab === 'stanowiska' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
-                class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
-            Stanowiska i Losowanie
+                :class="tab === 'stanowiska' ? 'border-b-4 border-gold-500 text-gray-900 dark:text-white font-black' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 font-bold'"
+                class="px-2 py-4 text-xs uppercase tracking-[0.2em] whitespace-nowrap transition-all">
+            Stanowiska
         </button>
         <button @click="window.location.hash = 'wyniki'"
-                :class="tab === 'wyniki' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
-                class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
-            Wprowadzanie Wyników
+                :class="tab === 'wyniki' ? 'border-b-4 border-gold-500 text-gray-900 dark:text-white font-black' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 font-bold'"
+                class="px-2 py-4 text-xs uppercase tracking-[0.2em] whitespace-nowrap transition-all">
+            Wyniki
         </button>
+        {% endif %}
         <button @click="window.location.hash = 'klasyfikacja'"
-                :class="tab === 'klasyfikacja' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
-                class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
-            Klasyfikacja
+                :class="tab === 'klasyfikacja' ? 'border-b-4 border-gold-500 text-gray-900 dark:text-white font-black' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 font-bold'"
+                class="px-2 py-4 text-xs uppercase tracking-[0.2em] whitespace-nowrap transition-all">
+            Klasyfikacja końcowa
         </button>
     </div>
 
-    <div x-show="tab === 'uczestnicy'" x-cloak>
-        {% include "zawody/_uczestnicy_tab.html" %}
-    </div>
+    <!-- Tab Contents -->
+    <div class="animate-in fade-in duration-500">
+        {% if current_user.is_authenticated %}
+        <div x-show="tab === 'uczestnicy'" x-cloak>
+            {% include "zawody/_uczestnicy_tab.html" %}
+        </div>
 
-    <div x-show="tab === 'stanowiska'" x-cloak>
-        {% include "zawody/_stanowiska_tab.html" %}
-    </div>
+        <div x-show="tab === 'stanowiska'" x-cloak>
+            {% include "zawody/_stanowiska_tab.html" %}
+        </div>
 
-    <div x-show="tab === 'wyniki'" x-cloak>
-        {% include "zawody/_wyniki_tab.html" %}
-    </div>
+        <div x-show="tab === 'wyniki'" x-cloak>
+            {% include "zawody/_wyniki_tab.html" %}
+        </div>
+        {% endif %}
 
-    <div x-show="tab === 'klasyfikacja'" x-cloak>
-        {% include "zawody/_klasyfikacja_tab.html" %}
+        <div x-show="tab === 'klasyfikacja'" x-cloak>
+            {% include "zawody/_klasyfikacja_tab.html" %}
+        </div>
     </div>
 </div>
 
@@ -231,37 +242,37 @@ function szukajZawodnika() {
 
 <!-- Modal: Szybkie dodawanie zawodnika -->
 <div x-data="{ showModal: false }" @open-modal.window="showModal = true" class="relative z-50">
-    <div x-show="showModal" style="display: none;" class="fixed inset-0 bg-black/50 transition-opacity"></div>
-    <div x-show="showModal" style="display: none;" class="fixed inset-0 z-10 w-screen overflow-y-auto">
+    <div x-show="showModal" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" x-cloak></div>
+    <div x-show="showModal" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="fixed inset-0 z-50 w-screen overflow-y-auto" x-cloak>
         <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div @click.away="showModal = false" class="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <form method="POST" action="{{ url_for('zawody.szybki_zawodnik', zid=zawody.id) }}" class="p-6">
-                    <h3 class="text-lg font-medium leading-6 text-gray-900 dark:text-gray-100 mb-4">
-                        Dodaj nowego zawodnika
+            <div @click.away="showModal = false" class="relative transform overflow-hidden rounded-3xl bg-white dark:bg-gray-800 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <form method="POST" action="{{ url_for('zawody.szybki_zawodnik', zid=zawody.id) }}" class="p-8">
+                    <h3 class="text-xl font-black text-gray-900 dark:text-white mb-6 uppercase tracking-tight">
+                        Dodaj zawodnika do bazy
                     </h3>
-                    <div class="space-y-4 text-sm">
+                    <div class="space-y-5 text-sm">
                         <div>
-                            <label class="block font-medium text-gray-700 dark:text-gray-300 mb-1">Imię *</label>
-                            <input type="text" name="imie" required class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Imię *</label>
+                            <input type="text" name="imie" required class="w-full px-4 py-3 rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all font-medium">
                         </div>
                         <div>
-                            <label class="block font-medium text-gray-700 dark:text-gray-300 mb-1">Nazwisko *</label>
-                            <input type="text" name="nazwisko" required class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Nazwisko *</label>
+                            <input type="text" name="nazwisko" required class="w-full px-4 py-3 rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all font-medium">
                         </div>
                         <div>
-                            <label class="block font-medium text-gray-700 dark:text-gray-300 mb-1">Koło PZW *</label>
-                            <input type="text" name="kolo" required class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Koło PZW *</label>
+                            <input type="text" name="kolo" required class="w-full px-4 py-3 rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all font-medium">
                         </div>
                         {% if zawody.klasyfikacja_druzynowa %}
                         <div>
-                            <label class="block font-medium text-gray-700 dark:text-gray-300 mb-1">Drużyna *</label>
-                            <input type="text" name="druzyna" required class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
+                            <label class="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Drużyna *</label>
+                            <input type="text" name="druzyna" required class="w-full px-4 py-3 rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all font-medium">
                         </div>
                         {% endif %}
                     </div>
-                    <div class="mt-6 flex justify-end gap-3">
-                        <button type="button" @click="showModal = false" class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg">Anuluj</button>
-                        <button type="submit" class="px-4 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg">Zapisz i dodaj</button>
+                    <div class="mt-8 flex gap-3">
+                        <button type="button" @click="showModal = false" class="flex-1 px-4 py-3 text-xs font-black uppercase tracking-widest text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all">Anuluj</button>
+                        <button type="submit" class="flex-1 px-4 py-3 text-xs font-black uppercase tracking-widest bg-gold-500 hover:bg-gold-600 text-white rounded-xl shadow-lg shadow-gold-500/20 transition-all">Zapisz i dodaj</button>
                     </div>
                 </form>
             </div>

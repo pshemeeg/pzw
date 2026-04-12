@@ -109,6 +109,7 @@ class Zawody(db.Model):
     liczba_tur = db.Column(db.Integer, nullable=False, default=1)
     grand_prix = db.Column(db.Boolean, default=False)
     klasyfikacja_druzynowa = db.Column(db.Boolean, default=False)
+    sezon = db.Column(db.Integer, nullable=False, default=lambda: datetime.now(timezone.utc).year)
     status = db.Column(db.String(16), nullable=False, default="planowane")
     uwagi = db.Column(db.Text, nullable=True)
     sedziowie_sektorowi = db.Column(db.Text, nullable=True)

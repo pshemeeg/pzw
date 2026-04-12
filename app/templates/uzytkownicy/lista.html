@@ -1,61 +1,80 @@
-{% extends "base.html" %} {% block title %}Użytkownicy{% endblock %} {% block page_title
-%}Użytkownicy{% endblock %} {% block content %}
-<div
-  class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden"
->
-  <table class="w-full text-sm">
-    <thead>
-      <tr
-        class="border-b border-water-200 dark:border-gray-700 text-xs text-gray-400 uppercase tracking-wide"
-      >
-        <th class="text-left px-5 py-3 font-medium">Email</th>
-        <th class="text-left px-5 py-3 font-medium">Rola</th>
-        <th class="text-left px-5 py-3 font-medium">Sędzia</th>
-        <th class="text-left px-5 py-3 font-medium">Status</th>
-        <th class="px-5 py-3"></th>
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-water-100 dark:divide-gray-700">
-      {% for u in uzytkownicy %}
-      <tr class="hover:bg-water-50 dark:hover:bg-gray-700 transition-colors">
-        <td class="px-5 py-3 font-medium text-gray-800 dark:text-gray-100">
-          {{ u.email }} {% if u.id == current_user.id %}
-          <span
-            class="ml-1.5 text-[10px] bg-water-100 text-water-700 dark:bg-gray-700 dark:text-water-200 px-1.5 py-0.5 rounded-full"
-          >
-            Ty
-          </span>
-          {% endif %}
-        </td>
-        <td class="px-5 py-3">
-          <span
-            class="text-xs px-2 py-0.5 rounded-full font-medium {% if u.rola == 'admin' %} bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200 {% else %} bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 {% endif %}"
-          >
-            {{ u.rola|capitalize }}
-          </span>
-        </td>
-        <td class="px-5 py-3 text-gray-500 dark:text-gray-400">
-          {% if u.sedzia %} {{ u.sedzia.imie }} {{ u.sedzia.nazwisko }} {% else %} — {%
-          endif %}
-        </td>
-        <td class="px-5 py-3">
-          <span
-            class="text-xs px-2 py-0.5 rounded-full font-medium {% if u.aktywny %} bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 {% else %} bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 {% endif %}"
-          >
-            {{ 'Aktywny' if u.aktywny else 'Nieaktywny' }}
-          </span>
-        </td>
-        <td class="px-5 py-3 text-right">
-          <a
-            href="{{ url_for('uzytkownicy.edytuj', uid=u.id) }}"
-            class="text-xs text-gray-400 hover:text-water-700 dark:hover:text-water-200 transition-colors"
-          >
-            Edytuj
-          </a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+{% extends "base.html" %}
+
+{% block title %}Użytkownicy{% endblock %}
+{% block page_title %}Zarządzanie dostępem{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h2 class="text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Lista kont użytkowników systemu</h2>
+</div>
+
+<div class="bg-white dark:bg-gray-800 rounded-3xl border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
+    <table class="w-full text-sm text-left">
+        <thead>
+            <tr class="bg-water-50/50 dark:bg-gray-750 text-gray-400 uppercase text-[10px] font-black tracking-widest border-b border-water-100 dark:border-gray-700">
+                <th class="px-8 py-5">Użytkownik</th>
+                <th class="px-6 py-5">Rola</th>
+                <th class="px-6 py-5">Powiązany Sędzia</th>
+                <th class="px-6 py-5 text-center">Status</th>
+                <th class="px-8 py-5"></th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-water-50 dark:divide-gray-700">
+            {% for u in uzytkownicy %}
+            <tr class="hover:bg-water-50/30 dark:hover:bg-gray-700/30 transition-colors group">
+                <td class="px-8 py-5">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-water-100 dark:bg-water-900/30 flex items-center justify-center text-water-600 dark:text-water-400 font-black">
+                            {{ u.email[0]|upper }}
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-900 dark:text-white">{{ u.email }}</div>
+                            {% if u.id == current_user.id %}
+                            <span class="inline-flex items-center px-2 py-0.5 mt-1 rounded text-[9px] font-black uppercase tracking-tighter bg-water-100 dark:bg-water-900/50 text-water-700 dark:text-water-200">To Ty</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-5">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider
+                        {% if u.rola == 'admin' %} bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400
+                        {% else %} bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 {% endif %}">
+                        {{ u.rola }}
+                    </span>
+                </td>
+                <td class="px-6 py-5">
+                    {% if u.sedzia %}
+                    <div class="text-gray-900 dark:text-gray-100 font-medium">{{ u.sedzia.imie }} {{ u.sedzia.nazwisko }}</div>
+                    <div class="text-[10px] text-gray-400">{{ u.sedzia.kolo }}</div>
+                    {% else %}
+                    <span class="text-gray-300 dark:text-gray-600 italic">Niepowiązany</span>
+                    {% endif %}
+                </td>
+                <td class="px-6 py-5 text-center">
+                    {% if u.aktywny %}
+                    <span class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block shadow-sm shadow-green-500/50" title="Aktywny"></span>
+                    {% else %}
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block shadow-sm shadow-red-500/50" title="Nieaktywny"></span>
+                    {% endif %}
+                </td>
+                <td class="px-8 py-5 text-right">
+                    <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <a href="{{ url_for('uzytkownicy.edytuj', uid=u.id) }}" title="Edytuj użytkownika"
+                           class="p-2 text-gray-400 hover:text-gold-600 dark:hover:text-gold-400 hover:bg-gold-50 dark:hover:bg-amber-900/20 rounded-lg transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                        </a>
+                        {% if u.id != current_user.id %}
+                        <form method="POST" action="{{ url_for('uzytkownicy.usun', uid=u.id) }}" class="inline" onsubmit="return confirm('Czy na pewno chcesz usunąć tego użytkownika?')">
+                            <button type="submit" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

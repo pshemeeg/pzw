@@ -1,6 +1,8 @@
-<div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700">
-    <div class="flex items-center justify-between px-5 py-4 border-b border-water-200 dark:border-gray-700">
-        <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">Wprowadzanie Wyników ({{ zawody.dyscyplina.typ_wyniku|capitalize }})</h2>
+<div class="bg-white dark:bg-gray-800 rounded-3xl border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
+    <div class="flex items-center justify-between px-8 py-5 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
+        <h2 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 opacity-80">
+            Wprowadzanie wyników ({{ zawody.dyscyplina.nazwa }})
+        </h2>
     </div>
 
     {% set stanowiska = zawody.uczestnicy | selectattr('stanowiska') | map(attribute='stanowiska') | sum(start=[]) | list %}
@@ -9,135 +11,128 @@
         {% set tury = stanowiska | map(attribute='tura') | unique | sort | list %}
         
         <div x-data="{ aktywna_tura: {{ tury[0] }} }">
-            <div class="flex overflow-x-auto border-b border-water-200 dark:border-gray-700 px-5 pt-3 gap-2 bg-water-50 dark:bg-gray-750">
+            <div class="flex items-center gap-2 px-8 pt-4 bg-white dark:bg-gray-800 border-b border-water-50 dark:border-gray-700 overflow-x-auto scrollbar-hide">
                 {% for tura in tury %}
                 <button @click="aktywna_tura = {{ tura }}"
-                        :class="aktywna_tura === {{ tura }} ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
-                        class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
+                        :class="aktywna_tura === {{ tura }} ? 'bg-water-50 dark:bg-water-900/30 text-water-600 dark:text-water-400' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'"
+                        class="px-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] rounded-t-xl transition-all whitespace-nowrap">
                     Tura {{ tura }}
                 </button>
                 {% endfor %}
             </div>
 
             {% for tura in tury %}
-            <div x-show="aktywna_tura === {{ tura }}" x-cloak>
+            <div x-show="aktywna_tura === {{ tura }}" x-cloak class="p-4 sm:p-8">
                 <form method="POST" action="{{ url_for('wyniki.zapisz_zbiorczo_' + zawody.dyscyplina.typ_wyniku, zid=zawody.id, tura=tura) }}">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead>
-                            <tr class="border-b border-water-100 dark:border-gray-700 text-xs text-gray-400 uppercase text-left bg-white dark:bg-gray-800">
-                                <th class="px-4 py-2 w-16">Sek.</th>
-                                <th class="px-4 py-2 w-16">St.</th>
-                                <th class="px-4 py-2 w-1/4">Zawodnik</th>
-                                {% if zawody.dyscyplina.typ_wyniku == 'wagowy' %}
-                                    <th class="px-4 py-2 w-32">Waga (g)</th>
-                                    <th class="px-4 py-2 w-24 text-center">Dysk.</th>
-                                    <th class="px-4 py-2">Uwagi</th>
-                                {% elif zawody.dyscyplina.typ_wyniku == 'karpie' %}
-                                    <th class="px-4 py-2 w-24">Sztuk</th>
-                                    <th class="px-4 py-2 w-32">Waga (g)</th>
-                                    <th class="px-4 py-2 w-32">Najcięższa (g)</th>
-                                    <th class="px-4 py-2 w-24">Pkt Karne</th>
-                                    <th class="px-4 py-2">Uwagi</th>
-                                {% elif zawody.dyscyplina.typ_wyniku == 'punktowy' %}
-                                    <th class="px-4 py-2">Złowione Ryby (Gatunek, Dł. w mm)</th>
-                                    <th class="px-4 py-2 w-32 text-right">Suma pkt</th>
-                                {% endif %}
-                            </tr>
-                        </thead>
+                    <div class="space-y-6">
                         {% set sektory = stanowiska | selectattr('tura', 'equalto', tura) | map(attribute='sektor') | unique | sort | list %}
                         {% for sektor in sektory %}
-                        <tbody class="divide-y divide-water-50 dark:divide-gray-700 border-b-2 border-water-100 dark:border-gray-600">
-                            {% for s in stanowiska | selectattr('tura', 'equalto', tura) | selectattr('sektor', 'equalto', sektor) | sort(attribute='numer') %}
+                        <div class="space-y-3">
+                            <h3 class="text-[10px] font-black uppercase tracking-widest text-water-600 dark:text-water-400 ml-2">Sektor {{ sektor }}</h3>
                             
-                            <tr class="bg-white dark:bg-gray-800 hover:bg-water-50 dark:hover:bg-gray-750 transition-colors align-top"
-                                {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}
-                                x-data="{
-                                    ryby: [
-                                        {% for r in s.wyniki_ryby %}
-                                            { gatunek: '{{ r.gatunek }}', dlugosc_mm: '{{ r.dlugosc_mm }}', punkty: {{ r.punkty }}, zaliczona: {{ 'true' if r.zaliczona else 'false' }} }{{ ',' if not loop.last else '' }}
-                                        {% endfor %}
-                                    ],
-                                    dodaj() { this.ryby.push({ gatunek: '', dlugosc_mm: '', punkty: 0, zaliczona: true }); },
-                                    usun(idx) { this.ryby.splice(idx, 1); }
-                                }"
-                                {% endif %}>
-                                <td class="px-4 py-3 text-gray-500 font-medium pt-4">{{ s.sektor }}</td>
-                                <td class="px-4 py-3 text-gray-500 pt-4">{{ s.numer }}</td>
-                                <td class="px-4 py-3 font-medium text-gray-800 dark:text-gray-100 pt-4">
-                                    {{ s.uczestnik.zawodnik.nazwisko }} {{ s.uczestnik.zawodnik.imie }}
-                                </td>
-                                {% if zawody.dyscyplina.typ_wyniku == 'wagowy' %}
-                                    <td class="px-4 py-2 pt-3">
-                                        <input type="number" name="waga_{{ s.id }}" value="{{ s.wynik_wagowy.waga_g if s.wynik_wagowy else '' }}" class="w-full px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-water-500">
-                                    </td>
-                                    <td class="px-4 py-2 pt-3 text-center">
-                                        <input type="checkbox" name="dysk_{{ s.id }}" {% if s.wynik_wagowy and s.wynik_wagowy.dyskwalifikacja %}checked{% endif %} class="w-4 h-4 text-water-600 rounded">
-                                    </td>
-                                    <td class="px-4 py-2 pt-3">
-                                        <input type="text" name="uwagi_{{ s.id }}" value="{{ s.wynik_wagowy.uwagi if s.wynik_wagowy else '' }}" class="w-full px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-water-500">
-                                    </td>
-                                {% elif zawody.dyscyplina.typ_wyniku == 'karpie' %}
-                                    <td class="px-4 py-2 pt-3">
-                                        <input type="number" name="sztuki_{{ s.id }}" value="{{ s.wynik_karpie.liczba_sztuk if s.wynik_karpie else '' }}" class="w-full px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-water-500">
-                                    </td>
-                                    <td class="px-4 py-2 pt-3">
-                                        <input type="number" name="waga_{{ s.id }}" value="{{ s.wynik_karpie.waga_g if s.wynik_karpie else '' }}" class="w-full px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-water-500">
-                                    </td>
-                                    <td class="px-4 py-2 pt-3">
-                                        <input type="number" name="naj_{{ s.id }}" value="{{ s.wynik_karpie.najciezsza_g if s.wynik_karpie else '' }}" class="w-full px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-water-500">
-                                    </td>
-                                    <td class="px-4 py-2 pt-3">
-                                        <input type="number" name="karne_{{ s.id }}" value="{{ s.wynik_karpie.punkty_karne if s.wynik_karpie else '' }}" class="w-full px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-water-500">
-                                    </td>
-                                    <td class="px-4 py-2 pt-3">
-                                        <input type="text" name="uwagi_{{ s.id }}" value="{{ s.wynik_karpie.uwagi if s.wynik_karpie else '' }}" class="w-full px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:ring-2 focus:ring-water-500">
-                                    </td>
-                                {% elif zawody.dyscyplina.typ_wyniku == 'punktowy' %}
-                                    <td class="px-4 py-3">
-                                        <div class="space-y-2">
-                                            <template x-for="(r, idx) in ryby" :key="idx">
-                                                <div class="flex items-center gap-2">
-                                                    <input type="text" :name="'gatunek_' + {{ s.id }} + '[]'" x-model="r.gatunek" placeholder="Gatunek" required class="w-40 px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100">
-                                                    <input type="number" :name="'dlugosc_' + {{ s.id }} + '[]'" x-model="r.dlugosc_mm" placeholder="Dł.(mm)" required class="w-24 px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100">
-                                                    <button type="button" @click="usun(idx)" class="text-gray-400 hover:text-red-500 transition-colors p-1" title="Usuń rybę">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                    </button>
-                                                    <span x-show="r.punkty > 0" class="text-xs font-medium text-green-600 dark:text-green-400" x-text="r.punkty + ' pkt'"></span>
-                                                    <span x-show="!r.zaliczona && r.dlugosc_mm" class="text-xs font-medium text-red-600 dark:text-red-400">Niezal.</span>
-                                                </div>
-                                            </template>
-                                            <button type="button" @click="dodaj()" class="text-xs font-medium text-water-600 dark:text-water-400 hover:text-water-800 transition-colors flex items-center gap-1 mt-1">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path></svg>
-                                                Dodaj rybę
-                                            </button>
+                            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                                {% for s in stanowiska | selectattr('tura', 'equalto', tura) | selectattr('sektor', 'equalto', sektor) | sort(attribute='numer') %}
+                                <div class="bg-gray-50/50 dark:bg-gray-900/20 rounded-2xl border border-water-100 dark:border-gray-700 p-4 sm:p-6 hover:border-water-300 transition-all group"
+                                     {% if zawody.dyscyplina.typ_wyniku == 'punktowy' %}
+                                     x-data="{
+                                         ryby: [
+                                             {% for r in s.wyniki_ryby %}
+                                                 { gatunek: '{{ r.gatunek }}', dlugosc_mm: '{{ r.dlugosc_mm }}', punkty: {{ r.punkty }}, zaliczona: {{ 'true' if r.zaliczona else 'false' }} }{{ ',' if not loop.last else '' }}
+                                             {% endfor %}
+                                         ],
+                                         dodaj() { this.ryby.push({ gatunek: '', dlugosc_mm: '', punkty: 0, zaliczona: true }); },
+                                         usun(idx) { this.ryby.splice(idx, 1); }
+                                     }"
+                                     {% endif %}>
+                                    
+                                    <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                                        <div class="flex items-center gap-4 shrink-0">
+                                            <div class="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 border border-water-200 dark:border-gray-700 flex items-center justify-center text-sm font-black text-water-700 dark:text-water-300 shadow-sm">
+                                                {{ s.numer }}
+                                            </div>
+                                            <div class="min-w-0 flex-1 sm:w-48">
+                                                <div class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ s.uczestnik.zawodnik.nazwisko }} {{ s.uczestnik.zawodnik.imie }}</div>
+                                                <div class="text-[10px] text-gray-400 uppercase font-medium truncate">{{ s.uczestnik.zawodnik.kolo }}</div>
+                                            </div>
                                         </div>
-                                    </td>
-                                    <td class="px-4 py-3 text-right pt-4">
-                                        {% set suma_pkt = s.wyniki_ryby | selectattr('zaliczona', 'equalto', true) | map(attribute='punkty') | sum %}
-                                        <span class="font-bold text-gray-700 dark:text-gray-200">{{ suma_pkt }}</span>
-                                    </td>
-                                {% endif %}
-                            </tr>
-                            
-                            {% endfor %}
-                        </tbody>
+
+                                        <div class="flex-1">
+                                            {% if zawody.dyscyplina.typ_wyniku == 'wagowy' %}
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex-1 relative">
+                                                        <input type="number" name="waga_{{ s.id }}" value="{{ s.wynik_wagowy.waga_g if s.wynik_wagowy else '' }}" 
+                                                               placeholder="Waga (g)" class="w-full pl-4 pr-10 py-2.5 text-sm font-black rounded-xl border border-water-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                                                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-gray-300 uppercase">g</span>
+                                                    </div>
+                                                    <label class="flex flex-col items-center gap-1 cursor-pointer group/dysk">
+                                                        <input type="checkbox" name="dysk_{{ s.id }}" {% if s.wynik_wagowy and s.wynik_wagowy.dyskwalifikacja %}checked{% endif %} class="w-5 h-5 text-red-500 rounded-lg border-water-200 dark:border-gray-700 focus:ring-red-500/20">
+                                                        <span class="text-[8px] font-black uppercase text-gray-400 group-hover/dysk:text-red-500 transition-colors">Dysk.</span>
+                                                    </label>
+                                                </div>
+                                            {% elif zawody.dyscyplina.typ_wyniku == 'karpie' %}
+                                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                                    <input type="number" name="sztuki_{{ s.id }}" value="{{ s.wynik_karpie.liczba_sztuk if s.wynik_karpie else '' }}" placeholder="Sztuk" class="w-full px-3 py-2 text-xs font-black rounded-xl border border-water-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white outline-none">
+                                                    <input type="number" name="waga_{{ s.id }}" value="{{ s.wynik_karpie.waga_g if s.wynik_karpie else '' }}" placeholder="Suma(g)" class="w-full px-3 py-2 text-xs font-black rounded-xl border border-water-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white outline-none">
+                                                    <input type="number" name="naj_{{ s.id }}" value="{{ s.wynik_karpie.najciezsza_g if s.wynik_karpie else '' }}" placeholder="Naj(g)" class="w-full px-3 py-2 text-xs font-black rounded-xl border border-water-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white outline-none">
+                                                    <input type="number" name="karne_{{ s.id }}" value="{{ s.wynik_karpie.punkty_karne if s.wynik_karpie else '' }}" placeholder="Karne" class="w-full px-3 py-2 text-xs font-black rounded-xl border border-water-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white outline-none">
+                                                </div>
+                                            {% elif zawody.dyscyplina.typ_wyniku == 'punktowy' %}
+                                                <div class="space-y-2">
+                                                    <template x-for="(r, idx) in ryby" :key="idx">
+                                                        <div class="flex items-center gap-2 animate-in slide-in-from-left-2 duration-200">
+                                                            <input type="text" :name="'gatunek_' + {{ s.id }} + '[]'" x-model="r.gatunek" placeholder="Gatunek" required class="flex-1 px-3 py-1.5 text-xs font-bold rounded-lg border border-water-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white outline-none">
+                                                            <input type="number" :name="'dlugosc_' + {{ s.id }} + '[]'" x-model="r.dlugosc_mm" placeholder="mm" required class="w-20 px-3 py-1.5 text-xs font-black rounded-lg border border-water-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white outline-none">
+                                                            <button type="button" @click="usun(idx)" class="p-1.5 text-gray-400 hover:text-red-500 transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                                                        </div>
+                                                    </template>
+                                                    <div class="flex items-center justify-between">
+                                                        <button type="button" @click="dodaj()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-water-50 dark:bg-water-900/30 text-water-600 dark:text-water-400 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-water-100 transition-all">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                                            Dodaj rybę
+                                                        </button>
+                                                        <div class="text-right">
+                                                            <span class="text-[10px] font-black uppercase text-gray-400 mr-2">Suma:</span>
+                                                            <span class="text-sm font-black text-water-600 dark:text-water-400">
+                                                                {% set suma_pkt = s.wyniki_ryby | selectattr('zaliczona', 'equalto', true) | map(attribute='punkty') | sum %}
+                                                                {{ suma_pkt }} pkt
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    {% if zawody.dyscyplina.typ_wyniku != 'punktowy' %}
+                                    <div class="mt-4 pt-4 border-t border-water-50 dark:border-gray-700 opacity-0 group-focus-within:opacity-100 transition-opacity">
+                                        <input type="text" name="uwagi_{{ s.id }}" value="{{ (s.wynik_wagowy.uwagi if s.wynik_wagowy else '') if zawody.dyscyplina.typ_wyniku == 'wagowy' else (s.wynik_karpie.uwagi if s.wynik_karpie else '') }}" 
+                                               placeholder="Dodaj uwagi do zawodnika..." class="w-full px-4 py-2 text-xs font-medium rounded-xl border border-water-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50 text-gray-600 dark:text-gray-400 outline-none focus:border-water-300">
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
                         {% endfor %}
-                    </table>
-                </div>
-                
-                <div class="px-5 py-4 bg-gray-50 dark:bg-gray-900 border-t border-water-200 dark:border-gray-700 flex justify-end">
-                    <button type="submit" class="px-6 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors">
-                        Zapisz wyniki tury {{ tura }}
-                    </button>
-                </div>
+                    </div>
+                    
+                    <div class="mt-12 flex justify-center sticky bottom-8">
+                        <button type="submit" class="px-12 py-4 bg-gold-500 hover:bg-gold-600 text-white font-black uppercase tracking-widest rounded-2xl shadow-2xl shadow-gold-500/40 transition-all active:scale-95 flex items-center gap-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                            Zatwierdź wyniki tury {{ tura }}
+                        </button>
+                    </div>
                 </form>
             </div>
             {% endfor %}
         </div>
     {% else %}
-    <div class="text-center py-10 text-gray-400 dark:text-gray-500">
-        <p class="text-sm">Brak wylosowanych stanowisk. Wylosuj je lub wpisz ręcznie w zakładce "Stanowiska i Losowanie".</p>
+    <div class="text-center py-20 bg-white dark:bg-gray-800">
+        <div class="w-16 h-16 bg-water-50 dark:bg-water-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-water-300">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+        </div>
+        <p class="text-gray-500 dark:text-gray-400 font-medium">Lista stanowisk jest pusta.</p>
+        <p class="text-xs text-gray-400 mt-1">Najpierw przeprowadź losowanie stanowisk.</p>
     </div>
     {% endif %}
 </div>

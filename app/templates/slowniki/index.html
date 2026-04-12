@@ -1,86 +1,164 @@
-{% extends "base.html" %} {% block title %}Słowniki{% endblock %} {% block page_title
-%}Słowniki{% endblock %} {% block content %}
-<div class="grid grid-cols-1 xl:grid-cols-3 lg:grid-cols-2 gap-6">
-  <div
-    class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden"
-  >
-    <div
-      class="flex items-center justify-between px-5 py-4 border-b border-water-200 dark:border-gray-700"
-    >
-      <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">Łowiska</h2>
-      <a
-        href="{{ url_for('slowniki.lowisko_nowe') }}"
-        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors"
-      >
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> Dodaj
-      </a>
+{% extends "base.html" %}
+
+{% block title %}Słowniki i Konfiguracja{% endblock %}
+{% block page_title %}Słowniki i Konfiguracja{% endblock %}
+
+{% block content %}
+<div x-data="{ current_tab: window.location.hash ? window.location.hash.substring(1) : 'lowiska' }" 
+     @hashchange.window="current_tab = window.location.hash ? window.location.hash.substring(1) : 'lowiska'">
+    
+    <!-- Tab Navigation -->
+    <div class="flex overflow-x-auto border-b border-water-200 dark:border-gray-700 mb-6 gap-4 scrollbar-hide">
+        <button @click="window.location.hash = 'lowiska'"
+                :class="current_tab === 'lowiska' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-semibold' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
+                class="px-4 py-3 text-sm whitespace-nowrap transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Łowiska
+        </button>
+        <button @click="window.location.hash = 'dyscypliny'"
+                :class="current_tab === 'dyscypliny' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-semibold' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
+                class="px-4 py-3 text-sm whitespace-nowrap transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+            Dyscypliny
+        </button>
+        <button @click="window.location.hash = 'ryby'"
+                :class="current_tab === 'ryby' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-semibold' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
+                class="px-4 py-3 text-sm whitespace-nowrap transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            Gatunki Ryb
+        </button>
     </div>
 
-    {% if lowiska %}
-    <ul class="divide-y divide-water-100 dark:divide-gray-700">
-      {% for l in lowiska %}
-      <li class="flex items-center justify-between px-5 py-3 hover:bg-water-50 dark:hover:bg-gray-700 transition-colors">
-        <div>
-          <p class="text-sm font-medium text-gray-800 dark:text-gray-100">{{ l.nazwa }}</p>
-          <p class="text-xs text-gray-400">{{ l.miejscowosc }}</p>
+    <!-- Tab Contents -->
+    
+    <!-- LOWISKA -->
+    <div x-show="current_tab === 'lowiska'" x-cloak class="space-y-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Zarządzanie Łowiskami</h3>
+            <a href="{{ url_for('slowniki.lowisko_nowe') }}" 
+               class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-xl shadow-sm transition-all active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                Nowe łowisko
+            </a>
         </div>
-        <a href="{{ url_for('slowniki.lowisko_edytuj', lid=l.id) }}" class="text-xs text-gray-400 hover:text-water-700 dark:hover:text-water-200 transition-colors">Edytuj</a>
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p class="px-5 py-8 text-sm text-center text-gray-400">Brak łowisk.</p>
-    {% endif %}
-  </div>
-
-  <div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden">
-    <div class="flex items-center justify-between px-5 py-4 border-b border-water-200 dark:border-gray-700">
-      <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">Dyscypliny</h2>
-      <a href="{{ url_for('slowniki.dyscyplina_nowa') }}" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> Dodaj
-      </a>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {% if lowiska %}
+                {% for l in lowiska %}
+                <div class="group bg-white dark:bg-gray-800 p-5 rounded-2xl border border-water-100 dark:border-gray-700 hover:border-water-300 dark:hover:border-gray-600 transition-all shadow-sm">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="font-bold text-gray-900 dark:text-gray-100">{{ l.nazwa }}</h4>
+                            <p class="text-sm text-water-600 dark:text-water-400 flex items-center gap-1 mt-1">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                {{ l.miejscowosc }}
+                            </p>
+                        </div>
+                        <a href="{{ url_for('slowniki.lowisko_edytuj', lid=l.id) }}" 
+                           class="p-2 text-gray-400 hover:text-gold-500 dark:hover:text-gold-400 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                        </a>
+                    </div>
+                    {% if l.opis %}
+                    <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-2 italic">{{ l.opis }}</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-span-full py-12 text-center bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700">
+                    <p class="text-gray-400">Brak zdefiniowanych łowisk.</p>
+                </div>
+            {% endif %}
+        </div>
     </div>
 
-    {% if dyscypliny %}
-    <ul class="divide-y divide-water-100 dark:divide-gray-700">
-      {% for d in dyscypliny %}
-      <li class="flex items-center justify-between px-5 py-3 hover:bg-water-50 dark:hover:bg-gray-700 transition-colors">
-        <div>
-          <p class="text-sm font-medium text-gray-800 dark:text-gray-100">{{ d.nazwa }}</p>
-          <p class="text-xs text-gray-400">kod: {{ d.kod }} &middot; {{ d.typ_wyniku }}</p>
+    <!-- DYSCYPLINY -->
+    <div x-show="current_tab === 'dyscypliny'" x-cloak class="space-y-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Dostępne Dyscypliny</h3>
+            <a href="{{ url_for('slowniki.dyscyplina_nowa') }}" 
+               class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-xl shadow-sm transition-all active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                Dodaj dyscyplinę
+            </a>
         </div>
-        <a href="{{ url_for('slowniki.dyscyplina_edytuj', did=d.id) }}" class="text-xs text-gray-400 hover:text-water-700 dark:hover:text-water-200 transition-colors">Edytuj</a>
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p class="px-5 py-8 text-sm text-center text-gray-400">Brak dyscyplin.</p>
-    {% endif %}
-  </div>
 
-  <div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden">
-    <div class="flex items-center justify-between px-5 py-4 border-b border-water-200 dark:border-gray-700">
-      <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">Gatunki ryb i wymiary</h2>
-      <a href="{{ url_for('slowniki.ryba_nowa') }}" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg> Dodaj
-      </a>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% if dyscypliny %}
+                {% for d in dyscypliny %}
+                <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-water-100 dark:border-gray-700 shadow-sm flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-water-50 dark:bg-water-900/30 flex items-center justify-center text-water-600 dark:text-water-400">
+                            <span class="font-bold text-xs uppercase">{{ d.kod }}</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 dark:text-gray-100">{{ d.nazwa }}</h4>
+                            <p class="text-xs text-gray-500 uppercase tracking-wider">Typ: {{ d.typ_wyniku }}</p>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('slowniki.dyscyplina_edytuj', did=d.id) }}" 
+                       class="p-2 text-gray-400 hover:text-gold-500 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    </a>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
     </div>
 
-    {% if ryby %}
-    <ul class="divide-y divide-water-100 dark:divide-gray-700">
-      {% for r in ryby %}
-      <li class="flex items-center justify-between px-5 py-3 hover:bg-water-50 dark:hover:bg-gray-700 transition-colors">
-        <div>
-          <p class="text-sm font-medium text-gray-800 dark:text-gray-100">{{ r.nazwa }}</p>
-          <p class="text-xs text-gray-400">od {{ r.wymiar_punktowany_mm/10 }}cm, baza: {{ r.punkty_bazowe }}pkt</p>
+    <!-- RYBY -->
+    <div x-show="current_tab === 'ryby'" x-cloak class="space-y-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Gatunki i Wymiary</h3>
+            <a href="{{ url_for('slowniki.ryba_nowa') }}" 
+               class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-xl shadow-sm transition-all active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                Nowy gatunek
+            </a>
         </div>
-        <a href="{{ url_for('slowniki.ryba_edytuj', rid=r.id) }}" class="text-xs text-gray-400 hover:text-water-700 dark:hover:text-water-200 transition-colors">Edytuj</a>
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p class="px-5 py-8 text-sm text-center text-gray-400">Brak gatunków ryb.</p>
-    {% endif %}
-  </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
+            <table class="w-full text-sm text-left">
+                <thead>
+                    <tr class="bg-water-50 dark:bg-gray-750 text-water-700 dark:text-water-200 text-xs uppercase tracking-widest border-b border-water-100 dark:border-gray-700">
+                        <th class="px-6 py-4 font-bold italic">Nazwa Gatunku</th>
+                        <th class="px-6 py-4 font-bold">Wymiar (cm)</th>
+                        <th class="px-6 py-4 font-bold">Pkt Bazowe</th>
+                        <th class="px-6 py-4 font-bold">Pkt / mm</th>
+                        <th class="px-6 py-4"></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-water-50 dark:divide-gray-700">
+                    {% if ryby %}
+                        {% for r in ryby %}
+                        <tr class="hover:bg-water-50/50 dark:hover:bg-gray-700/50 transition-colors group">
+                            <td class="px-6 py-4">
+                                <span class="font-semibold text-gray-900 dark:text-gray-100">{{ r.nazwa }}</span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600 dark:text-gray-400">
+                                {{ r.wymiar_punktowany_mm / 10 }} cm
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2.5 py-1 bg-gold-100 dark:bg-amber-900/30 text-gold-700 dark:text-amber-400 rounded-lg font-bold text-xs">
+                                    {{ r.punkty_bazowe }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600 dark:text-gray-400">
+                                {{ r.punkty_za_mm }}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="{{ url_for('slowniki.ryba_edytuj', rid=r.id) }}" 
+                                   class="text-gray-400 hover:text-gold-500 transition-colors inline-block">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

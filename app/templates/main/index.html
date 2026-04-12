@@ -1,122 +1,92 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard{% endblock %}
-{% block page_title %}Dashboard{% endblock %}
+{% block title %}Witaj w Systemie PZW{% endblock %}
+{% block page_title %}Strona główna{% endblock %}
 
 {% block content %}
-
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-    <div class="bg-white dark:bg-gray-800 rounded-2xl border
-                border-water-200 dark:border-gray-700 p-5">
-        <p class="text-xs text-gray-400 uppercase tracking-wide mb-1">
-            Zawody łącznie
-        </p>
-        <p class="text-3xl font-semibold text-water-700 dark:text-water-200">
-            {{ liczba_zawodow }}
-        </p>
-    </div>
-    <div class="bg-white dark:bg-gray-800 rounded-2xl border
-                border-water-200 dark:border-gray-700 p-5">
-        <p class="text-xs text-gray-400 uppercase tracking-wide mb-1">
-            Zawodnicy w bazie
-        </p>
-        <p class="text-3xl font-semibold text-water-700 dark:text-water-200">
-            {{ liczba_zawodnikow }}
-        </p>
-    </div>
-    <div class="bg-white dark:bg-gray-800 rounded-2xl border
-                border-water-200 dark:border-gray-700 p-5">
-        <p class="text-xs text-gray-400 uppercase tracking-wide mb-1">
-            Sędziowie
-        </p>
-        <p class="text-3xl font-semibold text-water-700 dark:text-water-200">
-            {{ liczba_sedziow }}
-        </p>
-    </div>
-</div>
-
-<div class="bg-white dark:bg-gray-800 rounded-2xl border
-            border-water-200 dark:border-gray-700 overflow-hidden">
-    <div class="flex items-center justify-between px-5 py-4
-                border-b border-water-200 dark:border-gray-700">
-        <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">
-            Ostatnie zawody
+<div class="max-w-4xl mx-auto space-y-12 py-8">
+    <!-- Welcome Section -->
+    <div class="text-center space-y-4">
+        <h2 class="text-4xl md:text-5xl font-black text-gray-900 dark:text-white uppercase tracking-tight">
+            System Obsługi Zawodów <span class="text-water-500">PZW</span>
         </h2>
-        <a href="{{ url_for('zawody.lista') }}"
-           class="text-xs text-water-700 dark:text-water-200 hover:underline">
-            Wszystkie
-        </a>
+        <p class="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
+            Profesjonalne narzędzie do organizacji, losowania stanowisk i podliczania wyników zawodów wędkarskich wszystkich dyscyplin.
+        </p>
+        <div class="pt-4 flex flex-wrap justify-center gap-4">
+            <a href="{{ url_for('zawody.lista') }}" class="px-8 py-4 bg-water-500 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-water-500/20 hover:bg-water-600 transition-all active:scale-95">
+                Przeglądaj zawody
+            </a>
+            {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('auth.login') }}" class="px-8 py-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-water-200 dark:border-gray-700 font-black uppercase tracking-widest rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-750 transition-all active:scale-95 shadow-sm">
+                Zaloguj się
+            </a>
+            {% else %}
+            <a href="{{ url_for('main.dashboard') }}" class="px-8 py-4 bg-gold-500 text-white font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-gold-500/20 hover:bg-gold-600 transition-all active:scale-95">
+                Mój Dashboard
+            </a>
+            {% endif %}
+        </div>
     </div>
 
-    {% if ostatnie_zawody %}
-    <table class="w-full text-sm">
-        <thead>
-            <tr class="border-b border-water-100 dark:border-gray-700
-                       text-xs text-gray-400 uppercase tracking-wide">
-                <th class="text-left px-5 py-3 font-medium">Nazwa</th>
-                <th class="text-left px-5 py-3 font-medium">Data</th>
-                <th class="text-left px-5 py-3 font-medium hidden sm:table-cell">
-                    Dyscyplina
-                </th>
-                <th class="text-left px-5 py-3 font-medium hidden md:table-cell">
-                    Łowisko
-                </th>
-                <th class="text-left px-5 py-3 font-medium">Status</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-water-100 dark:divide-gray-700">
+    <!-- Recent Competitions Section -->
+    <div class="space-y-6">
+        <div class="flex items-center justify-between border-b border-water-100 dark:border-gray-800 pb-4">
+            <h3 class="text-xs font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">Ostatnio zakończone zawody</h3>
+            <a href="{{ url_for('zawody.lista', status='zakonczone') }}" class="text-[10px] font-black uppercase text-water-600 dark:text-water-400 hover:underline">Zobacz wszystkie</a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             {% for z in ostatnie_zawody %}
-            <tr class="hover:bg-water-50 dark:hover:bg-gray-700 transition-colors">
-                <td class="px-5 py-3 font-medium text-gray-800 dark:text-gray-100">
-                    <a href="{{ url_for('zawody.szczegoly', zid=z.id) }}"
-                       class="hover:text-water-700 dark:hover:text-water-200">
-                        {{ z.nazwa }}
-                    </a>
-                    {% if z.grand_prix %}
-                    <span class="ml-1.5 text-[10px] bg-gold-100 text-gold-600
-                                 dark:bg-amber-900 dark:text-amber-300
-                                 px-1.5 py-0.5 rounded-full font-medium">
-                        GP
-                    </span>
-                    {% endif %}
-                </td>
-                <td class="px-5 py-3 text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                    {{ z.data.strftime('%d.%m.%Y') }}
-                </td>
-                <td class="px-5 py-3 text-gray-500 dark:text-gray-400 hidden sm:table-cell">
-                    {{ z.dyscyplina.nazwa }}
-                </td>
-                <td class="px-5 py-3 text-gray-500 dark:text-gray-400 hidden md:table-cell">
-                    {{ z.lowisko.nazwa if z.lowisko else '—' }}
-                </td>
-                <td class="px-5 py-3">
-                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
-                        {% if z.status == 'zakonczone' %}
-                            bg-green-100 text-green-800
-                            dark:bg-green-900 dark:text-green-200
-                        {% elif z.status == 'w_trakcie' %}
-                            bg-blue-100 text-blue-800
-                            dark:bg-blue-900 dark:text-blue-200
-                        {% else %}
-                            bg-gray-100 text-gray-600
-                            dark:bg-gray-700 dark:text-gray-300
-                        {% endif %}">
-                        {{ z.status|replace('_', ' ')|capitalize }}
-                    </span>
-                </td>
-            </tr>
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl border border-water-200 dark:border-gray-700 shadow-sm hover:border-water-400 transition-all group">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-water-50 dark:bg-water-900/30 flex items-center justify-center text-water-600 dark:text-water-400 font-bold">
+                            {{ z.dyscyplina.nazwa[0]|upper }}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-900 dark:text-white">{{ z.nazwa }}</h4>
+                            <div class="text-[10px] text-gray-400 uppercase font-bold">{{ z.data.strftime('%d.%m.%Y') }}</div>
+                        </div>
+                    </div>
+                    <svg class="w-5 h-5 text-gray-300 group-hover:text-water-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                </div>
+                <div class="flex items-center justify-between mt-auto pt-4 border-t border-water-50 dark:border-gray-700">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-water-600 dark:text-water-400">{{ z.dyscyplina.nazwa }}</span>
+                    <a href="{{ url_for('zawody.szczegoly', zid=z.id) }}" class="text-xs font-bold text-gray-400 hover:text-gray-900 dark:hover:text-white">Wyniki i Klasyfikacja</a>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-span-full py-12 text-center text-gray-400 bg-white/50 dark:bg-gray-800/50 rounded-3xl border-2 border-dashed border-water-100 dark:border-gray-700">
+                Brak niedawnych wyników do wyświetlenia.
+            </div>
             {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <div class="text-center py-16 text-gray-400 dark:text-gray-500">
-        <p class="text-sm">Brak zawodów</p>
-        <a href="{{ url_for('zawody.nowe') }}"
-           class="mt-2 inline-block text-sm text-water-700
-                  dark:text-water-200 hover:underline">
-            Utwórz pierwsze zawody
-        </a>
+        </div>
     </div>
-    {% endif %}
+
+    <!-- Info Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-gold-100 dark:bg-amber-900/20 flex items-center justify-center text-gold-600 dark:text-amber-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h4 class="font-black uppercase tracking-tight text-gray-900 dark:text-white">Szybkie podliczanie</h4>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Wprowadzaj wagę lub wymiary ryb bezpośrednio na stanowisku. System sam obliczy punkty sektorowe.</p>
+        </div>
+        <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            </div>
+            <h4 class="font-black uppercase tracking-tight text-gray-900 dark:text-white">Wszystkie dyscypliny</h4>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Pełne wsparcie dla dyscyplin spławikowych, gruntowych, spinningowych oraz zawodów karpiowych.</p>
+        </div>
+        <div class="space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-green-100 dark:bg-green-900/20 flex items-center justify-center text-green-600 dark:text-green-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <h4 class="font-black uppercase tracking-tight text-gray-900 dark:text-white">Raporty PDF</h4>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Generuj profesjonalne protokoły i klasyfikacje gotowe do druku i publikacji jednym kliknięciem.</p>
+        </div>
+    </div>
 </div>
 {% endblock %}

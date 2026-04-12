@@ -1,39 +1,43 @@
-<div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700" x-data="{ mode: 'view' }">
-    <div class="flex items-center justify-between px-5 py-4 border-b border-water-200 dark:border-gray-700 overflow-visible">
-        <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">Stanowiska</h2>
-        <div class="flex items-center gap-2">
-            <button x-show="mode === 'view'" @click="mode = 'manual'" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium border border-water-200 text-water-700 dark:border-gray-600 dark:text-water-200 hover:bg-water-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+<div class="bg-white dark:bg-gray-800 rounded-3xl border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm" x-data="{ mode: 'view' }">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between px-8 py-5 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750 gap-4">
+        <h2 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 opacity-80">Losowanie i stanowiska</h2>
+        <div class="flex flex-wrap items-center gap-2">
+            <button x-show="mode === 'view'" @click="mode = 'manual'" 
+                    class="flex items-center gap-2 px-4 py-2 text-xs font-black uppercase tracking-widest border border-water-200 text-water-700 dark:border-gray-600 dark:text-water-200 hover:bg-water-50 dark:hover:bg-gray-700 rounded-xl transition-all shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                 Wpisz ręcznie
             </button>
-            <button x-show="mode === 'manual'" @click="mode = 'view'" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium border border-water-200 text-gray-600 dark:border-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+            <button x-show="mode === 'manual'" @click="mode = 'view'" 
+                    class="flex items-center gap-2 px-4 py-2 text-xs font-black uppercase tracking-widest border border-water-200 text-gray-500 dark:border-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-all">
                 Anuluj
             </button>
-            <div x-data="{ open: false }" class="relative z-20">
-                <button @click="open = !open" class="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors">
-                    Losuj stanowiska
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
-                    </svg>
+            <div x-data="{ open: false }" class="relative">
+                <button @click="open = !open" 
+                        class="flex items-center gap-2 px-5 py-2 text-xs font-black uppercase tracking-widest bg-gold-500 hover:bg-gold-600 text-white rounded-xl shadow-lg shadow-gold-500/20 transition-all active:scale-95">
+                    Losuj automatycznie
+                    <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                 </button>
-                <div x-show="open" x-transition @click.outside="open = false" style="position: absolute; right: 0; top: 100%; margin-top: 8px; width: 256px; z-index: 50;" class="bg-white dark:bg-gray-800 border border-water-200 dark:border-gray-600 rounded-xl shadow-lg p-4">
-                    <form method="POST" action="{{ url_for('zawody.losuj', zid=zawody.id) }}" class="space-y-3">
+                <div x-show="open" x-transition @click.outside="open = false" x-cloak
+                     class="absolute right-0 top-full mt-3 w-64 bg-white dark:bg-gray-800 border border-water-200 dark:border-gray-700 rounded-2xl shadow-2xl p-5 z-50">
+                    <form method="POST" action="{{ url_for('zawody.losuj', zid=zawody.id) }}" class="space-y-4 text-left">
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Tura</label>
-                            <select name="tura" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500">
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 text-left">Wybierz turę</label>
+                            <select name="tura" class="w-full px-3 py-2 text-sm font-bold rounded-lg border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
                                 {% for t in range(1, zawody.liczba_tur + 1) %}
                                 <option value="{{ t }}">Tura {{ t }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Tryb</label>
-                            <select name="tryb" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500">
-                                <option value="auto">Losowe</option>
-                                <option value="druzynowe">Drużynowe</option>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 text-left">Metoda losowania</label>
+                            <select name="tryb" class="w-full px-3 py-2 text-sm font-bold rounded-lg border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                                <option value="auto">Pełna losowość</option>
+                                <option value="druzynowe">Zasada drużynowa</option>
                             </select>
                         </div>
-                        <button type="submit" onclick="return confirm('Losowanie nadpisze obecne stanowiska dla tej tury. Kontynuować?')" class="w-full py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors">
-                            Losuj
+                        <button type="submit" onclick="return confirm('Losowanie nadpisze obecne stanowiska dla tej tury. Kontynuować?')" 
+                                class="w-full py-3 text-xs font-black uppercase tracking-widest bg-water-500 hover:bg-water-600 text-white rounded-xl transition-all shadow-md shadow-water-500/20">
+                            Rozpocznij losowanie
                         </button>
                     </form>
                 </div>
@@ -42,49 +46,53 @@
     </div>
 
     <!-- WIDOK: wpisywanie ręczne -->
-    <div x-show="mode === 'manual'" style="display: none;" class="p-6 bg-gray-50 dark:bg-gray-900 border-b border-water-200 dark:border-gray-700" x-data="{ tura_wybrana: 1 }">
+    <div x-show="mode === 'manual'" x-cloak class="p-8 bg-gray-50 dark:bg-gray-900 border-b border-water-50 dark:border-gray-700" x-data="{ tura_wybrana: 1 }">
         <form method="POST" action="{{ url_for('zawody.stanowiska_recznie', zid=zawody.id) }}">
-            <div class="mb-4 max-w-xs">
-                <label class="block text-xs font-medium text-gray-600 dark:text-gray-300 mb-1">Dla której tury wpisujesz?</label>
-                <select name="tura" x-model.number="tura_wybrana" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500">
+            <div class="mb-8 max-w-xs">
+                <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Edytowana tura</label>
+                <div class="flex gap-2 p-1 bg-white dark:bg-gray-800 rounded-xl border border-water-200 dark:border-gray-700 shadow-inner">
                     {% for t in range(1, zawody.liczba_tur + 1) %}
-                    <option value="{{ t }}">Tura {{ t }}</option>
+                    <button type="button" @click="tura_wybrana = {{ t }}"
+                            :class="tura_wybrana === {{ t }} ? 'bg-gold-500 text-white shadow-md' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'"
+                            class="flex-1 py-2 text-xs font-black uppercase rounded-lg transition-all">
+                        {{ t }}
+                    </button>
                     {% endfor %}
-                </select>
+                    <input type="hidden" name="tura" x-model="tura_wybrana">
+                </div>
             </div>
             
-            <p class="text-xs text-gray-500 mb-4">Wybierz Sektor i wpisz Numer stanowiska. Puste (—) oznaczają brak przypisania.</p>
+            <p class="text-[10px] font-black uppercase tracking-widest text-water-600 dark:text-water-400 mb-6">Wpisz przydział sektorów i stanowisk dla zawodników</p>
 
             {% set litery = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
             {% for t in range(1, zawody.liczba_tur + 1) %}
-            <div x-show="tura_wybrana === {{ t }}" style="display: none;" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div x-show="tura_wybrana === {{ t }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {% for u in zawody.uczestnicy|sort(attribute='numer_startowy') %}
                 {% set stan = u.stanowiska | selectattr('tura', 'equalto', t) | list | first %}
-                <div class="flex items-center gap-2 bg-white dark:bg-gray-800 p-3 rounded border border-water-100 dark:border-gray-700">
+                <div class="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-water-100 dark:border-gray-700 shadow-sm group hover:border-water-300 transition-all">
                     <div class="flex-grow min-w-0">
-                        <div class="text-sm font-medium text-gray-800 dark:text-gray-100 truncate" title="{{ u.zawodnik.nazwisko }} {{ u.zawodnik.imie }}">
-                            {{ u.zawodnik.nazwisko }} {{ u.zawodnik.imie }}
-                        </div>
-                        <div class="text-xs text-gray-500 truncate">{{ u.zawodnik.kolo }}</div>
+                        <div class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ u.zawodnik.nazwisko }} {{ u.zawodnik.imie }}</div>
+                        <div class="text-[10px] font-medium text-gray-400 uppercase tracking-tight truncate">{{ u.zawodnik.kolo }}</div>
                     </div>
-                    <div class="flex gap-2">
-                        <select name="sektor_{{ t }}_{{ u.id }}" class="w-16 px-1 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-center">
+                    <div class="flex gap-1.5 shrink-0">
+                        <select name="sektor_{{ t }}_{{ u.id }}" class="w-12 px-1 py-1.5 text-xs font-black rounded-lg border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white text-center outline-none focus:border-water-500">
                             <option value="">—</option>
                             {% for i in range(zawody.liczba_sektorow) %}
                             {% set l = litery[i] %}
                             <option value="{{ l }}" {% if stan and stan.sektor == l %}selected{% endif %}>{{ l }}</option>
                             {% endfor %}
                         </select>
-                        <input type="number" name="numer_{{ t }}_{{ u.id }}" value="{{ stan.numer if stan else '' }}" placeholder="Nr" min="1" class="w-14 px-2 py-1 text-sm rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 text-center">
+                        <input type="number" name="numer_{{ t }}_{{ u.id }}" value="{{ stan.numer if stan else '' }}" placeholder="Nr" min="1" 
+                               class="w-12 px-1 py-1.5 text-xs font-black rounded-lg border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white text-center outline-none focus:border-water-500">
                     </div>
                 </div>
                 {% endfor %}
             </div>
             {% endfor %}
             
-            <div class="mt-6 flex justify-end">
-                <button type="submit" class="px-6 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors">
-                    Zapisz stanowiska ręcznie
+            <div class="mt-10 flex justify-end">
+                <button type="submit" class="px-8 py-3 text-xs font-black uppercase tracking-widest bg-gold-500 hover:bg-gold-600 text-white rounded-xl shadow-lg shadow-gold-500/20 transition-all active:scale-95">
+                    Zapisz zmiany ręcznie
                 </button>
             </div>
         </form>
@@ -97,38 +105,41 @@
             {% set tury = stanowiska | map(attribute='tura') | unique | sort | list %}
             
             <div x-data="{ aktywna_tura: {{ tury[0] }} }">
-                <div class="flex overflow-x-auto border-b border-water-200 dark:border-gray-700 px-5 pt-3 gap-2 bg-water-50 dark:bg-gray-750">
+                <div class="flex items-center gap-2 px-8 pt-4 bg-white dark:bg-gray-800 border-b border-water-50 dark:border-gray-700 overflow-x-auto scrollbar-hide">
                     {% for tura in tury %}
                     <button @click="aktywna_tura = {{ tura }}"
-                            :class="aktywna_tura === {{ tura }} ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
-                            class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
+                            :class="aktywna_tura === {{ tura }} ? 'bg-water-50 dark:bg-water-900/30 text-water-600 dark:text-water-400' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'"
+                            class="px-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] rounded-t-xl transition-all whitespace-nowrap">
                         Tura {{ tura }}
                     </button>
                     {% endfor %}
                 </div>
 
                 {% for tura in tury %}
-                <div x-show="aktywna_tura === {{ tura }}" x-cloak>
+                <div x-show="aktywna_tura === {{ tura }}" class="p-8">
                     {% set sektory = stanowiska | selectattr('tura', 'equalto', tura) | map(attribute='sektor') | unique | sort | list %}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 divide-y sm:divide-y-0 sm:divide-x divide-water-100 dark:divide-gray-700">
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                         {% for sektor in sektory %}
-                        <div>
-                            <div class="px-4 py-2 bg-water-50 dark:bg-gray-750 border-b border-water-100 dark:border-gray-700">
-                                <span class="text-xs font-semibold text-water-700 dark:text-water-200">Sektor {{ sektor }}</span>
+                        <div class="bg-gray-50/50 dark:bg-gray-900/20 rounded-2xl border border-water-50 dark:border-gray-700 p-1">
+                            <div class="px-5 py-3 border-b border-water-50 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 rounded-t-2xl flex items-center justify-between">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-water-600 dark:text-water-400">Sektor {{ sektor }}</span>
+                                <span class="text-[10px] font-bold text-gray-400 uppercase">{{ (stanowiska | selectattr('tura', 'equalto', tura) | selectattr('sektor', 'equalto', sektor) | list)|length }} zawodników</span>
                             </div>
-                            <table class="w-full text-xs">
-                                <tbody>
-                                    {% for s in stanowiska | selectattr('tura', 'equalto', tura) | selectattr('sektor', 'equalto', sektor) | sort(attribute='numer') %}
-                                    <tr class="border-b border-water-50 dark:border-gray-700 hover:bg-water-50 dark:hover:bg-gray-700">
-                                        <td class="px-4 py-2 text-gray-400 w-8">{{ s.numer }}</td>
-                                        <td class="px-2 py-2 font-medium text-gray-800 dark:text-gray-100">
+                            <div class="divide-y divide-water-50 dark:divide-gray-700 px-2">
+                                {% for s in stanowiska | selectattr('tura', 'equalto', tura) | selectattr('sektor', 'equalto', sektor) | sort(attribute='numer') %}
+                                <div class="flex items-center gap-4 py-3 px-3 hover:bg-white dark:hover:bg-gray-800 transition-colors rounded-xl mt-1 last:mb-1">
+                                    <div class="w-8 h-8 rounded-lg bg-water-100 dark:bg-water-900/50 flex items-center justify-center text-water-700 dark:text-water-300 text-xs font-black">
+                                        {{ s.numer }}
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="text-sm font-bold text-gray-900 dark:text-white truncate">
                                             {{ s.uczestnik.zawodnik.nazwisko }} {{ s.uczestnik.zawodnik.imie }}
-                                        </td>
-                                        <td class="px-2 py-2 text-gray-400">{{ s.uczestnik.zawodnik.kolo }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                        </div>
+                                        <div class="text-[10px] text-gray-400 uppercase font-medium truncate">{{ s.uczestnik.zawodnik.kolo }}</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
                         {% endfor %}
                     </div>
@@ -136,8 +147,12 @@
                 {% endfor %}
             </div>
         {% else %}
-        <div class="text-center py-10 text-gray-400 dark:text-gray-500">
-            <p class="text-sm">Brak stanowisk — użyj przycisku "Losuj stanowiska" lub "Wpisz ręcznie"</p>
+        <div class="text-center py-20 bg-white dark:bg-gray-800">
+            <div class="w-16 h-16 bg-water-50 dark:bg-water-900/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-water-300">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+            </div>
+            <p class="text-gray-500 dark:text-gray-400 font-medium">Brak przydzielonych stanowisk.</p>
+            <p class="text-xs text-gray-400 mt-1">Użyj przycisku "Losuj automatycznie" powyżej.</p>
         </div>
         {% endif %}
     </div>

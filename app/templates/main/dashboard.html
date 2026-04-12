@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border
+                border-water-200 dark:border-gray-700 p-5">
+        <p class="text-xs text-gray-400 uppercase tracking-wide mb-1">
+            Zawody łącznie
+        </p>
+        <p class="text-3xl font-semibold text-water-700 dark:text-water-200">
+            {{ liczba_zawodow }}
+        </p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border
+                border-water-200 dark:border-gray-700 p-5">
+        <p class="text-xs text-gray-400 uppercase tracking-wide mb-1">
+            Zawodnicy w bazie
+        </p>
+        <p class="text-3xl font-semibold text-water-700 dark:text-water-200">
+            {{ liczba_zawodnikow }}
+        </p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border
+                border-water-200 dark:border-gray-700 p-5">
+        <p class="text-xs text-gray-400 uppercase tracking-wide mb-1">
+            Sędziowie
+        </p>
+        <p class="text-3xl font-semibold text-water-700 dark:text-water-200">
+            {{ liczba_sedziow }}
+        </p>
+    </div>
+</div>
+
+<div class="bg-white dark:bg-gray-800 rounded-2xl border
+            border-water-200 dark:border-gray-700 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4
+                border-b border-water-200 dark:border-gray-700">
+        <h2 class="text-sm font-medium text-gray-700 dark:text-gray-200">
+            Ostatnie zawody
+        </h2>
+        <a href="{{ url_for('zawody.lista') }}"
+           class="text-xs text-water-700 dark:text-water-200 hover:underline">
+            Wszystkie
+        </a>
+    </div>
+
+    {% if ostatnie_zawody %}
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="border-b border-water-100 dark:border-gray-700
+                       text-xs text-gray-400 uppercase tracking-wide">
+                <th class="text-left px-5 py-3 font-medium">Nazwa</th>
+                <th class="text-left px-5 py-3 font-medium">Data</th>
+                <th class="text-left px-5 py-3 font-medium hidden sm:table-cell">
+                    Dyscyplina
+                </th>
+                <th class="text-left px-5 py-3 font-medium hidden md:table-cell">
+                    Łowisko
+                </th>
+                <th class="text-left px-5 py-3 font-medium">Status</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-water-100 dark:divide-gray-700">
+            {% for z in ostatnie_zawody %}
+            <tr class="hover:bg-water-50 dark:hover:bg-gray-700 transition-colors">
+                <td class="px-5 py-3 font-medium text-gray-800 dark:text-gray-100">
+                    <a href="{{ url_for('zawody.szczegoly', zid=z.id) }}"
+                       class="hover:text-water-700 dark:hover:text-water-200">
+                        {{ z.nazwa }}
+                    </a>
+                    {% if z.grand_prix %}
+                    <span class="ml-1.5 text-[10px] bg-gold-100 text-gold-600
+                                 dark:bg-amber-900 dark:text-amber-300
+                                 px-1.5 py-0.5 rounded-full font-medium">
+                        GP
+                    </span>
+                    {% endif %}
+                </td>
+                <td class="px-5 py-3 text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                    {{ z.data.strftime('%d.%m.%Y') }}
+                </td>
+                <td class="px-5 py-3 text-gray-500 dark:text-gray-400 hidden sm:table-cell">
+                    {{ z.dyscyplina.nazwa }}
+                </td>
+                <td class="px-5 py-3 text-gray-500 dark:text-gray-400 hidden md:table-cell">
+                    {{ z.lowisko.nazwa if z.lowisko else '—' }}
+                </td>
+                <td class="px-5 py-3">
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
+                        {% if z.status == 'zakonczone' %}
+                            bg-green-100 text-green-800
+                            dark:bg-green-900 dark:text-green-200
+                        {% elif z.status == 'w_trakcie' %}
+                            bg-blue-100 text-blue-800
+                            dark:bg-blue-900 dark:text-blue-200
+                        {% else %}
+                            bg-gray-100 text-gray-600
+                            dark:bg-gray-700 dark:text-gray-300
+                        {% endif %}">
+                        {{ z.status|replace('_', ' ')|capitalize }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="text-center py-16 text-gray-400 dark:text-gray-500">
+        <p class="text-sm">Brak zawodów</p>
+        <a href="{{ url_for('zawody.nowe') }}"
+           class="mt-2 inline-block text-sm text-water-700
+                  dark:text-water-200 hover:underline">
+            Utwórz pierwsze zawody
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
