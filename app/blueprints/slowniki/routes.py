@@ -17,6 +17,83 @@ def index():
     )
 
 
+import csv
+import io
+
+@bp.route("/import/<string:typ>", methods=["POST"])
+@login_required
+def import_csv(typ):
+    if "file" not in request.files:
+        flash("Brak pliku.", "danger")
+        return redirect(url_for("slowniki.index", _anchor=typ))
+    
+    file = request.files["file"]
+    if file.filename == "":
+        flash("Nie wybrano pliku.", "danger")
+        return redirect(url_for("slowniki.index", _anchor=typ))
+
+    try:
+        stream = io.StringIO(file.stream.read().decode("utf-8"), newline="")
+        reader = csv.DictReader(stream)
+        dodano = 0
+        pominieto = 0
+
+        if typ == "lowiska":
+            for row in reader:
+                nazwa = row.get("nazwa", "").strip()
+                miejscowosc = row.get("miejscowosc", "").strip()
+                if not nazwa or not miejscowosc:
+                    pominieto += 1
+                    continue
+                istniejacy = Lowisko.query.filter_by(nazwa=nazwa, miejscowosc=miejscowosc).first()
+                if istniejacy:
+                    pominieto += 1
+                    continue
+                db.session.add(Lowisko(nazwa=nazwa, miejscowosc=miejscowosc, opis=row.get("opis", "")))
+                dodano += 1
+
+        elif typ == "dyscypliny":
+            for row in reader:
+                nazwa = row.get("nazwa", "").strip()
+                kod = row.get("kod", "").strip().lower()
+                typ_wyniku = row.get("typ_wyniku", "").strip()
+                if not nazwa or not kod or typ_wyniku not in ["wagowy", "punktowy", "karpie"]:
+                    pominieto += 1
+                    continue
+                istniejacy = Dyscyplina.query.filter_by(kod=kod).first()
+                if istniejacy:
+                    pominieto += 1
+                    continue
+                db.session.add(Dyscyplina(nazwa=nazwa, kod=kod, typ_wyniku=typ_wyniku))
+                dodano += 1
+
+        elif typ == "ryby":
+            for row in reader:
+                nazwa = row.get("nazwa", "").strip()
+                if not nazwa:
+                    pominieto += 1
+                    continue
+                istniejacy = GatunekRyby.query.filter_by(nazwa=nazwa).first()
+                if istniejacy:
+                    pominieto += 1
+                    continue
+                db.session.add(GatunekRyby(
+                    nazwa=nazwa,
+                    wymiar_ochronny_mm=int(row.get("wymiar_ochronny_mm", 0) or 0),
+                    wymiar_punktowany_mm=int(row.get("wymiar_punktowany_mm", 0) or 0),
+                    punkty_bazowe=int(row.get("punkty_bazowe", 0) or 0),
+                    punkty_za_mm=float(row.get("punkty_za_mm", 0) or 0.0)
+                ))
+                dodano += 1
+
+        db.session.commit()
+        flash(f"Import {typ} zakończony. Dodano: {dodano}, Pominięto: {pominieto}.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Błąd importu: {str(e)}", "danger")
+
+    return redirect(url_for("slowniki.index", _anchor=typ))
+
 @bp.route("/lowiska/nowe", methods=["GET", "POST"])
 @login_required
 def lowisko_nowe():

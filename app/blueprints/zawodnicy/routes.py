@@ -71,6 +71,60 @@ def nowy():
     return render_template("zawodnicy/formularz.html", zawodnik=None)
 
 
+import csv
+import io
+
+@bp.route("/import", methods=["POST"])
+@login_required
+def import_csv():
+    if "file" not in request.files:
+        flash("Brak pliku w żądaniu.", "danger")
+        return redirect(url_for("zawodnicy.lista"))
+    
+    file = request.files["file"]
+    if file.filename == "":
+        flash("Nie wybrano pliku.", "danger")
+        return redirect(url_for("zawodnicy.lista"))
+
+    if not file.filename.endswith(".csv"):
+        flash("Plik musi mieć rozszerzenie .csv", "danger")
+        return redirect(url_for("zawodnicy.lista"))
+
+    try:
+        stream = io.StringIO(file.stream.read().decode("utf-8"), newline="")
+        reader = csv.DictReader(stream)
+        
+        dodano = 0
+        pominieto = 0
+        
+        for row in reader:
+            imie = row.get("imie", "").strip()
+            nazwisko = row.get("nazwisko", "").strip()
+            kolo = row.get("kolo", "").strip()
+            nr_licencji = row.get("nr_licencji", "").strip() or None
+            
+            if not imie or not nazwisko or not kolo:
+                pominieto += 1
+                continue
+                
+            istniejacy = Zawodnik.query.filter_by(imie=imie, nazwisko=nazwisko, kolo=kolo).first()
+            if istniejacy:
+                pominieto += 1
+                continue
+                
+            nowy = Zawodnik(imie=imie, nazwisko=nazwisko, kolo=kolo, nr_licencji=nr_licencji)
+            db.session.add(nowy)
+            dodano += 1
+            
+        db.session.commit()
+        flash(f"Import zakończony. Dodano: {dodano}, Pominięto (duplikaty/błędy): {pominieto}.", "success")
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Błąd podczas przetwarzania pliku CSV: {str(e)}", "danger")
+
+    return redirect(url_for("zawodnicy.lista"))
+
 @bp.route("/<int:zid>")
 @login_required
 def szczegoly(zid):
