@@ -122,6 +122,37 @@ def protokol(zid):
         klasyfikacja=klasyfikacja,
     )
 
+import io
+from flask import send_file
+
+@bp.route("/<int:zid>/protokol/pdf")
+@login_required
+def protokol_pdf(zid):
+    zawody = db.session.get(Zawody, zid)
+    if not zawody:
+        abort(404)
+        
+    klasyfikacja = oblicz_klasyfikacje(zawody)
+    
+    rendered_html = render_template(
+        "zawody/protokol.html",
+        zawody=zawody,
+        klasyfikacja=klasyfikacja,
+    )
+    
+    try:
+        from weasyprint import HTML
+        pdf_file = HTML(string=rendered_html).write_pdf()
+        return send_file(
+            io.BytesIO(pdf_file),
+            mimetype="application/pdf",
+            as_attachment=True,
+            download_name=f"protokol_{zawody.nr_zawodow.replace('/', '_') if zawody.nr_zawodow else zid}.pdf"
+        )
+    except ImportError:
+        flash("Moduł WeasyPrint nie jest zainstalowany. Pobieranie PDF niedostępne.", "danger")
+        return redirect(url_for("zawody.szczegoly", zid=zid))
+
 @bp.route("/<int:zid>")
 @login_required
 def szczegoly(zid):

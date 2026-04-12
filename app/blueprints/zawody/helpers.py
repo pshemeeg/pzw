@@ -184,11 +184,19 @@ def oblicz_klasyfikacje(zawody):
             suma_pkt = sum(punkty_u)
             suma_wag = sum(wagi_u)
             
+        max_ryba_mm = 0
+        if typ_wyniku == 'punktowy':
+            for stan in u.stanowiska:
+                for ryba in stan.wyniki_ryby:
+                    if ryba.zaliczona and ryba.dlugosc_mm > max_ryba_mm:
+                        max_ryba_mm = ryba.dlugosc_mm
+
         indywidualna.append({
             'uczestnik': u,
             'suma_sektorowych': suma_pkt,
             'suma_wag': suma_wag,
             'punkty_tury': {t: pkt_sektorowe[u.id].get(t, '-') for t in tury},
+            'najdluzsza_ryba_cm': round(max_ryba_mm / 10, 1) if max_ryba_mm > 0 else 0,
             'status': status
         })
         
