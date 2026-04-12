@@ -71,7 +71,7 @@
                 {% set stan = u.stanowiska | selectattr('tura', 'equalto', t) | list | first %}
                 <div class="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-2xl border border-water-100 dark:border-gray-700 shadow-sm group hover:border-water-300 transition-all">
                     <div class="flex-grow min-w-0">
-                        <div class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ u.zawodnik.nazwisko }} {{ u.zawodnik.imie }}</div>
+                        <div class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ u.zawodnik | display_name }}</div>
                         <div class="text-[10px] font-medium text-gray-400 uppercase tracking-tight truncate">{{ u.zawodnik.kolo }}</div>
                     </div>
                     <div class="flex gap-1.5 shrink-0">
@@ -133,7 +133,7 @@
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <div class="text-sm font-bold text-gray-900 dark:text-white truncate">
-                                            {{ s.uczestnik.zawodnik.nazwisko }} {{ s.uczestnik.zawodnik.imie }}
+                                            {{ s.uczestnik.zawodnik | display_name }}
                                         </div>
                                         <div class="text-[10px] text-gray-400 uppercase font-medium truncate">{{ s.uczestnik.zawodnik.kolo }}</div>
                                     </div>

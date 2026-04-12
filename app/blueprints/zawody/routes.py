@@ -276,15 +276,17 @@ def szybki_zawodnik(zid):
     nazwisko = request.form.get("nazwisko", "").strip()
     kolo = request.form.get("kolo", "").strip()
     druzyna = request.form.get("druzyna", "").strip() or None
+    rodo_zgoda = bool(request.form.get("rodo_zgoda"))
     
     if not imie or not nazwisko or not kolo:
-        flash("Wypełnij wymagane pola (Imię, Nazwisko, Koło).", "danger")
+        flash("Wype\u0142nij wymagane pola (Imi\u0119, Nazwisko, Ko\u0142o).", "danger")
         return redirect(url_for("zawody.szczegoly", zid=zid))
         
     zawodnik = Zawodnik(
         imie=imie,
         nazwisko=nazwisko,
-        kolo=kolo
+        kolo=kolo,
+        rodo_zgoda=rodo_zgoda
     )
     db.session.add(zawodnik)
     db.session.flush() # pobranie ID

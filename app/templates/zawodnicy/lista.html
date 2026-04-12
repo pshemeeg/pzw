@@ -71,11 +71,11 @@
                 <td class="px-8 py-5">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-water-100 dark:bg-water-900/30 flex items-center justify-center text-water-600 dark:text-water-400 font-bold">
-                            {{ z.nazwisko[0]|upper }}
+                            {{ (z | display_name)[0]|upper }}
                         </div>
                         <a href="{{ url_for('zawodnicy.szczegoly', zid=z.id) }}"
                            class="font-bold text-gray-900 dark:text-white hover:text-water-600 transition-colors">
-                            {{ z.nazwisko }} {{ z.imie }}
+                            {{ z | display_name }}
                         </a>
                     </div>
                 </td>

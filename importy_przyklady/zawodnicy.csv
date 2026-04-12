@@ -1,11 +1,11 @@
-imie,nazwisko,kolo,nr_licencji
-Jan,Kowalski,Koło nr 1 Warszawa,WA-1234
-Piotr,Nowak,Koło nr 8 Bieruń,SL-5678
-Anna,Zielińska,Koło nr 14 Tychy,SL-9012
-Marek,Wiśniewski,Koło Poznań Miasto,WP-3456
-Krzysztof,Wójcik,Koło nr 1 Warszawa,WA-7890
-Magdalena,Mazur,Koło nr 8 Bieruń,SL-1122
-Robert,Lewandowski,Koło Wrocław Krzyki,DS-3344
-Adam,Małysz,Koło nr 14 Tychy,SL-5566
-Tomasz,Adamek,Koło Poznań Miasto,WP-7788
-Andrzej,Gołota,Koło Wrocław Krzyki,DS-9900
+imie,nazwisko,kolo,nr_licencji,rodo_zgoda
+Jan,Kowalski,Ko\u0142o nr 1 Warszawa,WA-1234,1
+Piotr,Nowak,Ko\u0142o nr 8 Bieru\u0144,SL-5678,1
+Anna,Zieli\u0144ska,Ko\u0142o nr 14 Tychy,SL-9012,0
+Marek,Wi\u015bniewski,Ko\u0142o Pozna\u0144 Miasto,WP-3456,1
+Krzysztof,W\u00f3jcik,Ko\u0142o nr 1 Warszawa,WA-7890,0
+Magdalena,Mazur,Ko\u0142o nr 8 Bieru\u0144,SL-1122,1
+Robert,Lewandowski,Ko\u0142o Wroc\u0142aw Krzyki,DS-3344,1
+Adam,Ma\u0142ysz,Ko\u0142o nr 14 Tychy,SL-5566,0
+Tomasz,Adamek,Ko\u0142o Pozna\u0144 Miasto,WP-7788,1
+Andrzej,Go\u0142ota,Ko\u0142o Wroc\u0142aw Krzyki,DS-9900,0

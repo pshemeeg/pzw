@@ -96,7 +96,7 @@
             {% for entry in ranking %}
             <tr>
                 <td class="text-center font-bold">{{ loop.index }}</td>
-                <td class="font-bold">{{ entry.zawodnik.nazwisko }} {{ entry.zawodnik.imie }}</td>
+                <td class="font-bold">{{ entry.zawodnik | display_name }}</td>
                 <td>{{ entry.zawodnik.kolo }}</td>
                 {% for z in zawody_gp %}
                 <td class="text-center">
@@ -130,7 +130,7 @@
             <tbody>
                 {% for entry in ranking %}
                 <tr>
-                    <td class="font-bold">{{ entry.zawodnik.nazwisko }} {{ entry.zawodnik.imie }}</td>
+                    <td class="font-bold">{{ entry.zawodnik | display_name }}</td>
                     {% for pos in entry.historia_pozycji %}
                     <td class="text-center">{{ pos }}</td>
                     {% endfor %}
@@ -157,7 +157,7 @@
                 {% for r in wyniki.indywidualna %}
                 <tr>
                     <td class="text-center">{{ r.miejsce }}</td>
-                    <td class="font-bold">{{ r.uczestnik.zawodnik.nazwisko }} {{ r.uczestnik.zawodnik.imie }}</td>
+                    <td class="font-bold">{{ r.uczestnik.zawodnik | display_name }}</td>
                     <td>{{ r.uczestnik.zawodnik.kolo }}</td>
                     <td class="text-center">{{ r.suma_wag }}{{ 'p' if z.dyscyplina.typ_wyniku == 'punktowy' else 'g' }}</td>
                     <td class="text-right font-bold">{{ r.suma_sektorowych|string|replace('.0', '') if r.status == 'OK' else 'NC' }}</td>

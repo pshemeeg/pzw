@@ -78,7 +78,7 @@
             {% for r in d.zawodnicy %}
             <tr>
                 <td class="col-name" style="padding-left: 20px; font-size: 9pt;">
-                    {{ r.uczestnik.zawodnik.nazwisko|upper }} {{ r.uczestnik.zawodnik.imie|upper }}
+                    {{ r.uczestnik.zawodnik | display_name | upper }}
                 </td>
                 {% if zawody.liczba_tur == 1 %}
                     <td class="col-num" style="font-size: 9pt; color: #555;">{{ r.suma_wag|string|replace('.0', '') }}</td>

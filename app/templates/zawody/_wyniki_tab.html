@@ -51,7 +51,7 @@
                                                 {{ s.numer }}
                                             </div>
                                             <div class="min-w-0 flex-1 sm:w-48">
-                                                <div class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ s.uczestnik.zawodnik.nazwisko }} {{ s.uczestnik.zawodnik.imie }}</div>
+                                                <div class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ s.uczestnik.zawodnik | display_name }}</div>
                                                 <div class="text-[10px] text-gray-400 uppercase font-medium truncate">{{ s.uczestnik.zawodnik.kolo }}</div>
                                             </div>
                                         </div>

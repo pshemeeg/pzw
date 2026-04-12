@@ -35,6 +35,7 @@ class Zawodnik(db.Model):
     nazwisko = db.Column(db.String(64), nullable=False)
     kolo = db.Column(db.String(128), nullable=False)
     nr_licencji = db.Column(db.String(32), nullable=True, unique=True)
+    rodo_zgoda = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
@@ -43,6 +44,12 @@ class Zawodnik(db.Model):
 
     def __repr__(self):
         return f"<Zawodnik {self.imie} {self.nazwisko}>"
+
+    def display_name(self, is_authenticated=False):
+        """Zwraca imię i nazwisko lub postać zanonimizowaną zgodnie z RODO."""
+        if is_authenticated or self.rodo_zgoda:
+            return f"{self.nazwisko} {self.imie}"
+        return f"Zawodnik#{self.id}"
 
 
 class Sedzia(db.Model):

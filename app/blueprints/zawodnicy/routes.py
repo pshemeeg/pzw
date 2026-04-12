@@ -57,11 +57,16 @@ def nowy():
             )
             return redirect(url_for("zawodnicy.szczegoly", zid=istniejacy.id))
 
+        nr_lic = f.get("nr_licencji", "").strip()
+        if not nr_lic or nr_lic.lower() == "none":
+            nr_lic = None
+
         zawodnik = Zawodnik(
             imie=imie,
             nazwisko=nazwisko,
             kolo=kolo,
-            nr_licencji=f.get("nr_licencji", "").strip() or None,
+            nr_licencji=nr_lic,
+            rodo_zgoda=bool(f.get("rodo_zgoda")),
         )
         db.session.add(zawodnik)
         db.session.commit()
@@ -101,7 +106,11 @@ def import_csv():
             imie = row.get("imie", "").strip()
             nazwisko = row.get("nazwisko", "").strip()
             kolo = row.get("kolo", "").strip()
-            nr_licencji = row.get("nr_licencji", "").strip() or None
+            nr_licencji = row.get("nr_licencji", "").strip()
+            if not nr_licencji or nr_licencji.lower() == "none":
+                nr_licencji = None
+            # Default to False for safety if not specified
+            rodo_zgoda = row.get("rodo_zgoda", "0").strip().lower() in ["1", "true", "tak", "yes"]
             
             if not imie or not nazwisko or not kolo:
                 pominieto += 1
@@ -112,7 +121,7 @@ def import_csv():
                 pominieto += 1
                 continue
                 
-            nowy = Zawodnik(imie=imie, nazwisko=nazwisko, kolo=kolo, nr_licencji=nr_licencji)
+            nowy = Zawodnik(imie=imie, nazwisko=nazwisko, kolo=kolo, nr_licencji=nr_licencji, rodo_zgoda=rodo_zgoda)
             db.session.add(nowy)
             dodano += 1
             
@@ -165,7 +174,13 @@ def edytuj(zid):
         zawodnik.imie = imie
         zawodnik.nazwisko = nazwisko
         zawodnik.kolo = kolo
-        zawodnik.nr_licencji = f.get("nr_licencji", "").strip() or None
+        
+        nr_lic = f.get("nr_licencji", "").strip()
+        if not nr_lic or nr_lic.lower() == "none":
+            nr_lic = None
+        zawodnik.nr_licencji = nr_lic
+        
+        zawodnik.rodo_zgoda = bool(f.get("rodo_zgoda"))
         db.session.commit()
         flash("Dane zawodnika zostały zaktualizowane.", "success")
         return redirect(url_for("zawodnicy.szczegoly", zid=zid))

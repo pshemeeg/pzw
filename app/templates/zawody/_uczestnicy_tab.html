@@ -35,7 +35,7 @@
                 </td>
                 <td class="px-6 py-4 font-bold text-gray-900 dark:text-white">
                     <a href="{{ url_for('zawodnicy.szczegoly', zid=u.zawodnik.id) }}" class="hover:text-water-600 transition-colors">
-                        {{ u.zawodnik.nazwisko }} {{ u.zawodnik.imie }}
+                        {{ u.zawodnik | display_name }}
                     </a>
                 </td>
                 <td class="px-6 py-4 text-gray-500 dark:text-gray-400 hidden sm:table-cell font-medium">

@@ -42,7 +42,7 @@
             <td class="col-lp">{{ loop.index }}</td>
             <td class="col-name">{{ r.uczestnik.druzyna|upper if r.uczestnik.druzyna else r.uczestnik.zawodnik.kolo|upper }}</td>
             <td class="col-name {% if r.miejsce == 1 %}text-red{% elif r.miejsce == 2 %}text-blue{% endif %}">
-                {{ r.uczestnik.zawodnik.nazwisko|upper }} {{ r.uczestnik.zawodnik.imie|upper }}
+                {{ r.uczestnik.zawodnik | display_name | upper }}
             </td>
             <td class="col-num-small">{{ dt.stanowisko if dt else '' }}</td>
             

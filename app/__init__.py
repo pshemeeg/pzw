@@ -27,6 +27,11 @@ def create_app(config_name=None):
 
     setup_logging(app)
 
+    @app.template_filter("display_name")
+    def display_name_filter(zawodnik):
+        from flask_login import current_user
+        return zawodnik.display_name(current_user.is_authenticated)
+
     from app.blueprints.auth import bp as auth_bp
 
     app.register_blueprint(auth_bp, url_prefix="/auth")
