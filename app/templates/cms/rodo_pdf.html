@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Oświadczenie RODO - Zawodnik</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2.5cm;
+        }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000;
+        }
+        .header {
+            text-align: right;
+            margin-bottom: 50px;
+        }
+        .title {
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14pt;
+            margin-bottom: 40px;
+            text-decoration: underline;
+        }
+        .content {
+            text-align: justify;
+            margin-bottom: 30px;
+        }
+        .signature-area {
+            margin-top: 80px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .sig-box {
+            border-top: 1px solid #000;
+            width: 200px;
+            text-align: center;
+            font-size: 10pt;
+            padding-top: 5px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            font-size: 9pt;
+            color: #666;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        Miejscowość: ..............................., Data: ................... r.
+    </div>
+
+    <div class="title">
+        Oświadczenie Uczestnika Zawodów Wędkarskich<br>
+        (Zgoda na przetwarzanie danych osobowych - RODO)
+    </div>
+
+    <div class="content">
+        Ja, niżej podpisany/a:<br><br>
+        <strong>Imię i Nazwisko:</strong> ....................................................................................................<br>
+        <strong>Nr Licencji / Koło:</strong> ....................................................................................................<br><br>
+        
+        1. Wyrażam dobrowolną zgodę na przetwarzanie moich danych osobowych przez organizatora zawodów (Koło PZW) w celu organizacji zawodów, prowadzenia list startowych oraz wyliczania klasyfikacji sportowej.<br><br>
+        
+        2. Wyrażam zgodę na publikację mojego imienia, nazwiska oraz przynależności do koła w publicznych wynikach i klasyfikacjach zawodów (w tym w systemie internetowym oraz mediach społecznościowych).<br><br>
+        
+        3. Przyjmuję do wiadomości, że administratorem moich danych jest organizator zawodów. Zostałem/am poinformowany/a o prawie do wglądu w moje dane, ich poprawiania, a także wycofania zgody w dowolnym momencie.
+    </div>
+
+    <div class="signature-area">
+        <div style="float: left;">
+            <div class="sig-box">Czytelny podpis zawodnika</div>
+        </div>
+        <div style="float: right;">
+            <div class="sig-box">Podpis opiekuna (dla nieletnich)</div>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+
+    <div class="footer">
+        Dokument wygenerowany automatycznie przez System Obsługi Zawodów - {{ data_generowania.strftime('%d.%m.%Y') }}
+    </div>
+
+</body>
+</html>

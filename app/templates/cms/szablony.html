@@ -8,73 +8,129 @@
     <!-- Header -->
     <div class="text-center space-y-4">
         <h1 class="text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tighter">Centrum <span class="text-water-500">Szablonów</span></h1>
-        <p class="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto font-medium">
-            Pobierz gotowe wzory plików CSV do importu oraz wzory oświadczeń RODO dla zawodników.
+        <p class="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto font-medium text-sm md:text-base">
+            Pobierz gotowe wzory plików CSV do importu oraz profesjonalne oświadczenia RODO.
         </p>
     </div>
 
     <!-- CSV Templates Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Zawodnicy -->
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] border border-water-200 dark:border-gray-700 shadow-sm flex flex-col justify-between group hover:border-water-400 transition-all">
-            <div class="space-y-4">
-                <div class="w-12 h-12 rounded-2xl bg-gold-100 dark:bg-amber-900/30 flex items-center justify-center text-gold-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+    <div class="space-y-6">
+        <h2 class="text-xs font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 border-b border-water-100 dark:border-gray-800 pb-4 ml-4">Szablony Importu CSV</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Zawodnicy -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-sm flex flex-col justify-between group hover:border-gold-400 transition-all">
+                <div class="space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-gold-50 dark:bg-amber-900/20 flex items-center justify-center text-gold-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    </div>
+                    <h3 class="text-sm font-black text-gray-900 dark:text-white uppercase">Zawodnicy</h3>
+                    <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Masowy import członków koła z numerami licencji.</p>
                 </div>
-                <h3 class="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Baza Zawodników</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Szablon do masowego importu członków koła. Zawiera kolumny: imię, nazwisko, koło, licencja, zgoda RODO.</p>
+                <a href="{{ url_for('main.download_csv_template', typ='zawodnicy') }}" 
+                   class="mt-6 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 font-black uppercase text-[9px] tracking-widest rounded-xl hover:bg-gold-500 hover:text-white transition-all shadow-sm">
+                    Pobierz CSV
+                </a>
             </div>
-            <a href="{{ url_for('main.download_csv_template', typ='zawodnicy') }}" 
-               class="mt-8 inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 font-black uppercase text-[10px] tracking-widest rounded-xl hover:bg-water-500 hover:text-white transition-all shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                Pobierz szablon CSV
-            </a>
-        </div>
 
-        <!-- Łowiska -->
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] border border-water-200 dark:border-gray-700 shadow-sm flex flex-col justify-between group hover:border-water-400 transition-all">
-            <div class="space-y-4">
-                <div class="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <!-- Łowiska -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-sm flex flex-col justify-between group hover:border-blue-400 transition-all">
+                <div class="space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    </div>
+                    <h3 class="text-sm font-black text-gray-900 dark:text-white uppercase">Łowiska</h3>
+                    <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Lista zbiorników, rzek i kanałów obsługiwanych w systemie.</p>
                 </div>
-                <h3 class="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Słownik Łowisk</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Importuj listę zbiorników i rzek obsługiwanych przez Twoje koło lub okręg.</p>
+                <a href="{{ url_for('main.download_csv_template', typ='lowiska') }}" 
+                   class="mt-6 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 font-black uppercase text-[9px] tracking-widest rounded-xl hover:bg-blue-500 hover:text-white transition-all shadow-sm">
+                    Pobierz CSV
+                </a>
             </div>
-            <a href="{{ url_for('main.download_csv_template', typ='lowiska') }}" 
-               class="mt-8 inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 font-black uppercase text-[10px] tracking-widest rounded-xl hover:bg-water-500 hover:text-white transition-all shadow-sm">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                Pobierz szablon CSV
-            </a>
+
+            <!-- Dyscypliny -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-sm flex flex-col justify-between group hover:border-green-400 transition-all">
+                <div class="space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-green-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                    </div>
+                    <h3 class="text-sm font-black text-gray-900 dark:text-white uppercase">Dyscypliny</h3>
+                    <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Konfiguracja typów punktacji dla różnych dyscyplin PZW.</p>
+                </div>
+                <a href="{{ url_for('main.download_csv_template', typ='dyscypliny') }}" 
+                   class="mt-6 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 font-black uppercase text-[9px] tracking-widest rounded-xl hover:bg-green-500 hover:text-white transition-all shadow-sm">
+                    Pobierz CSV
+                </a>
+            </div>
+
+            <!-- Ryby -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-sm flex flex-col justify-between group hover:border-red-400 transition-all">
+                <div class="space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-red-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                    </div>
+                    <h3 class="text-sm font-black text-gray-900 dark:text-white uppercase">Gatunki Ryb</h3>
+                    <p class="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Wymiary ochronne i punktacja za milimetry (wymagane w spin/much).</p>
+                </div>
+                <a href="{{ url_for('main.download_csv_template', typ='ryby') }}" 
+                   class="mt-6 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-200 font-black uppercase text-[9px] tracking-widest rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm">
+                    Pobierz CSV
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- RODO Patterns Section -->
+    <!-- RODO Documentation Section -->
     <div class="space-y-6">
-        <h2 class="text-xs font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 border-b border-water-100 dark:border-gray-800 pb-4 ml-4">Wzory zapisów prawnych i zgód</h2>
+        <h2 class="text-xs font-black uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500 border-b border-water-100 dark:border-gray-800 pb-4 ml-4">Dokumentacja Prawna (RODO)</h2>
         
-        <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-water-200 dark:border-gray-700 shadow-sm overflow-hidden">
-            <div class="p-8 md:p-12 space-y-8">
-                <!-- Osobna zgoda -->
-                <div class="space-y-4">
-                    <h4 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-gold-500"></span>
-                        Indywidualna zgoda na publikację wizerunku i danych
-                    </h4>
-                    <div class="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-water-50 dark:border-gray-700 text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed italic">
-                        "Wyrażam zgodę na przetwarzanie moich danych osobowych (imię, nazwisko, przynależność do koła) przez Koło PZW nr [NUMER] w celu publikacji list startowych oraz wyników zawodów w systemie informatycznym, na stronie internetowej oraz w mediach społecznościowych koła."
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-[2.5rem] border border-water-200 dark:border-gray-700 shadow-sm overflow-hidden">
+                <div class="p-8 md:p-12 space-y-10">
+                    <!-- Osobna zgoda -->
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-gold-500 shadow-sm shadow-gold-500/50"></span>
+                            Treść indywidualnej zgody zawodnika
+                        </h4>
+                        <div class="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-water-50 dark:border-gray-700 text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed italic relative group">
+                            <button @click="navigator.clipboard.writeText($el.nextElementSibling.innerText); alert('Skopiowano do schowka!')" 
+                                    class="absolute top-4 right-4 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                            </button>
+                            <span>"Wyrażam zgodę na przetwarzanie moich danych osobowych (imię, nazwisko, przynależność do koła) przez Koło PZW organizujące zawody w celu publikacji list startowych oraz wyników zawodów w systemie informatycznym, na stronie internetowej oraz w mediach społecznościowych koła."</span>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Regulamin zawodów -->
-                <div class="space-y-4">
-                    <h4 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-water-500"></span>
-                        Wpis do Regulaminu Zawodów (RODO)
-                    </h4>
-                    <div class="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-water-50 dark:border-gray-700 text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed">
-                        "Zapisanie się na listę startową jest równoznaczne z akceptacją regulaminu zawodów. Administratorem danych jest organizator. Wyniki zawodów z pełnymi danymi zawodników będą publikowane publicznie wyłącznie w przypadku wyrażenia dobrowolnej zgody. W braku zgody, dane zawodnika zostaną zanonimizowane."
+                    <!-- Regulamin zawodów -->
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-water-500 shadow-sm shadow-water-500/50"></span>
+                            Wpis do ogólnego Regulaminu Zawodów
+                        </h4>
+                        <div class="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-water-50 dark:border-gray-700 text-sm font-medium text-gray-600 dark:text-gray-400 leading-relaxed relative group">
+                            <button @click="navigator.clipboard.writeText($el.nextElementSibling.innerText); alert('Skopiowano do schowka!')" 
+                                    class="absolute top-4 right-4 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                            </button>
+                            <span>"Administratorem danych jest organizator zawodów. Wyniki zawodów z pełnymi danymi zawodników będą publikowane publicznie wyłącznie w przypadku wyrażenia dobrowolnej zgody (zaznaczenie pola w bazie). W braku zgody, dane zawodnika zostaną zanonimizowane do postaci 'Zawodnik#[NUMER]'."</span>
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- PDF Download Action -->
+            <div class="bg-gradient-to-br from-water-600 to-water-400 p-8 rounded-[2.5rem] text-white shadow-xl shadow-water-500/20 flex flex-col justify-between items-center text-center">
+                <div class="space-y-4">
+                    <div class="w-16 h-16 rounded-3xl bg-white/20 backdrop-blur-md flex items-center justify-center mx-auto">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <h3 class="text-xl font-black uppercase tracking-tight">Gotowe oświadczenie</h3>
+                    <p class="text-xs opacity-80 font-medium">Pobierz gotowy dokument PDF do wydrukowania i zebrania podpisów od zawodników na łowisku.</p>
+                </div>
+                <a href="{{ url_for('cms.download_rodo_pdf') }}" 
+                   class="w-full mt-8 py-4 bg-white text-water-600 font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-gold-500 hover:text-white transition-all active:scale-95 shadow-lg">
+                    Pobierz wzór PDF
+                </a>
             </div>
         </div>
     </div>
