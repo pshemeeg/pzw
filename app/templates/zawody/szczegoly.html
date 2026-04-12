@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}{{ zawody.nazwa }}{% endblock %}
+{% block page_title %}{{ zawody.nazwa }}{% endblock %}
+
+{% block content %}
+<div class="flex items-center gap-3 mb-6">
+    <a href="{{ url_for('zawody.lista') }}"
+       class="text-sm text-gray-400 hover:text-gray-600
+              dark:hover:text-gray-200 transition-colors">
+        Zawody
+    </a>
+    <span class="text-gray-300 dark:text-gray-600">/</span>
+    <span class="text-sm text-gray-600 dark:text-gray-300">
+        {{ zawody.nazwa }}
+    </span>
+    <a href="{{ url_for('zawody.edytuj', zid=zawody.id) }}"
+       class="ml-auto text-sm px-3 py-1.5 rounded-lg border
+              border-water-200 dark:border-gray-600
+              text-water-700 dark:text-water-200
+              hover:bg-water-100 dark:hover:bg-gray-700 transition-colors">
+        Edytuj
+    </a>
+    <a href="{{ url_for('zawody.protokol', zid=zawody.id) }}"
+       target="_blank"
+       class="text-sm px-3 py-1.5 rounded-lg border
+              border-gold-500 bg-gold-500 text-white
+              hover:bg-gold-600 hover:border-gold-600 transition-colors">
+        Drukuj protokół
+    </a>
+    <a href="{{ url_for('zawody.protokol_pdf', zid=zawody.id) }}"
+       target="_blank"
+       class="text-sm px-3 py-1.5 rounded-lg border
+              border-blue-500 bg-blue-500 text-white
+              hover:bg-blue-600 hover:border-blue-600 transition-colors ml-2">
+        Pobierz PDF
+    </a>
+</div>
+
+<!-- Info Cards (unchanged for brevity, let me just keep them full) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6">
+        <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-4">
+            Informacje
+        </h2>
+        <dl class="space-y-3 text-sm">
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Data</dt>
+                <dd class="font-medium">{{ zawody.data.strftime('%d.%m.%Y') }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Dyscyplina</dt>
+                <dd class="font-medium">{{ zawody.dyscyplina.nazwa }}</dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Łowisko</dt>
+                <dd class="font-medium">
+                    {{ zawody.lowisko.nazwa if zawody.lowisko else '—' }}
+                </dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Godziny</dt>
+                <dd class="font-medium">
+                    {% if zawody.godzina_start %}
+                        {{ zawody.godzina_start.strftime('%H:%M') }}
+                        {% if zawody.godzina_koniec %}
+                            — {{ zawody.godzina_koniec.strftime('%H:%M') }}
+                        {% endif %}
+                    {% else %}—{% endif %}
+                </dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Sektory / tury</dt>
+                <dd class="font-medium">
+                    {{ zawody.liczba_sektorow }} / {{ zawody.liczba_tur }}
+                </dd>
+            </div>
+            {% if zawody.organizator %}
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Organizator</dt>
+                <dd class="font-medium">
+                    {{ zawody.organizator.imie }} {{ zawody.organizator.nazwisko }}
+                </dd>
+            </div>
+            {% endif %}
+            <div class="flex justify-between">
+                <dt class="text-gray-500 dark:text-gray-400">Status</dt>
+                <dd>
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium
+                        {% if zawody.status == 'zakonczone' %}
+                            bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                        {% elif zawody.status == 'w_trakcie' %}
+                            bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+                        {% else %}
+                            bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300
+                        {% endif %}">
+                        {{ zawody.status|replace('_', ' ')|capitalize }}
+                    </span>
+                </dd>
+            </div>
+        </dl>
+    </div>
+
+    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border border-water-200 dark:border-gray-700 p-6">
+        <h2 class="text-sm font-medium text-gray-400 uppercase tracking-wide mb-4">
+            Dodaj zawodnika
+        </h2>
+        <form method="POST" action="{{ url_for('zawody.uczestnik_dodaj', zid=zawody.id) }}" class="space-y-3">
+            <div x-data="szukajZawodnika()" class="relative">
+                <input type="hidden" name="zawodnik_id" x-model="wybranyId">
+                <input type="text"
+                       x-model="fraza"
+                       @input.debounce.300ms="szukaj()"
+                       @focus="szukaj()"
+                       @keydown.escape="zamknij()"
+                       placeholder="Wpisz nazwisko lub imię..."
+                       autocomplete="off"
+                       class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500">
+                <div x-show="wyniki.length > 0" class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-water-200 dark:border-gray-600 rounded-lg shadow-lg overflow-hidden">
+                    <template x-for="z in wyniki" :key="z.id">
+                        <div @click="wybierz(z)" class="px-4 py-2.5 text-sm cursor-pointer hover:bg-water-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-100 border-b border-water-100 dark:border-gray-700 last:border-0">
+                            <span class="font-medium" x-text="z.nazwisko + ' ' + z.imie"></span>
+                            <span class="text-gray-400 ml-2 text-xs" x-text="z.kolo"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            {% if zawody.klasyfikacja_druzynowa %}
+            <div x-data="{ druzyna: '', podpowiedzi: {{ druzyny | tojson }} }">
+                <input type="text" name="druzyna" x-model="druzyna" placeholder="Nazwa drużyny *" required list="lista-druzyn" autocomplete="off" class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-water-500">
+                <datalist id="lista-druzyn">
+                    {% for d in druzyny %}
+                    <option value="{{ d }}">{{ d }}</option>
+                    {% endfor %}
+                </datalist>
+            </div>
+            {% endif %}
+
+            <button type="submit" class="w-full px-4 py-2 text-sm font-medium bg-gold-500 hover:bg-gold-600 text-white rounded-lg transition-colors">
+                Dodaj do zawodów
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- TABS -->
+<div x-data="{ tab: window.location.hash ? window.location.hash.substring(1) : 'uczestnicy' }" @hashchange.window="tab = window.location.hash ? window.location.hash.substring(1) : 'uczestnicy'">
+    <div class="flex overflow-x-auto border-b border-water-200 dark:border-gray-700 mb-6 gap-2">
+        <button @click="window.location.hash = 'uczestnicy'"
+                :class="tab === 'uczestnicy' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
+                class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
+            Uczestnicy
+        </button>
+        <button @click="window.location.hash = 'stanowiska'"
+                :class="tab === 'stanowiska' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
+                class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
+            Stanowiska i Losowanie
+        </button>
+        <button @click="window.location.hash = 'wyniki'"
+                :class="tab === 'wyniki' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
+                class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
+            Wprowadzanie Wyników
+        </button>
+        <button @click="window.location.hash = 'klasyfikacja'"
+                :class="tab === 'klasyfikacja' ? 'border-b-2 border-gold-500 text-gold-600 dark:text-gold-400 font-medium' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-medium'"
+                class="px-4 py-2 text-sm whitespace-nowrap transition-colors">
+            Klasyfikacja
+        </button>
+    </div>
+
+    <div x-show="tab === 'uczestnicy'" x-cloak>
+        {% include "zawody/_uczestnicy_tab.html" %}
+    </div>
+
+    <div x-show="tab === 'stanowiska'" x-cloak>
+        {% include "zawody/_stanowiska_tab.html" %}
+    </div>
+
+    <div x-show="tab === 'wyniki'" x-cloak>
+        {% include "zawody/_wyniki_tab.html" %}
+    </div>
+
+    <div x-show="tab === 'klasyfikacja'" x-cloak>
+        {% include "zawody/_klasyfikacja_tab.html" %}
+    </div>
+</div>
+
+<script>
+function szukajZawodnika() {
+    return {
+        fraza: '',
+        wyniki: [],
+        wybranyId: null,
+        async szukaj() {
+            if (this.fraza.length < 2) {
+                this.wyniki = [];
+                return;
+            }
+            const resp = await fetch(
+                `/zawodnicy/szukaj?q=${encodeURIComponent(this.fraza)}`
+            );
+            this.wyniki = await resp.json();
+        },
+        wybierz(z) {
+            this.fraza = z.nazwisko + ' ' + z.imie + ' — ' + z.kolo;
+            this.wybranyId = z.id;
+            this.wyniki = [];
+        },
+        zamknij() {
+            this.wyniki = [];
+        },
+    }
+}
+</script>
+{% endblock %}
