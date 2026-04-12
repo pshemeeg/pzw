@@ -44,6 +44,12 @@ class Zawodnik(db.Model):
         db.UniqueConstraint("imie", "nazwisko", "kolo", name="uq_zawodnik"),
     )
 
+    udzialy = db.relationship(
+        "Uczestnik",
+        back_populates="zawodnik",
+        cascade="all, delete-orphan",
+    )
+
     def __repr__(self):
         return f"<Zawodnik {self.imie} {self.nazwisko}>"
 
@@ -67,7 +73,10 @@ class Sedzia(db.Model):
     )
 
     uzytkownik = db.relationship(
-        "Uzytkownik", back_populates="sedzia", uselist=False
+        "Uzytkownik",
+        back_populates="sedzia",
+        uselist=False,
+        cascade="all, delete-orphan",
     )
 
     def __repr__(self):
@@ -262,7 +271,7 @@ class Uczestnik(db.Model):
     )
 
     zawody = db.relationship("Zawody", back_populates="uczestnicy")
-    zawodnik = db.relationship("Zawodnik", backref="udzialy")
+    zawodnik = db.relationship("Zawodnik", back_populates="udzialy")
     stanowiska = db.relationship(
         "Stanowisko",
         back_populates="uczestnik",
