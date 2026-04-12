@@ -11,7 +11,14 @@
 </form>
 {% endif %}
 
-<form method="POST" id="form-glowny">
+<form method="POST" id="form-glowny" x-data="{ 
+    imie: '{{ sedzia.imie if sedzia else '' }}', 
+    nazwisko: '{{ sedzia.nazwisko if sedzia else '' }}',
+    email: '{{ sedzia.uzytkownik.email if sedzia and sedzia.uzytkownik else '' }}',
+    get is_valid() {
+        return this.imie.length >= 2 && this.nazwisko.length >= 2;
+    }
+}">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-2 space-y-8">
             <!-- Personal Data Card -->
@@ -23,13 +30,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Imię *</label>
-                            <input type="text" name="imie" required value="{{ sedzia.imie if sedzia else '' }}"
-                                   class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                            <input type="text" name="imie" required x-model="imie"
+                                   :class="imie.length > 0 && imie.length < 2 ? 'border-red-500 ring-red-500/10' : 'border-water-200 dark:border-gray-700'"
+                                   class="w-full px-4 py-3 text-sm font-bold rounded-xl border bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                            <p x-show="imie.length > 0 && imie.length < 2" class="text-[10px] text-red-500 font-bold ml-1">Imię jest za krótkie</p>
                         </div>
                         <div class="space-y-2">
                             <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Nazwisko *</label>
-                            <input type="text" name="nazwisko" required value="{{ sedzia.nazwisko if sedzia else '' }}"
-                                   class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                            <input type="text" name="nazwisko" required x-model="nazwisko"
+                                   :class="nazwisko.length > 0 && nazwisko.length < 2 ? 'border-red-500 ring-red-500/10' : 'border-water-200 dark:border-gray-700'"
+                                   class="w-full px-4 py-3 text-sm font-bold rounded-xl border bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                            <p x-show="nazwisko.length > 0 && nazwisko.length < 2" class="text-[10px] text-red-500 font-bold ml-1">Nazwisko jest za krótkie</p>
                         </div>
                     </div>
 
@@ -80,8 +91,9 @@
         <div class="space-y-8">
             <!-- Actions Card -->
             <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-xl p-8 space-y-4">
-                <button type="submit" form="form-glowny"
-                        class="w-full py-4 bg-gold-500 hover:bg-gold-600 text-white font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-gold-500/20 transition-all active:scale-[0.98]">
+                <button type="submit" form="form-glowny" :disabled="!is_valid"
+                        :class="is_valid ? 'bg-gold-500 hover:bg-gold-600' : 'bg-gray-300 cursor-not-allowed'"
+                        class="w-full py-4 text-white font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-gold-500/20 transition-all active:scale-[0.98]">
                     {{ 'Zapisz zmiany' if sedzia else 'Dodaj sędziego' }}
                 </button>
                 <a href="{{ url_for('sedziowie.lista') }}"

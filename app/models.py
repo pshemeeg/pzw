@@ -147,6 +147,37 @@ class Zawody(db.Model):
     def __repr__(self):
         return f"<Zawody {self.nr_zawodow} {self.nazwa}>"
 
+    @property
+    def computed_status(self):
+        """Dynamicznie wylicza status zawodów na podstawie daty i czasu."""
+        teraz = datetime.now()
+        
+        # Jeśli data jest w przyszłości -> planowane
+        data_start = datetime.combine(self.data, self.godzina_start or datetime.min.time())
+        if teraz < data_start:
+            return "planowane"
+            
+        # Jeśli mamy data_do i jest w przeszłości -> zakonczone
+        koniec_dnia = self.data_do or self.data
+        godzina_stop = self.godzina_koniec or datetime.max.time()
+        data_koniec = datetime.combine(koniec_dnia, godzina_stop)
+        
+        if teraz > data_koniec:
+            return "zakonczone"
+            
+        # W przeciwnym razie -> w trakcie
+        return "w_trakcie"
+
+    @property
+    def status_display(self):
+        s = self.computed_status
+        mapping = {
+            "planowane": ("Planowane", "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400", "bg-gray-400"),
+            "w_trakcie": ("W trakcie", "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400", "bg-blue-500"),
+            "zakonczone": ("Zakończone", "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400", "bg-green-500"),
+        }
+        return mapping.get(s, ("Nieznany", "bg-gray-100 text-gray-600", "bg-gray-400"))
+
 
 class GatunekRyby(db.Model):
     __tablename__ = "gatunki_ryb"

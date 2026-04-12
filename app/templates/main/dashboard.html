@@ -4,6 +4,37 @@
 {% block page_title %}Dashboard analityczny{% endblock %}
 
 {% block content %}
+<!-- Context Awareness Banner -->
+{% if moje_aktywne %}
+<div class="mb-12 space-y-4">
+    {% for z in moje_aktywne %}
+    <div class="relative overflow-hidden bg-gradient-to-r from-water-600 to-water-400 rounded-[2rem] p-8 text-white shadow-2xl shadow-water-500/30 animate-in slide-in-from-top duration-500">
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                    </span>
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">Twoje zawody trwają teraz</span>
+                </div>
+                <h2 class="text-3xl font-black uppercase tracking-tighter">{{ z.nazwa }}</h2>
+                <p class="text-sm font-medium opacity-90">{{ z.lowisko.nazwa if z.lowisko else 'Łowisko nieokreślone' }} — {{ z.dyscyplina.nazwa }}</p>
+            </div>
+            <a href="{{ url_for('zawody.szczegoly', zid=z.id) }}#wyniki" 
+               class="inline-flex items-center justify-center px-8 py-4 bg-white text-water-600 font-black uppercase tracking-widest rounded-2xl hover:bg-gold-500 hover:text-white transition-all active:scale-95 shadow-lg">
+                Wpisz wyniki
+            </a>
+        </div>
+        <!-- Decorative fish icon -->
+        <div class="absolute right-0 bottom-0 opacity-10 translate-y-1/4 translate-x-1/4 pointer-events-none">
+            <svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
     <div class="bg-white dark:bg-gray-800 rounded-3xl border border-water-200 dark:border-gray-700 p-8 shadow-sm group hover:shadow-xl hover:shadow-water-500/5 transition-all">
         <div class="flex items-center justify-between mb-4">
@@ -39,10 +70,49 @@
     </div>
 </div>
 
-<div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
+<!-- Chart Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+    <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-[2.5rem] border border-water-200 dark:border-gray-700 p-8 shadow-sm">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Aktywność w sezonie {{ chart_labels[0] }}</h2>
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-water-500"></span>
+                <span class="text-[10px] font-bold text-gray-400 uppercase">Liczba zawodów</span>
+            </div>
+        </div>
+        <div class="h-64">
+            <canvas id="mainChart"></canvas>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-water-200 dark:border-gray-700 p-8 shadow-sm flex flex-col">
+        <h2 class="text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-8">Szybkie skróty</h2>
+        <div class="grid grid-cols-2 gap-4 flex-1">
+            <a href="{{ url_for('zawody.nowe') }}" class="flex flex-col items-center justify-center p-4 rounded-3xl bg-water-50 dark:bg-water-900/20 text-water-600 dark:text-water-400 hover:bg-water-500 hover:text-white transition-all group">
+                <svg class="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                <span class="text-[10px] font-black uppercase">Zawody</span>
+            </a>
+            <a href="{{ url_for('zawodnicy.nowy') }}" class="flex flex-col items-center justify-center p-4 rounded-3xl bg-gold-50 dark:bg-amber-900/20 text-gold-600 dark:text-amber-400 hover:bg-gold-500 hover:text-white transition-all group">
+                <svg class="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                <span class="text-[10px] font-black uppercase">Zawodnik</span>
+            </a>
+            <a href="{{ url_for('slowniki.lowisko_nowe') }}" class="flex flex-col items-center justify-center p-4 rounded-3xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-500 hover:text-white transition-all group">
+                <svg class="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span class="text-[10px] font-black uppercase">Łowisko</span>
+            </a>
+            <a href="{{ url_for('uzytkownicy.lista') }}" class="flex flex-col items-center justify-center p-4 rounded-3xl bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 hover:bg-gray-500 hover:text-white transition-all group">
+                <svg class="w-8 h-8 mb-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z"/></svg>
+                <span class="text-[10px] font-black uppercase">Dostęp</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Last Activities -->
+<div class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-water-200 dark:border-gray-700 overflow-hidden shadow-sm">
     <div class="flex items-center justify-between px-8 py-6 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
         <h2 class="text-xs font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">
-            Ostatnio dodane lub edytowane zawody
+            Ostatnia aktywność w systemie
         </h2>
         <a href="{{ url_for('zawody.lista') }}" class="text-[10px] font-black uppercase text-water-600 dark:text-water-400 hover:underline">Zarządzaj wszystkimi</a>
     </div>
@@ -64,7 +134,7 @@
                 <tr class="hover:bg-water-50/30 dark:hover:bg-gray-700/30 transition-colors group">
                     <td class="px-8 py-5">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-gray-400 font-bold text-[10px]">
+                            <div class="w-8 h-8 rounded-lg bg-water-50 dark:bg-water-900/30 flex items-center justify-center text-water-600 dark:text-water-400 font-bold text-[10px]">
                                 {{ z.dyscyplina.nazwa[0]|upper }}
                             </div>
                             <a href="{{ url_for('zawody.szczegoly', zid=z.id) }}" class="font-bold text-gray-900 dark:text-white hover:text-water-600 transition-colors">
@@ -79,11 +149,9 @@
                         {{ z.lowisko.nazwa if z.lowisko else '—' }}
                     </td>
                     <td class="px-6 py-5 text-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider
-                            {% if z.status == 'zakonczone' %} bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400
-                            {% elif z.status == 'w_trakcie' %} bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400
-                            {% else %} bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 {% endif %}">
-                            {{ z.status|replace('_', ' ') }}
+                        {% set s_display = z.status_display %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider {{ s_display[1] }}">
+                            {{ s_display[0] }}
                         </span>
                     </td>
                     <td class="px-8 py-5 text-right">
@@ -102,4 +170,58 @@
     </div>
     {% endif %}
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('mainChart').getContext('2d');
+    const isDark = document.documentElement.classList.contains('dark');
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_labels | tojson }},
+            datasets: [{
+                label: 'Liczba zawodów',
+                data: {{ chart_data | tojson }},
+                borderColor: '#4a9cb8',
+                backgroundColor: 'rgba(74, 156, 184, 0.1)',
+                borderWidth: 4,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#4a9cb8',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: isDark ? '#2d3748' : '#f0f8fa' },
+                    ticks: { 
+                        stepSize: 1,
+                        color: '#9ca3af',
+                        font: { weight: 'bold', size: 10 }
+                    }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { 
+                        color: '#9ca3af',
+                        font: { weight: 'bold', size: 10 }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

@@ -24,8 +24,8 @@ def runner(app):
 def db_session(app):
     with app.app_context():
         # Setup basic DB state for tests
-        admin = Uzytkownik(username="admin", is_admin=True)
-        admin.set_password("admin")
+        admin = Uzytkownik(email="admin@pzw.pl", rola="admin")
+        admin.haslo_hash = "admin" # simplified for tests
         db.session.add(admin)
 
         dyscyplina = Dyscyplina(nazwa="Spławik", kod="splawik", typ_wyniku="wagowy")

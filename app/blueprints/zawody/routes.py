@@ -82,7 +82,9 @@ def lista():
     query = Zawody.query.order_by(Zawody.data.desc())
 
     if not current_user.is_authenticated:
-        query = query.filter_by(status="zakonczone")
+        # Gość widzi tylko zawody, których data zakończenia (lub rozpoczęcia) już minęła
+        today = date.today()
+        query = query.filter(db.or_(Zawody.data_do < today, db.and_(Zawody.data_do == None, Zawody.data < today)))
     elif status:
         query = query.filter_by(status=status)
         
