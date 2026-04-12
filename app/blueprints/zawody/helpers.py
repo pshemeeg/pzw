@@ -70,7 +70,10 @@ def oblicz_klasyfikacje(zawody):
                 'wynik_sort': wynik_sort,
                 'dysk': dysk,
                 'zero': zero,
-                'waga': waga_do_remisow
+                'waga': waga_do_remisow,
+                'najdluzsza_ryba': najdluzsza_ryba,
+                'punkty_karne': punkty_karne,
+                'sztuki': sztuki
             }
 
     # 2. Obliczanie punktów sektorowych per tura
