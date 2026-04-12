@@ -61,7 +61,6 @@ def dashboard():
 from app.blueprints.main.helpers import generate_csv_template, calculate_gp_ranking
 
 @bp.route("/grand-prix")
-@login_required
 def grand_prix():
     sezon = request.args.get("sezon", datetime.now().year, type=int)
     ranking, zawody_gp, detale_zawodow = calculate_gp_ranking(sezon)
@@ -79,7 +78,6 @@ def grand_prix():
     )
 
 @bp.route("/grand-prix/pdf")
-@login_required
 def grand_prix_pdf():
     sezon = request.args.get("sezon", datetime.now().year, type=int)
     typ = request.args.get("typ", "prosty") # 'prosty' lub 'zaawansowany'

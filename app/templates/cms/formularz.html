@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Edytuj: {{ dokument.tytul }}{% endblock %}
+{% block page_title %}Edytuj dokument{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8 py-8">
+    <form method="POST" class="space-y-8">
+        <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-sm overflow-hidden">
+            <div class="px-8 py-5 border-b border-water-50 dark:border-gray-700 bg-water-50/30 dark:bg-gray-750">
+                <h2 class="text-xs font-black uppercase tracking-widest text-water-600 dark:text-water-400 opacity-80">Edycja: {{ dokument.kod }}</h2>
+            </div>
+            <div class="p-8 space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Tytuł dokumentu *</label>
+                    <input type="text" name="tytul" required value="{{ dokument.tytul }}"
+                           class="w-full px-4 py-3 text-sm font-bold rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all">
+                </div>
+
+                <div class="space-y-2 pt-4">
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Treść (Markdown/Text) *</label>
+                    <textarea name="tresc" rows="20" required
+                              class="w-full px-4 py-3 text-sm font-medium rounded-xl border border-water-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white outline-none focus:border-water-500 transition-all font-mono">{{ dokument.tresc }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-water-200 dark:border-gray-700 shadow-xl p-8 space-y-4">
+            <button type="submit"
+                    class="w-full py-4 bg-gold-500 hover:bg-gold-600 text-white font-black uppercase tracking-widest rounded-2xl shadow-lg shadow-gold-500/20 transition-all active:scale-[0.98]">
+                Zapisz zmiany w dokumencie
+            </button>
+            <a href="{{ url_for('cms.view', kod=dokument.kod) }}"
+               class="block w-full py-4 text-xs font-black text-center text-gray-400 uppercase tracking-widest hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                Anuluj i wróć do podglądu
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -335,3 +335,21 @@ class WynikRyba(db.Model):
 
     def __repr__(self):
         return f"<WynikRyba {self.gatunek} {self.dlugosc_mm}mm {self.punkty}pkt>"
+
+
+class Dokument(db.Model):
+    __tablename__ = "dokumenty"
+
+    id = db.Column(db.Integer, primary_key=True)
+    kod = db.Column(db.String(32), unique=True, nullable=False) # e.g., 'regulamin', 'polityka'
+    tytul = db.Column(db.String(128), nullable=False)
+    tresc = db.Column(db.Text, nullable=False)
+    updated_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+    def __repr__(self):
+        return f"<Dokument {self.kod} {self.tytul}>"
+

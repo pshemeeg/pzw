@@ -335,8 +335,10 @@
                             <div class="space-y-3">
                                 <h5 class="text-xs font-black uppercase tracking-[0.2em] text-gray-900 dark:text-white">Zasoby</h5>
                                 <ul class="space-y-2">
-                                    <li><a href="#" class="text-xs font-bold text-gray-400 hover:text-water-500 transition-colors uppercase tracking-wider">Dokumentacja</a></li>
-                                    <li><a href="#" class="text-xs font-bold text-gray-400 hover:text-water-500 transition-colors uppercase tracking-wider">Regulamin</a></li>
+                                    <li><a href="{{ url_for('cms.view', kod='dokumentacja') }}" class="text-xs font-bold text-gray-400 hover:text-water-500 transition-colors uppercase tracking-wider">Dokumentacja</a></li>
+                                    <li><a href="{{ url_for('cms.view', kod='regulamin') }}" class="text-xs font-bold text-gray-400 hover:text-water-500 transition-colors uppercase tracking-wider">Regulamin</a></li>
+                                    <li><a href="{{ url_for('cms.view', kod='polityka') }}" class="text-xs font-bold text-gray-400 hover:text-water-500 transition-colors uppercase tracking-wider">Polityka Prywatności</a></li>
+                                    <li><a href="{{ url_for('cms.view', kod='szablony') }}" class="text-xs font-bold text-gray-400 hover:text-water-500 transition-colors uppercase tracking-wider">Szablony</a></li>
                                 </ul>
                             </div>
                             <div class="space-y-3">
