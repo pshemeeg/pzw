@@ -1,7 +1,7 @@
 from app.extensions import db
 from app.models import GatunekRyby
 
-def seed_gatunki_ryb():
+def run_seeds():
     if GatunekRyby.query.first():
         return # already seeded
     
