@@ -47,9 +47,9 @@ def dashboard():
     # Statystyki do wykresu: Zawody na miesiąc w bieżącym sezonie
     obecny_rok = teraz.year
     stats_raw = db.session.query(
-        func.strftime("%m", Zawody.data), func.count(Zawody.id)
+        db.extract("month", Zawody.data), func.count(Zawody.id)
     ).filter(Zawody.sezon == obecny_rok).group_by(
-        func.strftime("%m", Zawody.data)
+        db.extract("month", Zawody.data)
     ).all()
 
     chart_labels = [
@@ -57,8 +57,10 @@ def dashboard():
         "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru"
     ]
     chart_data = [0] * 12
-    for m_str, count in stats_raw:
-        chart_data[int(m_str) - 1] = count
+    for m_val, count in stats_raw:
+        # extract returns integer (1-12)
+        if m_val:
+            chart_data[int(m_val) - 1] = count
 
     return render_template(
         "main/dashboard.html",
